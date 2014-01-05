@@ -1,4 +1,4 @@
-# A calendar plugin for Vim
+# A calendar application for Vim
 ### Vim meets a next generation application
 
 ![calendar.vim](https://raw.github.com/wiki/itchyny/calendar.vim/image/image.png)
