@@ -44,7 +44,7 @@ This is a calendar which is ...
 The key mappings are designed to match the default mappings of Vim.
 
 ### Powerful
-The plugin can be connected to Google Calendar and used in your life.
+The application can be connected to Google Calendar and used in your life.
 
 ### Elegant
 The appearance is carefully designed, dropping any unnecessary information.
