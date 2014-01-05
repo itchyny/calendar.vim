@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/01/05 16:42:46.
+Last Change: 2014/01/05 17:41:50.
 
 CONTENTS					*calendar-contents*
 
@@ -64,7 +64,7 @@ This is a calendar which is ...
 	The key mappings are designed to match the default mappings of Vim.
 <
 	Powerful >
-	The plugin can be connected to Google Calendar and used in your life.
+	The application can be connected to Google Calendar and used in your life.
 <
 	Elegant >
 	The appearance is carefully designed, dropping any unnecessary information.
