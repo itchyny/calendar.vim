@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/client.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/05 13:21:26.
+" Last Change: 2014/01/05 19:00:07.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -53,6 +53,7 @@ function! calendar#google#client#access_token()
   let cache = s:cache.get('access_token')
   if type(cache) != type({}) || type(cache) == type({}) && !has_key(cache, 'access_token')
     if !s:access_token_check
+      let s:access_token_check = 1
       call calendar#async#new('calendar#google#client#access_token_async()')
     endif
     return 1
@@ -65,7 +66,6 @@ endfunction
 
 function! calendar#google#client#access_token_async()
   let client = s:client()
-  let s:access_token_check = 1
   let url = s:get_url()
   let _url = url
   let short_url = s:shortener.shorten(url)
