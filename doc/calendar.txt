@@ -28,7 +28,7 @@ The *calendar.vim* is a modern and ultimate *calendar* application for Vim.
 The mattn's |calendar.vim| plugin was a great plugin.
 (http://www.vim.org/scripts/script.php?script_id=52)
 The plugin provides a calendar window within Vim, with a diary feature, both
-vertical/horizontal view and printing week number. The plugin was, as you
+vertical/horizontal view and printing week number. The plugin has, as you
 guess from the fact that its script id is 52, played an important role to show
 the potential of Vim script in its early stage. The only problem is that the
 source codes of the plugin are not so clean and hard to modify. Couldn't be
@@ -36,10 +36,10 @@ helped. Remember that it was written without using dictionary and list.
 
 My |calendar.vim| plugin basically provides what is provided by mattn's
 plugin: calendar of the nearest months, both horizontal and vertical view, and
-large-size calendar. Also, this plugin provides many mappings to move around
-the calendar. The default mappings are carefully designed to match the default
-mappings of Vim itself. Of course, users can freely configure mappings in
-|calendar| buffers.
+large-size calendar. Also, this plugin provides many key mappings to move
+around the calendar. The default key mappings are carefully designed to match
+the default key mappings of Vim itself. Of course, users can freely configure
+key mappings in |calendar| buffers.
 
 This |calendar| plugin also supports importing events from Google Calendar.
 Once the user connect this plugin to Google Calendar, your can freely edit,
@@ -64,13 +64,16 @@ This is a calendar which is ...
 	The key mappings are designed to match the default mappings of Vim.
 <
 	Powerful >
-	The application can be connected to Google Calendar and used in your life.
+	The application can be connected to Google Calendar and used in your
+	life.
 <
 	Elegant >
-	The appearance is carefully designed, dropping any unnecessary information.
+	The appearance is carefully designed, dropping any unnecessary
+	information.
 <
 	Interesting >
-	You can choose the calendar in Julian calendar or in Gregorian calendar.
+	You can choose the calendar in Julian calendar or in Gregorian
+	calendar.
 <
 	Useful >
 	To conclude, very useful.
@@ -94,8 +97,8 @@ There are lots of Vim plugins. We can classify them as the following groups.
 features. For example, file manipulations or interfaces to Twitter. This
 |calendar| plugin is one of them.
 
-Now, I want to define a new group: Vim application, a subset of special buffer
-plugins. A Vim application should:
+Now, I'd like to define a new group: Vim application, a subset of special
+buffer plugins. A Vim application should:
 	- be a special buffer plugin >
 	  (create a special buffer and provides some features inside it)
 <	- use a buffer as a display for the state of the plugin >
@@ -104,10 +107,11 @@ plugins. A Vim application should:
 	  (for example, window layers composition)
 <	- be coded with loose coupling >
 	  (any two files do not have the common codes)
-<	- be independent from any other plugins >
+<	- be independent to any other plugins >
 	  (all the requirements are included)
 <The |calendar| plugin is the first Vim application. So now, it's time to put
 up a slogan for the new age of Vim.
+						*calendar-slogan-vaap*
 
 	Vim as an application platform ~
 
