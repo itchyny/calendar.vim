@@ -3,7 +3,7 @@
 " Version: 0.0
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/06 18:33:18.
+" Last Change: 2014/01/06 18:59:41.
 " =============================================================================
 
 if version < 700
@@ -36,10 +36,10 @@ if !has('gui_running')
       let s:weekday_fg_color = 0
       let s:othermonth_fg_color = 7
     endif
-    let s:sunday_bg_color = 9
-    let s:saturday_bg_color = 12
-    let s:sunday_fg_color = 1
-    let s:saturday_fg_color = 4
+    let s:sunday_bg_color = 12
+    let s:saturday_bg_color = 9
+    let s:sunday_fg_color = 0
+    let s:saturday_fg_color = 0
     let s:sunday_title_fg_color = s:sunday_fg_color
     let s:saturday_title_fg_color = s:saturday_fg_color
   elseif s:is_dark
