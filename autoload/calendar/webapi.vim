@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/06 13:55:29.
+" Last Change: 2014/01/06 23:22:36.
 " =============================================================================
 
 " Web interface.
@@ -202,9 +202,7 @@ function! s:request(json, async, url, ...)
     call writefile(split(postdatastr, "\n"), file, "b")
   endif
   if a:async != {}
-    let tmp = quote . tempname() . quote
-    let command .= ' > ' . tmp . ' ; mv ' . tmp . ' ' . quote . s:cache.path(a:async.id) . quote
-    let command = '{' . command . '; } &'
+    let command .= ' > ' . quote . s:cache.path(a:async.id) . quote . ' &'
     call s:cache.delete(a:async.id)
     call calendar#async#new('calendar#webapi#callback(' . string(a:async.id) . ',' . string(a:async.cb) . ')')
     call calendar#util#system(command)
@@ -217,9 +215,15 @@ function! s:request(json, async, url, ...)
   endif
 endfunction
 
+let s:callback_count = {}
 function! calendar#webapi#callback(id, cb)
   let data = s:cache.get_raw(a:id)
   if type(data) == type([])
+    let s:callback_count[a:id] = get(s:callback_count, a:id, 0) + 1
+    if s:callback_count[a:id] < 6
+      return 1
+    endif
+    call remove(s:callback_count, a:id)
     if len(data)
       let i = 0
       while i < len(data) && data[i] !~# '^\r\?$'
