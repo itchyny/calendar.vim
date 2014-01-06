@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/client.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/05 19:07:22.
+" Last Change: 2014/01/06 21:38:19.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -83,10 +83,10 @@ function! calendar#google#client#access_token_async()
           \ 'grant_type': 'authorization_code'})
     let content = calendar#webapi#decode(response.content)
     if calendar#google#client#access_token_response(response, content)
-      return 1
+      return
     endif
   else
-    return 1
+    return
   endif
   let g:calendar_google_event_downloading_list = 0
   let g:calendar_google_event_download = 3
