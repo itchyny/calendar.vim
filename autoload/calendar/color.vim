@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/color.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/04 18:45:01.
+" Last Change: 2014/01/06 18:33:16.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -12,6 +12,7 @@ set cpo&vim
 
 let s:is_gui = has('gui_running')
 let s:is_cterm = !s:is_gui
+let s:is_win32cui = (has('win32') || has('win64')) && !has('gui_running')
 let s:term = has('gui_running') ? 'gui' : 'cterm'
 let s:is_dark = &background ==# 'dark'
 
@@ -71,6 +72,16 @@ function! calendar#color#convert(rgb)
     return 7
   elseif rgb[0] == 0x80 && rgb[1] == 0x80 && rgb[2] == 0x80
     return 8
+  elseif s:is_win32cui 
+    if rgb[0] > 127 && rgb[1] > 127 && rgb[2] > 127
+      let min = 0
+      for r in rgb
+        let min = min([min, r])
+      endfor
+      let rgb[index(rgb, min)] -= 127
+    endif
+    let newrgb = [rgb[0] > 0xa0 ? 4 : 0, rgb[1] > 0xa0 ? 2 : 0, rgb[2] > 0xa0 ? 1 : 0]
+    return newrgb[0] + newrgb[1] + newrgb[2] + (rgb[0] > 196 || rgb[1] > 196 || rgb[2] > 196) * 8
   elseif (rgb[0] == 0x80 || rgb[0] == 0x00) && (rgb[1] == 0x80 || rgb[1] == 0x00) && (rgb[2] == 0x80 || rgb[2] == 0x00)
     return (rgb[0] / 0x80) + (rgb[1] / 0x80) * 2 + (rgb[1] / 0x80) * 4
   elseif abs(rgb[0]-rgb[1]) < 3 && abs(rgb[1]-rgb[2]) < 3 && abs(rgb[2]-rgb[0]) < 3
@@ -169,6 +180,13 @@ function! calendar#color#is_dark()
 endfunction
 
 function! calendar#color#normal_fg_color()
+  if s:is_win32cui
+    if calendar#color#is_dark()
+      return 15
+    else
+      return 0
+    endif
+  endif
   let fg_color = calendar#color#fg_color('Normal')
   if s:is_cterm && type(fg_color) == type(0) && fg_color < 0
     if calendar#color#is_dark()
@@ -181,6 +199,13 @@ function! calendar#color#normal_fg_color()
 endfunction
 
 function! calendar#color#normal_bg_color()
+  if s:is_win32cui
+    if calendar#color#is_dark()
+      return 0
+    else
+      return 15
+    endif
+  endif
   let bg_color = calendar#color#bg_color('Normal')
   if s:is_cterm && type(bg_color) == type(0) && bg_color < 0
     if calendar#color#is_dark()
@@ -193,6 +218,9 @@ function! calendar#color#normal_bg_color()
 endfunction
 
 function! calendar#color#comment_fg_color()
+  if s:is_win32cui
+    return 7
+  endif
   let fg_color = calendar#color#fg_color('Comment')
   if s:is_cterm && type(fg_color) == type(0) && fg_color < 0
     if calendar#color#is_dark()
@@ -205,6 +233,13 @@ function! calendar#color#comment_fg_color()
 endfunction
 
 function! calendar#color#comment_bg_color()
+  if s:is_win32cui
+    if calendar#color#is_dark()
+      return 0
+    else
+      return 15
+    endif
+  endif
   let bg_color = calendar#color#bg_color('Comment')
   if s:is_cterm && type(bg_color) == type(0) && bg_color < 0
     if calendar#color#is_dark()
@@ -240,7 +275,13 @@ function! calendar#color#nr_rgb(nr)
   endif
 endfunction
 
-if s:is_cterm
+if s:is_win32cui
+
+  function! calendar#color#gen_color(fg, bg, weightfg, weightbg)
+    return a:weightfg > a:weightbg ? a:fg : a:bg
+  endfunction
+
+elseif s:is_cterm
 
   function! calendar#color#gen_color(fg, bg, weightfg, weightbg)
     let fg = a:fg < 0 ? (s:is_dark ?  255 : 232) : a:fg
@@ -329,6 +370,9 @@ function! s:select_color()
   let fg_color = calendar#color#normal_fg_color()
   let bg_color = calendar#color#normal_bg_color()
   let select_color = calendar#color#gen_color(fg_color, bg_color, 1, 4)
+  if s:is_win32cui
+    let select_color = 8
+  endif
   return select_color
 endfunction
 
