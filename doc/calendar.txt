@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/01/07 08:00:15.
+Last Change: 2014/01/07 08:01:34.
 
 CONTENTS					*calendar-contents*
 
@@ -274,7 +274,7 @@ options.
 		add the trailing '!'.
 		The default value is 0.
 
-						*task-options-google_task*
+						*calendar-options-google_task*
 						*g:calendar_google_task*
 		-google_task[!]
 		let g:calendar_google_task = {0/1}
