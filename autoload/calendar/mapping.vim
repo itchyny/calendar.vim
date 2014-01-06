@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/mapping.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/29 08:58:56.
+" Last Change: 2014/01/06 23:43:08.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -23,7 +23,7 @@ function! calendar#mapping#new()
         \ 'first_line', 'last_line', 'first_line_head', 'last_line_last', 'space',
         \ 'scroll_top_head', 'scroll_top', 'scroll_center_head', 'scroll_center', 'scroll_bottom_head', 'scroll_bottom',
         \ 'add', 'subtract', 'status', 'plus', 'minus', 'task', 'event',
-        \ 'delete', 'delete_line', 'undo', 'undo_line', 'tab', 'shift_tab', 
+        \ 'delete', 'delete_line', 'yank', 'yank_line', 'undo', 'undo_line', 'tab', 'shift_tab',
         \ 'today', 'view_left',  'view_right', 'redraw', 'clear', 'help', 'exit',
         \ 'start_insert', 'start_insert_append', 'start_insert_head', 'start_insert_last',
         \ 'start_insert_prev_line', 'start_insert_next_line', 'start_insert_change',
@@ -130,6 +130,10 @@ function! calendar#mapping#new()
   " delete
   nmap <buffer> d <Plug>(calendar_delete)
   nmap <buffer> D <Plug>(calendar_delete_line)
+
+  " yank
+  nmap <buffer> y <Plug>(calendar_yank)
+  nmap <buffer> Y <Plug>(calendar_yank_line)
 
   " utility
   nmap <buffer> <Undo> <Plug>(calendar_undo)

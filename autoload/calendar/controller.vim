@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/controller.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/04 20:25:57.
+" Last Change: 2014/01/06 23:32:57.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -203,6 +203,14 @@ function! s:self.action(action) dict
       let self.mode = ''
     else
       let self.mode = 'delete'
+      return
+    endif
+  elseif action ==# 'yank'
+    " yy
+    if self.mode ==# 'yank'
+      let self.mode = ''
+    else
+      let self.mode = 'yank'
       return
     endif
   else

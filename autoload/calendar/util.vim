@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/util.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/27 00:24:37.
+" Last Change: 2014/01/06 23:36:29.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -62,6 +62,14 @@ endfunction
 " Get the command line, substituting the leading colons.
 function! calendar#util#getcmdline()
   return substitute(getcmdline(), '^\(\s*:\)*\s*', '', '')
+endfunction
+
+" Yank text
+function! calendar#util#yank(text)
+  let @" = a:text
+  if has('clipboard') || has('xterm_clipboard')
+    let @+ = a:text
+  endif
 endfunction
 
 " Execute shell command.
