@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/color.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/06 18:59:03.
+" Last Change: 2014/01/06 21:52:54.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -371,7 +371,7 @@ function! s:select_color()
   let bg_color = calendar#color#normal_bg_color()
   let select_color = calendar#color#gen_color(fg_color, bg_color, 1, 4)
   if s:is_win32cui
-    let select_color = 8
+    let select_color = s:is_dark ? 8 : 7
   endif
   return select_color
 endfunction

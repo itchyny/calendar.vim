@@ -3,7 +3,7 @@
 " Version: 0.0
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/06 18:59:41.
+" Last Change: 2014/01/06 21:54:49.
 " =============================================================================
 
 if version < 700
@@ -16,7 +16,7 @@ let s:fg_color = calendar#color#normal_fg_color()
 let s:bg_color = calendar#color#normal_bg_color()
 let s:comment_fg_color = calendar#color#comment_fg_color()
 let s:select_color = calendar#color#gen_color(s:fg_color, s:bg_color, 1, 4)
-let s:is_win32cui = (has('win32') || has('win64')) && !has('gui_running')
+let s:is_win32cui = 1 || (has('win32') || has('win64')) && !has('gui_running')
 let s:is_dark = &background ==# 'dark'
 
 if !has('gui_running')
@@ -25,17 +25,15 @@ if !has('gui_running')
       let s:select_color = 8
       let s:today_color = 10
       let s:today_fg_color = 0
-      let s:weekday_color = 8
-      let s:weekday_fg_color = 15
       let s:othermonth_fg_color = 8
     else
       let s:select_color = 7
       let s:today_color = 2
       let s:today_fg_color = 15
-      let s:weekday_color = 7
-      let s:weekday_fg_color = 0
       let s:othermonth_fg_color = 7
     endif
+    let s:weekday_color = 8
+    let s:weekday_fg_color = 0
     let s:sunday_bg_color = 12
     let s:saturday_bg_color = 9
     let s:sunday_fg_color = 0
