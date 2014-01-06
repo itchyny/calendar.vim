@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/setting.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/31 15:11:46.
+" Last Change: 2014/01/07 07:27:00.
 " =============================================================================
 
 scriptencoding utf-8
@@ -10,7 +10,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 " Obtaining settings.
-"    1: b:calendar_option is set by :Calendar -option=value
+"    1: b:_calendar[option] is set by :Calendar -option=value
 "    2: g:calendar_option is set in vimrc. let g:calendar_option = value
 "    3: s:option() is the default value.
 " Firstly, check the buffer variable if exists. It is set from argument. See
