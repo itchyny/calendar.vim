@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/05 14:59:32.
+" Last Change: 2014/01/06 13:55:29.
 " =============================================================================
 
 " Web interface.
@@ -203,7 +203,7 @@ function! s:request(json, async, url, ...)
   endif
   if a:async != {}
     let tmp = quote . tempname() . quote
-    let command .= ' > ' . tmp . ' && mv ' . tmp . ' ' . quote . s:cache.path(a:async.id) . quote
+    let command .= ' > ' . tmp . ' ; mv ' . tmp . ' ' . quote . s:cache.path(a:async.id) . quote
     let command = '{' . command . '; } &'
     call s:cache.delete(a:async.id)
     call calendar#async#new('calendar#webapi#callback(' . string(a:async.id) . ',' . string(a:async.cb) . ')')
