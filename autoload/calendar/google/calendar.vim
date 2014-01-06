@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/05 12:51:18.
+" Last Change: 2014/01/07 07:39:05.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -443,7 +443,7 @@ endfunction
 
 function! calendar#google#calendar#delete_response(id, response)
   let [_calendar, _delete, err, year, month, calendarId, eventId; rest] = split(a:id, ';;;')
-  if a:response.status =~# '^2'
+  if a:response.status =~# '^2' || a:response.status ==# '410'
     call calendar#google#calendar#downloadEvents(year, month, calendarId)
   elseif a:response.status == 401
     if err == 0
