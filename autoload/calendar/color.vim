@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/color.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/06 21:52:54.
+" Last Change: 2014/01/07 05:35:18.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -88,6 +88,19 @@ function! calendar#color#convert(rgb)
     return s:black((rgb[0] + rgb[1] + rgb[2]) / 3)
   else
     return 16 + ((s:nr(rgb[0]) * 6) + s:nr(rgb[1])) * 6 + s:nr(rgb[2])
+  endif
+endfunction
+
+function! s:black(x)
+  if a:x < 0x04
+    return 16
+  elseif a:x > 0xf4
+    return 231
+  elseif index([0x00, 0x5f, 0x87, 0xaf, 0xdf, 0xff], a:x) >= 0
+    let l = a:x / 0x30
+    return ((l * 6) + l) * 6 + l + 16
+  else
+    return 232 + (a:x < 8 ? 0 : a:x < 0x60 ? (a:x-8)/10 : a:x < 0x76 ? (a:x-0x60)/6+9 : (a:x-8)/10)
   endif
 endfunction
 
