@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/controller.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/06 23:32:57.
+" Last Change: 2014/01/07 18:22:53.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -26,6 +26,8 @@ let s:self.pos = [0, 0]
 let s:self.cursor_pos = [0, 0]
 
 let s:self.mode = ''
+
+let s:self.action_name = ''
 
 let s:self.syntaxnames = ['Select', 'Sunday', 'Saturday',
       \ 'TodaySunday', 'TodaySaturday', 'Today',
@@ -216,6 +218,7 @@ function! s:self.action(action) dict
   else
     let self.mode = ''
   endif
+  let self.action_name = action
   if action ==# 'command_enter'
     let cmdline = calendar#util#getcmdline()
     if cmdline =~# '^\s*marks\s*$'
