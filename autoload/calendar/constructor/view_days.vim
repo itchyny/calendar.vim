@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_days.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/04 20:54:46.
+" Last Change: 2014/01/07 10:06:18.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -376,7 +376,7 @@ function! s:instance.set_contents() dict
         endif
         let longevtIndex += 1
       else
-        while z < len(evts.events) && (evts.events[z].isHoliday || evts.events[z].isMoon)
+        while z < len(evts.events) && (!has_key(evts.events[z], 'summary') || evts.events[z].isHoliday || evts.events[z].isMoon)
           let z += 1
         endwhile
         if z < len(evts.events)

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/month.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/04 20:34:58.
+" Last Change: 2014/01/07 10:06:22.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -206,7 +206,7 @@ function! s:self.set_contents() dict
         endif
         let longevtIndex += 1
       else
-        while z < len(evts.events) && (evts.events[z].isHoliday || evts.events[z].isMoon || evts.events[z].isDayNum || evts.events[z].isWeekNum)
+        while z < len(evts.events) && (!has_key(evts.events[z], 'summary') || evts.events[z].isHoliday || evts.events[z].isMoon || evts.events[z].isDayNum || evts.events[z].isWeekNum)
           let z += 1
         endwhile
         if z < len(evts.events)
