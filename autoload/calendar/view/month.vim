@@ -307,9 +307,9 @@ function! s:self.action(action) dict
   let hwnum = calendar#week#week_number(hday)
   let lwnum = calendar#week#week_number(lday)
   if a:action ==# 'left'
-    call b:calendar.move_day(max([-v:count1, -wnum]))
+    call b:calendar.move_day(-v:count1 % 7 < -wnum ? 7 - v:count1 % 7 : -v:count1 % 7)
   elseif a:action ==# 'right'
-    call b:calendar.move_day(min([v:count1, -wnum + 6]))
+    call b:calendar.move_day(v:count1 % 7 > -wnum + 6 ? -7 + v:count1 % 7 : v:count1 % 7)
   elseif index(['prev', 'next', 'space', 'add', 'subtract'], a:action) >= 0
     call b:calendar.move_day(v:count1 * (index(['prev', 'subtract'], a:action) >= 0 ? -1 : 1))
   elseif index(['down', 'up'], a:action) >= 0
