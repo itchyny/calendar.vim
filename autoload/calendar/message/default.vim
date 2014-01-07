@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/message/default.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/07 13:13:55.
+" Last Change: 2014/01/07 16:38:42.
 " =============================================================================
 
 scriptencoding utf-8
@@ -29,7 +29,7 @@ endfunction
 
 function! s:get_day_name(long)
   let names = []
-  let time = 60 * 60 * (24 * 3 + 1)
+  let time = 60 * 60 * (24 * 3 + 10)
   let format = a:long ? '%A' : '%a'
   while len(names) < 7
     let newname = strftime(format, time)
