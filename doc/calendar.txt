@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/01/07 08:01:34.
+Last Change: 2014/01/07 20:27:15.
 
 CONTENTS					*calendar-contents*
 
@@ -414,6 +414,8 @@ Utility
 <Plug>(calendar_minus)				*<Plug>(calendar_minus)*
 <Plug>(calendar_task)				*<Plug>(calendar_task)*
 <Plug>(calendar_event)				*<Plug>(calendar_event)*
+<Plug>(calendar_close_task)			*<Plug>(calendar_close_task)*
+<Plug>(calendar_close_event)			*<Plug>(calendar_close_event)*
 <Plug>(calendar_delete)				*<Plug>(calendar_delete)*
 <Plug>(calendar_delete_line)			*<Plug>(calendar_delete_line)*
 <Plug>(calendar_yank)				*<Plug>(calendar_yank)*

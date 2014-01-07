@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/07 18:16:36.
+" Last Change: 2014/01/07 20:26:04.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -331,6 +331,10 @@ function! s:self.action(action) dict
         let self.order = self._order
         let self._task = 0
       endif
+    elseif a:action ==# 'close_task'
+      if self._task
+        call self.action('task')
+      endif
     elseif a:action ==# 'event'
       if self.current_view().on_top() && self.current_view().source.type !=# 'event'
         return
@@ -352,6 +356,10 @@ function! s:self.action(action) dict
       elseif has_key(self, '_order')
         let self.order = self._order
         let self._event = 0
+      endif
+    elseif a:action ==# 'close_event'
+      if self._event
+        call self.action('event')
       endif
     elseif a:action ==# 'exit'
       bdelete!

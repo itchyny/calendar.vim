@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/mapping.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/06 23:43:08.
+" Last Change: 2014/01/07 20:27:37.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -22,7 +22,7 @@ function! calendar#mapping#new()
         \ 'line_head', 'line_middle', 'line_last', 'bar',
         \ 'first_line', 'last_line', 'first_line_head', 'last_line_last', 'space',
         \ 'scroll_top_head', 'scroll_top', 'scroll_center_head', 'scroll_center', 'scroll_bottom_head', 'scroll_bottom',
-        \ 'add', 'subtract', 'status', 'plus', 'minus', 'task', 'event',
+        \ 'add', 'subtract', 'status', 'plus', 'minus', 'task', 'event', 'close_task', 'close_event',
         \ 'delete', 'delete_line', 'yank', 'yank_line', 'undo', 'undo_line', 'tab', 'shift_tab',
         \ 'today', 'view_left',  'view_right', 'redraw', 'clear', 'help', 'exit',
         \ 'start_insert', 'start_insert_append', 'start_insert_head', 'start_insert_last',
