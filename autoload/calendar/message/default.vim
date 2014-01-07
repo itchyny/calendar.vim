@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/message/default.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/07 16:38:42.
+" Last Change: 2014/01/07 13:41:38.
 " =============================================================================
 
 scriptencoding utf-8
@@ -21,8 +21,8 @@ function! s:message()
   if exists('*strftime')
     let message.day_name        = s:get_day_name(0)
     let message.day_name_long   = s:get_day_name(1)
-    let message.month_name      = map(range(12), "strftime('%b', 60 * 60 * 24 * 32 * v:val)")
-    let message.month_name_long = map(range(12), "strftime('%B', 60 * 60 * 24 * 32 * v:val)")
+    let message.month_name      = map(range(12), "strftime('%b', 60 * 60 * 24 * (32 * v:val + 5))")
+    let message.month_name_long = map(range(12), "strftime('%B', 60 * 60 * 24 * (32 * v:val + 5))")
   endif
   return message
 endfunction
