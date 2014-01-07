@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/06 23:22:36.
+" Last Change: 2014/01/07 12:26:13.
 " =============================================================================
 
 " Web interface.
@@ -161,18 +161,17 @@ endfunction
 function! s:request(json, async, url, ...)
   let url = a:url
   let param = a:0 > 0 ? a:000[0] : {}
-  let headdata = a:0 > 1 ? a:000[1] : {}
+  let postdata = a:0 > 1 ? a:000[1] : {}
   let method = a:0 > 2 ? a:000[2] : "POST"
   let paramstr = calendar#webapi#encodeURI(param)
   let withbody = method !=# 'GET' && method !=# 'DELETE'
-  if withbody
-    let postdatastr = a:json ? calendar#webapi#encode(headdata) : join(s:postdata(headdata), "\n")
-  endif
+  let headdata = {}
   if strlen(paramstr)
     let url .= "?" . paramstr
   endif
   let quote = s:_quote()
   if withbody
+    let postdatastr = a:json ? calendar#webapi#encode(postdata) : join(s:postdata(postdata), "\n")
     let file = tempname()
     let headdata['Content-Length'] = len(postdatastr)
     if a:json
