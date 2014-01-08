@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/message/en.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/27 07:12:24.
+" Last Change: 2014/01/08 20:54:45.
 " =============================================================================
 
 scriptencoding utf-8
@@ -43,8 +43,6 @@ let s:message.clear_completed_task = 'Clear all the completed tasks? (cannot be 
 let s:message.curl_wget_not_found = 'curl and wget not found'
 
 let s:message.mark_not_set = 'Mark not set: '
-
-let s:message.all_day_event = 'All day event Y/n: '
 
 let s:message.start_date_time = 'Starting date and time: '
 

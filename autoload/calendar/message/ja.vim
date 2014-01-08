@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/message/ja.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/05 16:09:59.
+" Last Change: 2014/01/08 20:54:48.
 " =============================================================================
 
 scriptencoding utf-8
@@ -43,8 +43,6 @@ let s:message.clear_completed_task = '完了したタスクを全て削除しま
 let s:message.curl_wget_not_found = 'curl または wget が必要です'
 
 let s:message.mark_not_set = 'マークが設定されていません: '
-
-let s:message.all_day_event = '一日中のイベント Y/n: '
 
 let s:message.start_date_time = '開始日時: '
 

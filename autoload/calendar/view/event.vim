@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/08 15:38:47.
+" Last Change: 2014/01/08 20:52:50.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -110,28 +110,20 @@ function! s:self.insert_new_event(action, ...) dict
     endif
     let date = printf('%d-%d-%d', year, month, day)
     let ndate = printf('%d-%d-%d', nyear, nmonth, nday)
-    if title =~# '^\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+:\d\+\%(:\d\+\)\?'
-      let time = matchstr(title, '^\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+:\d\+\%(:\d\+\)\?')
-      let starttime = matchstr(time, '^\d\+:\d\+\%(:\d\+\)\?')
+    if title =~# '^\s*\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+:\d\+\%(:\d\+\)\?'
+      let time = matchstr(title, '^\s*\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+:\d\+\%(:\d\+\)\?')
+      let starttime = matchstr(time, '^\s*\d\+:\d\+\%(:\d\+\)\?')
       let endtime = matchstr(time[len(starttime):], '\d\+:\d\+\%(:\d\+\)\?')
       let title = substitute(title[len(time):], '^\s*', '', '')
       let [startdate, enddate] = [s:format_time(date . 'T' . starttime), s:format_time(date . 'T' . endtime)]
+    elseif title =~# '^\s*\d\+[-/]\d\+\s*-\s*\d\+[-/]\d\+'
+      let time = matchstr(title, '^\s*\d\+[-/]\d\+\s*-\s*\d\+[-/]\d\+')
+      let starttime = matchstr(time, '^\s*\d\+[-/]\d\+\s*')
+      let endtime = matchstr(time[len(starttime):], '\d\+[-/]\d\+')
+      let title = substitute(title[len(time):], '^\s*', '', '')
+      let [startdate, enddate] = [s:format_time(starttime), s:format_time_end(endtime)]
     else
-      redraw
-      let allday = input(calendar#message#get('all_day_event')) =~# '^\([yY]\%[es]\|\)$'
-      if allday
-        let [startdate, enddate] = [date, ndate]
-      else
-        redraw
-        let startdate = input(calendar#message#get('start_date_time'), date . 'T')
-        redraw
-        let enddate = input(calendar#message#get('end_date_time'), date . 'T')
-        if startdate ==# '' || enddate ==# ''
-          let [startdate, enddate] = [date, ndate]
-        else
-          let [startdate, enddate] = [s:format_time(startdate), s:format_time_end(enddate)]
-        endif
-      endif
+      let [startdate, enddate] = [date, ndate]
     endif
     let calendars = b:calendar.event.calendarList()
     if len(calendars) == 0
@@ -184,6 +176,10 @@ function! s:format_time(time)
   let time = substitute(a:time, '\s', '', 'g')
   if time =~# '^\d\+-\d\+-\d\+T\s*$'
     return substitute(time, 'T\s*$', '', '')
+  elseif time =~# '^\d\+[-/]\d\+\s*$'
+    let [m, d] = split(time, '[-/]')
+    let y = b:calendar.day().get_year()
+    return join([y, m, d], '-')
   elseif time =~# '^\d\+-\d\+-\d\+T\d\+$'
     return time . ':00:00'
   elseif time =~# '^\d\+-\d\+-\d\+T\d\+:\d\+$'
