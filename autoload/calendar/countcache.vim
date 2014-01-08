@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/countcache.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/28 23:03:14.
+" Last Change: 2014/01/08 17:24:52.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -31,16 +31,37 @@ function! calendar#countcache#new(name)
   return self
 endfunction
 
+let s:saveflag = {}
+
+let s:count = 0
+
 " Saving the cache to the cache file.
 function! calendar#countcache#save()
+  if s:count < 10
+    let s:count += 1
+    return
+  endif
+  let s:count = 0
+  if exists('s:reltime') && has('reltime')
+    let time = split(split(reltimestr(reltime(s:reltime)))[0], '\.')
+    if time[0] < 60
+      return
+    endif
+  endif
   for c in s:caches
-    silent! call s:cache.save(c.name, filter(c.cache, 'v:val[0] > 29'))
+    if get(s:saveflag, c.name, 1)
+      silent! call s:cache.save(c.name, filter(c.cache, 'v:val[0] > 29'))
+      let s:saveflag[c.name] = 0
+    endif
   endfor
+  if has('reltime')
+    let s:reltime = reltime()
+  endif
 endfunction
 
 augroup CalendarCountCache
   autocmd!
-  autocmd VimLeavePre * silent! call calendar#countcache#save()
+  autocmd CursorHold * silent! call calendar#countcache#save()
 augroup END
 
 let s:self = {}
@@ -59,6 +80,7 @@ endfunction
 " Save a data with a key.
 function! s:self.save(k, v) dict
   let self.cache[a:k] = [ get(self.cache, a:k, [0])[0] + 1, a:v ]
+  let s:saveflag[self.name] = 1
   return a:v
 endfunction
 
