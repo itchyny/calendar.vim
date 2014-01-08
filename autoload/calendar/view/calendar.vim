@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/04 16:19:54.
+" Last Change: 2014/01/09 07:43:12.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -73,6 +73,10 @@ endfunction
 
 function! s:self.updated() dict
   return self.view.updated()
+endfunction
+
+function! s:self.timerange() dict
+  return self.view.timerange()
 endfunction
 
 function! s:self.action(action) dict

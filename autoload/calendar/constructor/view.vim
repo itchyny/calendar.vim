@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/25 09:11:11.
+" Last Change: 2014/01/09 07:35:28.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -137,6 +137,10 @@ endfunction
 
 function! s:instance.updated() dict
   return 1
+endfunction
+
+function! s:instance.timerange() dict
+  return []
 endfunction
 
 function! s:instance.action(action) dict

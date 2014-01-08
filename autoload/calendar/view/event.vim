@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/08 20:52:50.
+" Last Change: 2014/01/09 07:45:36.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -102,7 +102,13 @@ function! s:self.insert_new_event(action, ...) dict
   let calendarId = get(event, 'calendarId', '')
   let [year, month, day] = b:calendar.day().get_ymd()
   let [nyear, nmonth, nday] = b:calendar.day().new(year, month, day).add(1).get_ymd()
-  let title = input(calendar#message#get('input_event'))
+  let timerange = b:calendar.view.current_view().timerange()
+  if len(timerange) == 2
+    let input_prefix = printf('%d:00-%d:00 ', timerange[0], timerange[1])
+  else
+    let input_prefix = ''
+  endif
+  let title = input(calendar#message#get('input_event'), input_prefix)
   if title !=# ''
     let next = a:action ==# 'start_insert_next_line'
     if next
