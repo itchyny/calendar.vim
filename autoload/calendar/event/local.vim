@@ -2,14 +2,14 @@
 " Filename: autoload/calendar/event/local.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/07 23:06:42.
+" Last Change: 2014/01/08 11:13:54.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
 function! calendar#event#local#new()
-  return copy(s:self)
+  return deepcopy(s:self)
 endfunction
 
 let s:cache = calendar#cache#new('local')

@@ -2,14 +2,14 @@
 " Filename: autoload/calendar/event/google.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/07 22:32:29.
+" Last Change: 2014/01/08 11:13:48.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
 function! calendar#event#google#new()
-  return copy(s:self)
+  return deepcopy(s:self)
 endfunction
 
 let s:self = {}
