@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/05 12:29:38.
+" Last Change: 2014/01/08 15:04:29.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -37,7 +37,7 @@ function! s:self.get_taskList() dict
       if type(taskList) == type({}) && has_key(taskList, 'items') && type(taskList.items) == type([])
         let self.localtasklist = taskList
       else
-        let self.localtasklist = { 'items': [{'id': self.newid(), 'title': get(calendar#message#get('task'), 'title', 'Task')}] }
+        let self.localtasklist = { 'items': [{'id': calendar#util#id(), 'title': get(calendar#message#get('task'), 'title', 'Task')}] }
         silent! call s:cache.save('taskList', self.localtasklist)
       endif
     endif
@@ -136,7 +136,7 @@ function! s:self.insert(listid, previous, title) dict
     let k = self.get_tasklist_index(a:listid)
     if k >= 0
       let j = self.get_index(k, a:previous) + 1
-      call insert(self.localtask[k].items, { 'title': a:title, 'id': self.newid() }, j)
+      call insert(self.localtask[k].items, { 'title': a:title, 'id': calendar#util#id() }, j)
       silent! call self.save()
     endif
   endif
@@ -228,13 +228,6 @@ function! s:self.save() dict
       endfor
     endif
   endif
-endfunction
-
-function! s:self.newid() dict
-  let ymd = calendar#day#today().get_ymd()
-  let hms = calendar#time#now().get_hms()
-  let rnd = [calendar#random#number(1000000, 9000000) + 1000000]
-  return join(ymd + hms + rnd, '_')
 endfunction
 
 let &cpo = s:save_cpo

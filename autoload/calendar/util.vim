@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/util.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/06 23:36:29.
+" Last Change: 2014/01/08 15:05:43.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -70,6 +70,14 @@ function! calendar#util#yank(text)
   if has('clipboard') || has('xterm_clipboard')
     let @+ = a:text
   endif
+endfunction
+
+" Id generator
+function! calendar#util#id()
+  let ymd = calendar#day#today().get_ymd()
+  let hms = calendar#time#now().get_hms()
+  let rnd = [calendar#random#number(1000000, 9000000) + 1000000]
+  return join(ymd + hms + rnd, '_')
 endfunction
 
 " Execute shell command.

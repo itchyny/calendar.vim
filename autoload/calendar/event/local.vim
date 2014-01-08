@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/event/local.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/08 11:13:54.
+" Last Change: 2014/01/08 15:04:46.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -85,7 +85,7 @@ function! s:self.insert(calendarId, title, start, end, year, month) dict
       let c = s:event_cache.new(calendar.id).new(printf('%04d', a:year)).new(printf('%02d', a:month)).get('0')
       let cnt = type(c) == type({}) && has_key(c, 'items') && type(c.items) == type([]) ? c : { 'items': [] }
       call add(cnt.items,
-            \ { 'id': s:newid()
+            \ { 'id': calendar#util#id()
             \ , 'summary': a:title
             \ , 'start': a:start =~# 'T\d\+' ? { 'dateTime': a:start } : { 'date': a:start }
             \ , 'end': a:end =~# 'T\d\+' ? { 'dateTime': a:end } : { 'date': a:end }
@@ -146,7 +146,7 @@ function! s:self.createCalendar() dict
       let newcolors = calendar#color#colors()
     endif
     call add(c.items,
-          \ { 'id': s:newid()
+          \ { 'id': calendar#util#id()
           \ , 'summary': calendarTitle
           \ , 'backgroundColor': newcolors[0]
           \ , 'foregroundColor': '#000000'
@@ -156,13 +156,6 @@ function! s:self.createCalendar() dict
       unlet! self._calendarList
     endif
   endif
-endfunction
-
-function! s:newid()
-  let ymd = calendar#day#today().get_ymd()
-  let hms = calendar#time#now().get_hms()
-  let rnd = [calendar#random#number(1000000, 9000000) + 1000000]
-  return join(ymd + hms + rnd, '_')
 endfunction
 
 let &cpo = s:save_cpo
