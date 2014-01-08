@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_days.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/07 10:06:18.
+" Last Change: 2014/01/09 00:40:13.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -57,7 +57,7 @@ endfunction
 function! s:instance.width() dict
   let frame = calendar#setting#frame()
   let width = calendar#string#strdisplaywidth(frame.vertical)
-  let w = max([self.maxwidth() / 8, 3])
+  let w = max([(self.maxwidth() - calendar#setting#get('clock_12hour') * 7) / 8, 3])
   let hh = self.height()
   let h = max([(hh - 3) / 6, 1])
   let h = h < 3 ? h : max([(hh - 3) / calendar#week#week_count(b:calendar.month()), 1])
@@ -496,10 +496,23 @@ function! s:instance.set_contents() dict
     endif
     if !((j + 1) % v.hourheight)
       let hour = self.min_hour + j / v.hourheight + 1
-      let s[v.offset + h + j] .= printf('%2d:%02d', hour, 0)
+      if calendar#setting#get('clock_12hour')
+        let postfix = hour < 12 || hour == 24 ? ' a.m.' : ' p.m.'
+        let hour = calendar#time#hour12(hour)
+      else
+        let postfix = ''
+      endif
+      let s[v.offset + h + j] .= printf('%2d:%02d', hour, 0) . postfix
     endif
     if !j
-      let s[v.offset + h - 1] .= printf('%2d:%02d', self.min_hour, 0)
+      let hour = self.min_hour
+      if calendar#setting#get('clock_12hour')
+        let postfix = ' a.m.'
+        let hour = calendar#time#hour12(hour)
+      else
+        let postfix = ''
+      endif
+      let s[v.offset + h - 1] .= printf('%2d:%02d', hour, 0) . postfix
     endif
   endfor
   let self._cache_key = self.cache_key()

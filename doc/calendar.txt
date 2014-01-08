@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/01/08 15:40:58.
+Last Change: 2014/01/09 00:44:52.
 
 CONTENTS					*calendar-contents*
 
@@ -234,6 +234,14 @@ The following options change the appearance of the calendar.
 		let g:calendar_date_month_name={0/1}
 		If on, a date string uses month names. In order to disable
 		this option from the argument, add the trailing '!'.
+		The default value is 0.
+
+						*calendar-options-clock_12hour*
+						*g:calendar_clock_12hour*
+		-clock_12hour[!]
+		let g:calendar_clock_12hour={0/1}
+		If on, times are displayed in 12-hour clock style. In order to
+		disable this option from the argument, add the trailing '!'.
 		The default value is 0.
 
 						*calendar-options-frame*

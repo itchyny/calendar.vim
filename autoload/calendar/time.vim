@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/time.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/11/10 16:05:05.
+" Last Change: 2014/01/09 00:39:55.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -22,6 +22,10 @@ function! calendar#time#now()
   else
     return calendar#time#new(system('date "+%H"') * 1, system('date "+%M"') * 1, system('date "+%S"') * 1)
   endif
+endfunction
+
+function! calendar#time#hour12(h)
+  return a:h == 0 ? 12 : a:h < 13 ? a:h : a:h - 12
 endfunction
 
 let s:self = {}

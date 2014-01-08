@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/setting.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/07 07:27:00.
+" Last Change: 2014/01/09 00:24:26.
 " =============================================================================
 
 scriptencoding utf-8
@@ -52,6 +52,10 @@ function! s:date_separator()
 endfunction
 
 function! s:date_month_name()
+  return 0
+endfunction
+
+function! s:clock_12hour()
   return 0
 endfunction
 

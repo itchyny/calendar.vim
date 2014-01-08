@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/clock_date_monthday_time.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/25 00:13:41.
+" Last Change: 2014/01/09 00:41:46.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -24,6 +24,9 @@ function! s:self.get_letter() dict
   let [h, i, s] = calendar#time#now().get_hms()
   let [y, m, d] = calendar#day#today().get_ymd()
   let w = calendar#message#en#get().day_name[calendar#day#today().week()]
+  if calendar#setting#get('clock_12hour')
+    let h = calendar#time#hour12(h)
+  endif
   return [printf('%s %d:%02d:%02d', calendar#day#join_date([m, d]), h, i, s)]
 endfunction
 
