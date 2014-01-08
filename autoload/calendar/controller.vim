@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/controller.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/07 18:22:53.
+" Last Change: 2014/01/08 15:42:13.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -199,25 +199,20 @@ endfunction
 
 function! s:self.action(action) dict
   let action = a:action
-  if action ==# 'delete'
-    " dd
-    if self.mode ==# 'delete'
-      let self.mode = ''
-    else
-      let self.mode = 'delete'
-      return
+  let prevmode = self.mode
+  let self.mode = ''
+  for prefix in [ 'delete', 'yank', 'change' ]
+    if action ==# prefix
+      if prevmode ==# prefix
+        let self.mode = ''
+        let action .= '_line'
+        break
+      else
+        let self.mode = prefix
+        return
+      endif
     endif
-  elseif action ==# 'yank'
-    " yy
-    if self.mode ==# 'yank'
-      let self.mode = ''
-    else
-      let self.mode = 'yank'
-      return
-    endif
-  else
-    let self.mode = ''
-  endif
+  endfor
   let self.action_name = action
   if action ==# 'command_enter'
     let cmdline = calendar#util#getcmdline()

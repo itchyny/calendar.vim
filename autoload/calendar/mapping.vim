@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/mapping.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/07 20:27:37.
+" Last Change: 2014/01/08 15:36:33.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -23,10 +23,11 @@ function! calendar#mapping#new()
         \ 'first_line', 'last_line', 'first_line_head', 'last_line_last', 'space',
         \ 'scroll_top_head', 'scroll_top', 'scroll_center_head', 'scroll_center', 'scroll_bottom_head', 'scroll_bottom',
         \ 'add', 'subtract', 'status', 'plus', 'minus', 'task', 'event', 'close_task', 'close_event',
-        \ 'delete', 'delete_line', 'yank', 'yank_line', 'undo', 'undo_line', 'tab', 'shift_tab',
+        \ 'delete', 'delete_line', 'yank', 'yank_line', 'change', 'change_line',
+        \ 'undo', 'undo_line', 'tab', 'shift_tab',
         \ 'today', 'view_left',  'view_right', 'redraw', 'clear', 'help', 'exit',
         \ 'start_insert', 'start_insert_append', 'start_insert_head', 'start_insert_last',
-        \ 'start_insert_prev_line', 'start_insert_next_line', 'start_insert_change',
+        \ 'start_insert_prev_line', 'start_insert_next_line',
         \ ]
   for action in actions
     exec printf("nnoremap <buffer><silent> <Plug>(calendar_%s) :<C-u>call b:calendar.action('%s')<CR>", action, action)
@@ -135,6 +136,10 @@ function! calendar#mapping#new()
   nmap <buffer> y <Plug>(calendar_yank)
   nmap <buffer> Y <Plug>(calendar_yank_line)
 
+  " change
+  nmap <buffer> c <Plug>(calendar_change)
+  nmap <buffer> C <Plug>(calendar_change_line)
+
   " utility
   nmap <buffer> <Undo> <Plug>(calendar_undo)
   nmap <buffer> u <Plug>(calendar_undo)
@@ -178,8 +183,6 @@ function! calendar#mapping#new()
   nmap <buffer> A <Plug>(calendar_start_insert_last)
   nmap <buffer> O <Plug>(calendar_start_insert_prev_line)
   nmap <buffer> o <Plug>(calendar_start_insert_next_line)
-  nmap <buffer> c <Plug>(calendar_start_insert_change)
-  nmap <buffer> C <Plug>(calendar_start_insert_change)
 
   " command line
   cmap <buffer> <CR> <Plug>(calendar_command_enter)

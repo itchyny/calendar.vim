@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/07 10:16:21.
+" Last Change: 2014/01/08 15:38:47.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -78,10 +78,10 @@ function! s:self.action(action) dict
     if len(calendarId)
       call b:calendar.event.delete(calendarId, eventid, year, month)
     endif
-  elseif index(['start_insert', 'start_insert_append', 'start_insert_head', 'start_insert_last', 'start_insert_change'], a:action) >= 0
+  elseif index(['start_insert', 'start_insert_append', 'start_insert_head', 'start_insert_last', 'change', 'change_line'], a:action) >= 0
     if eventid !=# '' && calendarId !=# ''
       let head = index(['start_insert', 'start_insert_head'], a:action) >= 0
-      let change = a:action ==# 'start_insert_change'
+      let change = index(['change', 'change_line'], a:action) >= 0
       let msg = calendar#message#get('input_event') . (change ? get(event, 'summary', get(event, 'title', '')) . ' -> ' : '')
       let title = input(msg, change ? '' : get(event, 'summary', get(event, 'title', '')) . (head ? "\<Home>" : ''))
       if title !=# ''

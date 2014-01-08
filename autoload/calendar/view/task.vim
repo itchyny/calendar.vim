@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/28 15:25:33.
+" Last Change: 2014/01/08 15:38:51.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -33,10 +33,10 @@ function! s:self.action(action) dict
     call b:calendar.task.complete(self.current_group_id(), taskid)
   elseif index(['undo_line'], a:action) >= 0
     call b:calendar.task.uncomplete(self.current_group_id(), taskid)
-  elseif index(['start_insert', 'start_insert_append', 'start_insert_head', 'start_insert_last', 'start_insert_change'], a:action) >= 0
+  elseif index(['start_insert', 'start_insert_append', 'start_insert_head', 'start_insert_last', 'change', 'change_line'], a:action) >= 0
     if taskid !=# ''
       let head = index(['start_insert', 'start_insert_head'], a:action) >= 0
-      let change = a:action ==# 'start_insert_change'
+      let change = index(['change', 'change_line'], a:action) >= 0
       let msg = calendar#message#get('input_task') . (change ? get(task, 'title', '') . ' -> ' : '')
       let title = input(msg, change ? '' : get(task, 'title', '') . (head ? "\<Home>" : ''))
       if title !=# ''

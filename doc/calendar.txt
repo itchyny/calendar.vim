@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/01/07 20:27:15.
+Last Change: 2014/01/08 15:40:58.
 
 CONTENTS					*calendar-contents*
 
@@ -420,6 +420,8 @@ Utility
 <Plug>(calendar_delete_line)			*<Plug>(calendar_delete_line)*
 <Plug>(calendar_yank)				*<Plug>(calendar_yank)*
 <Plug>(calendar_yank_line)			*<Plug>(calendar_yank_line)*
+<Plug>(calendar_change)				*<Plug>(calendar_change)*
+<Plug>(calendar_change_line)			*<Plug>(calendar_change_line)*
 <Plug>(calendar_undo)				*<Plug>(calendar_undo)*
 <Plug>(calendar_undo_line)			*<Plug>(calendar_undo_line)*
 <Plug>(calendar_tab)				*<Plug>(calendar_tab)*
@@ -439,7 +441,6 @@ Insert mode
 <Plug>(calendar_start_insert_last)		*<Plug>(calendar_start_insert_last)*
 <Plug>(calendar_start_insert_prev_line)		*<Plug>(calendar_start_insert_prev_line)*
 <Plug>(calendar_start_insert_next_line)		*<Plug>(calendar_start_insert_next_line)*
-<Plug>(calendar_start_insert_change)		*<Plug>(calendar_start_insert_change)*
 
 Normal mode default mappings.
 {lhs}		{rhs}
