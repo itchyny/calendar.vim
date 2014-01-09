@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/client.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/06 21:38:19.
+" Last Change: 2014/01/10 01:31:48.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -73,7 +73,11 @@ function! calendar#google#client#access_token_async()
     let url = short_url
   endif
   call calendar#webapi#open_url(url)
-  let code = input(printf(calendar#message#get('access_url_input_code'), url) . "\n" . calendar#message#get('input_code'))
+  try
+    let code = input(printf(calendar#message#get('access_url_input_code'), url) . "\n" . calendar#message#get('input_code'))
+  catch
+    return
+  endtry
   if code !=# ''
     let response = calendar#webapi#post_nojson(s:token_url, {}, {
           \ 'client_id': client.client_id,
