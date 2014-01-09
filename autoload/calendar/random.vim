@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/random.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/19 22:57:24.
+" Last Change: 2014/01/09 12:31:51.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -27,9 +27,9 @@ endif
 function! calendar#random#number(...)
   let a = a:0 ? a:1 : 0
   let b = a:0 > 1 ? a:2 : 0x1000000
-  let t = xor(s:x, (s:x * 0x800))
+  let t = calendar#util#xor(s:x, (s:x * 0x800))
   let [s:x, s:y, s:z] = [s:y, s:z, s:w]
-  let s:w = xor(xor(s:w, (s:w / 0x80000)), xor(t, (t / 0x100)))
+  let s:w = calendar#util#xor(calendar#util#xor(s:w, (s:w / 0x80000)), calendar#util#xor(t, (t / 0x100)))
   return (a + s:w) % b
 endfunction
 
