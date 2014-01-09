@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/async.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/04 01:44:48.
+" Last Change: 2014/01/10 01:26:15.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -82,7 +82,7 @@ function! calendar#async#call()
     let cnt += 1
     let ret = eval(expression)
     let b:calendar_async[i][1] += 1
-    if !ret || b:calendar_async[i][1] > 300
+    if !ret || b:calendar_async[i][1] > 100
       call add(del, i)
     endif
   endfor
