@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/util.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/09 12:33:22.
+" Last Change: 2014/01/09 12:51:59.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -114,7 +114,7 @@ endif
 " xor function from vital.vim
 function! calendar#util#xor(a, b)
   if exists('*xor')
-    return xor(a, b)
+    return xor(a:a, a:b)
   endif
   let a = a:a < 0 ? a:a - 0x80000000 : a:a
   let b = a:b < 0 ? a:b - 0x80000000 : a:b
