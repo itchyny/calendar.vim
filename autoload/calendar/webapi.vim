@@ -215,11 +215,17 @@ function! s:request(json, async, url, ...)
 endfunction
 
 let s:callback_count = {}
+let s:callback_datalen = {}
 function! calendar#webapi#callback(id, cb)
   let data = s:cache.get_raw(a:id)
   if type(data) == type([])
-    let s:callback_count[a:id] = get(s:callback_count, a:id, 0) + 1
-    if s:callback_count[a:id] < 6
+    let prevdatalen = get(s:callback_datalen, a:id)
+    let s:callback_datalen[a:id] = len(data)
+    if len(data) == 0 || len(data) != prevdatalen
+      return 1
+    endif
+    let s:callback_count[a:id] = get(s:callback_count, a:id) + 1
+    if s:callback_count[a:id] < 3
       return 1
     endif
     call remove(s:callback_count, a:id)
@@ -250,6 +256,8 @@ function! calendar#webapi#callback(id, cb)
       if len(a:cb)
         exec 'call ' . a:cb . '(a:id, response)'
       endif
+    else
+      return 1
     endif
     call s:cache.delete(a:id)
     return 0
