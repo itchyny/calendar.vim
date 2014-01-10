@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/01/10 13:58:58.
+Last Change: 2014/01/10 14:00:46.
 
 CONTENTS					*calendar-contents*
 
@@ -706,11 +706,9 @@ Problem 5:					*calendar-problem-5*
 Problem 6:					*calendar-problem-6*
 	How to change the cache directory.
 
-		For example, add the following configuration to your vimrc.
->
+		For example, add the following configuration to your vimrc. >
 		let g:calendar_cache_directory = expand('~/.vim/cache/calendar.vim/')
-<
-		See |g:calendar_cache_directory|.
+<		See |g:calendar_cache_directory|.
 
 Problem 7:					*calendar-problem-7*
 	The clock stops to update after the cursor gets out of the window.
