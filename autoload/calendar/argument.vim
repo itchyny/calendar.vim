@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/argument.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/09 00:45:12.
+" Last Change: 2014/01/10 21:14:49.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -26,7 +26,7 @@ let s:all_value_options = {
       \ '-updatetime': [],
       \ '-view': [ 'year', 'month', 'week', 'days', 'day', 'clock' ],
       \ '-frame': [ 'default', 'unicode', 'space', 'unicode_bold', 'unicode_round', 'unicode_double' ],
-      \ '-position': [ 'here', 'below', 'tab' ],
+      \ '-position': [ 'here', 'below', 'tab', 'left', 'right', 'topleft', 'topright' ],
       \ '-split': [ 'horizontal', 'vertical' ],
       \ '-width': [],
       \ '-height': [],
@@ -143,7 +143,7 @@ function! calendar#argument#parse(args)
   let isnewbuffer = bufname('%') != '' || &l:filetype != '' || &modified
   let name = " `='" . calendar#argument#buffername('calendar') . "'`"
   let command = 'tabnew'
-  let below = ''
+  let commandprefix = ''
   let addname = 1
   let ymd = []
   let variables = {}
@@ -184,7 +184,17 @@ function! calendar#argument#parse(args)
             if command ==# 'tabnew'
               let command = 'new'
             endif
-            let below = 'below '
+            let commandprefix = 'below '
+            let isnewbuffer = 1
+          elseif index(['left', 'right', 'topleft', 'topright'], optvar[1]) >= 0
+            if command ==# 'tabnew'
+              let command = 'vnew'
+            endif
+            let commandprefix = optvar[1] ==# 'left' ? 'leftabove '
+                  \           : optvar[1] ==# 'right' ? 'rightbelow '
+                  \           : optvar[1] ==# 'topleft' ? 'topleft '
+                  \           : optvar[1] ==# 'topright' ? 'botright '
+                  \           : ''
             let isnewbuffer = 1
           elseif optvar[1] ==# 'tab'
             let command = 'tabnew'
@@ -220,7 +230,7 @@ function! calendar#argument#parse(args)
   elseif command ==# 'vnew' && width > 0
     let command = width . ' ' . command
   endif
-  let cmd1 = below . command . (addname ? name : '')
+  let cmd1 = commandprefix . command . (addname ? name : '')
   let cmd2 = 'edit' . name
   let command = 'if isnewbuffer | ' . cmd1 . ' | else | ' . cmd2 . '| endif'
   if flg_ymd

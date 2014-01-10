@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/01/10 14:00:46.
+Last Change: 2014/01/10 21:18:01.
 
 CONTENTS					*calendar-contents*
 
@@ -145,7 +145,7 @@ buffer.
 		buffer.
 
 						*calendar-options-position*
-		-position={below/tab/here}
+		-position={below/tab/here/left/right/topleft/topright}
 		-position=below
 			Open the buffer below.
 		-position=tab
@@ -155,6 +155,16 @@ buffer.
 			buffer. If some changes exist in the current buffer,
 			this option is ignored. An '!' is added to discard
 			any changes in the current buffer.
+		-position=left
+			Open the buffer on the left hand side.
+		-position=right
+			Open the buffer on the right hand side.
+		-position=topleft
+			Open the buffer on the left hand side, with full
+			height of Vim.
+		-position=topright
+			Open the buffer on the right hand side, with full
+			height of Vim.
 
 You can use the following options to change the size of the |calendar| buffer.
 
