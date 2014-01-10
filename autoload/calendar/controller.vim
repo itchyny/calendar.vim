@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/controller.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/10 09:08:18.
+" Last Change: 2014/01/10 13:12:49.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -222,7 +222,7 @@ function! s:self.action(action) dict
     if cmdline =~# '^\s*marks\s*$'
       call self.mark.showmarks()
       return calendar#util#update_keys()
-    elseif cmdline =~# '^\s*\(ma\%[rk]\|k\)\s\+[a-z]\s*$'
+    elseif cmdline =~# '^\s*\(ma\%[rk]\s\+\|k\s*\)[a-z]\s*$'
       let mark = matchstr(cmdline, '[a-z]\(\s*$\)\@=')
       call self.mark.set(mark)
       return calendar#util#update_keys()
