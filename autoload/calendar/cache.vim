@@ -12,7 +12,7 @@ set cpo&vim
 function! calendar#cache#new(...)
   let self = copy(s:self)
   let self.subpath = a:0 ? a:1 : ''
-  let self.subpath .= len(self.subpath) && self.subpath[len(self.subpath) - 1] !=# '/' ? '/' : ''
+  let self.subpath .= len(self.subpath) && self.subpath[len(self.subpath) - 1] !~ '^[/\\]$' ? '/' : ''
   return self
 endfunction
 
@@ -40,7 +40,11 @@ function! s:self.escape(key) dict
 endfunction
 
 function! s:self.dir() dict
-  return substitute(calendar#setting#get('cache_directory'), '/$', '', '') . '/' . self.subpath
+  let dir = substitute(calendar#setting#get('cache_directory'), '[/\\]$', '', '') . '/' . self.subpath
+  if has('win32') || has('win64')
+    let dir = substitute(dir, '/', '\', 'g')
+  endif
+  return dir
 endfunction
 
 function! s:self.path(key) dict
