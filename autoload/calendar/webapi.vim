@@ -83,6 +83,15 @@ endfunction
 
 function! s:execute(command)
   let res = calendar#util#system(a:command)
+  while res =~ '^HTTP/1.\d 3' || res =~ '^HTTP/1\.\d 200 Connection established' || res =~ '^HTTP/1\.\d 100 Continue'
+    let pos = stridx(res, "\r\n\r\n")
+    if pos != -1
+      let res = strpart(res, pos+4)
+    else
+      let pos = stridx(res, "\n\n")
+      let res = strpart(res, pos+2)
+    endif
+  endwhile
   let pos = stridx(res, "\r\n\r\n")
   if pos != -1
     let content = strpart(res, pos+4)
@@ -181,18 +190,24 @@ function! s:request(json, async, url, ...)
   if executable('curl')
     let command = printf('curl -s -k -i -N -X %s', method)
     let command .= s:make_header_args(headdata, '-H ', quote)
-    let command .= " " . quote . url . quote
     if withbody
       let command .= " --data-binary @" . quote . file . quote
     endif
+    if a:async != {}
+      let command .= ' -o ' . quote . s:cache.path(a:async.id) . quote
+    endif
+    let command .= " " . quote . url . quote
   elseif executable('wget')
     let command = 'wget -O- --save-headers --server-response -q'
     let headdata['X-HTTP-Method-Override'] = method
     let command .= s:make_header_args(headdata, '--header=', quote)
-    let command .= " " . quote . url . quote
     if withbody
       let command .= " --post-data @" . quote . file . quote
     endif
+    if a:async != {}
+      let command .= ' -O ' . quote . s:cache.path(a:async.id) . quote
+    endif
+    let command .= " " . quote . url . quote
   else
     call calendar#echo#error_message('curl_wget_not_found')
     return 1
@@ -201,10 +216,14 @@ function! s:request(json, async, url, ...)
     call writefile(split(postdatastr, "\n"), file, "b")
   endif
   if a:async != {}
-    let command .= ' > ' . quote . s:cache.path(a:async.id) . quote . ' &'
     call s:cache.delete(a:async.id)
     call calendar#async#new('calendar#webapi#callback(' . string(a:async.id) . ',' . string(a:async.cb) . ')')
-    call calendar#util#system(command)
+    if has("win32") || has("win64")
+      call calendar#util#system('cmd /c start /min ' . command)
+    else
+      let command .= ' &'
+      call calendar#util#system(command)
+    endif
   else
     let ret = s:execute(command)
     if withbody
@@ -231,6 +250,12 @@ function! calendar#webapi#callback(id, cb)
     call remove(s:callback_count, a:id)
     if len(data)
       let i = 0
+      while data[i] =~ '^HTTP/1.\d 3' || data[i] =~ '^HTTP/1\.\d 200 Connection established' || data[i] =~ '^HTTP/1\.\d 100 Continue'
+        while i < len(data) && data[i] !~# '^\r\?$'
+          let i += 1
+        endwhile
+        let i += 1
+      endwhile
       while i < len(data) && data[i] !~# '^\r\?$'
         let i += 1
       endwhile
