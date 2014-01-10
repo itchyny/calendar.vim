@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/01/09 11:58:47.
+Last Change: 2014/01/10 13:58:58.
 
 CONTENTS					*calendar-contents*
 
@@ -590,7 +590,7 @@ Problem 4:				|calendar-problem-4|
 	How to change key-mapping settings for calendar buffers.
 
 Problem 5:				|calendar-problem-5|
-	How to use the fancy frame.
+	The frame collapses (on Ubuntu).
 
 Problem 6:				|calendar-problem-6|
 	How to change the cache directory.
@@ -698,11 +698,10 @@ Problem 4:					*calendar-problem-4*
 		augroup END
 
 Problem 5:					*calendar-problem-5*
-	How to use the fancy frame.
+	The frame collapses (on Ubuntu).
 
 		Add the following configuration to your vimrc. >
-		let g:calendar_frame = 'unicode'
-<		See |g:calendar_frame|.
+		let g:calendar_frame = 'default'
 
 Problem 6:					*calendar-problem-6*
 	How to change the cache directory.
