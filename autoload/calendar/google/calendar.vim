@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/08 15:06:25.
+" Last Change: 2014/01/10 11:28:00.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -95,17 +95,26 @@ endfunction
 
 let s:initial_download = {}
 let s:event_download = {}
+function! calendar#google#calendar#getEventsInitial(year, month)
+  let myCalendarList = calendar#google#calendar#getMyCalendarList()
+  let events = {}
+  let key = join([a:year, a:month], '/')
+  if !get(s:initial_download, key)
+    let s:initial_download[key] = 1
+    if len(myCalendarList) && calendar#timestamp#update(join(['google', 'calendar.vim', a:year, a:month], '#'), 1, 2 * 60 * 60)
+      call calendar#async#new(printf('calendar#google#calendar#initialDownload(%d, %d, 0)', a:year, a:month))
+    endif
+  endif
+endfunction
+
 " The optional argument: Forcing initial download. s:initial_download is used to check.
 function! calendar#google#calendar#getEvents(year, month, ...)
   let calendarList = calendar#google#calendar#getCalendarList()
   let myCalendarList = calendar#google#calendar#getMyCalendarList()
   let events = {}
   let key = join([a:year, a:month], '/')
-  if !get(s:initial_download, key) && a:0 && a:1
-    let s:initial_download[key] = 1
-    if len(myCalendarList) && calendar#timestamp#update('google#calendar.vim', 1, 60 * 60)
-      call calendar#async#new(printf('calendar#google#calendar#initialDownload(%d, %d, 0)', a:year, a:month))
-    endif
+  if a:0 && a:1
+    call calendar#google#calendar#getEventsInitial(a:year, a:month)
   endif
   if has_key(calendarList, 'items') && type(calendarList.items) == type([]) && len(calendarList.items)
     for item in calendarList.items

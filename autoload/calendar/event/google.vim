@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/event/google.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/08 11:13:48.
+" Last Change: 2014/01/10 11:26:37.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -19,6 +19,9 @@ let s:self._events = {}
 function! s:self.get_events_one_month(year, month, ...) dict
   let key = a:year . '-' . a:month
   if has_key(self._key, key) && has_key(self._events, key) && get(g:, 'calendar_google_event_download', 1) <= 0 && self._events[key] != {}
+    if a:0 && a:1
+      call calendar#google#calendar#getEventsInitial(a:year, a:month)
+    endif
     return self._events[key]
   endif
   if has_key(self._key, key)
