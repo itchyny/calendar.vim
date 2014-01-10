@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/controller.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/08 15:42:13.
+" Last Change: 2014/01/10 09:08:18.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -138,6 +138,9 @@ function! s:self.update_if_resized() dict
 endfunction
 
 function! s:self.redraw(...) dict
+  if histget(':', -1) ==# 'silent call b:calendar.update()'
+    silent! call histdel(':', -1)
+  endif
   let u = self.view.gather(a:0 ? a:1 : 0)
   if type(u) != type([])
     return

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/util.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/09 12:51:59.
+" Last Change: 2014/01/10 09:11:15.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -56,6 +56,7 @@ endfunction
 
 " Used for the return value of cnoremap.
 function! calendar#util#update_keys()
+  silent! call histadd(':', getcmdline())
   return "\<End>\<C-u>silent call b:calendar.update()\<CR>"
 endfunction
 
