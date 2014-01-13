@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/13 10:30:38.
+" Last Change: 2014/01/13 16:14:09.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -123,6 +123,14 @@ function! s:self.insert_new_event(action, ...) dict
       let endtime = matchstr(time[len(starttime):], '\d\+[-/]\d\+\%([-/]\d\+\)\?')
       let title = substitute(title[len(time):], '^\s*', '', '')
       let [startdate, enddate] = [s:format_time(starttime), s:format_time_end(endtime)]
+    elseif title =~# '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?'
+      let time = matchstr(title, '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?')
+      let starttime = matchstr(time, '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?\s*')
+      let endtime = matchstr(time[len(starttime):], '\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?')
+      let starttime = substitute(starttime, '^\s*\|\s*$', '', 'g')
+      let endtime = substitute(endtime, '^\s*\|\s*$', '', 'g')
+      let title = substitute(title[len(time):], '^\s*', '', '')
+      let [startdate, enddate] = [s:format_time(starttime), s:format_time(endtime)]
     else
       let [startdate, enddate] = [date, ndate]
     endif
@@ -182,7 +190,7 @@ function! s:self.insert_new_event(action, ...) dict
 endfunction
 
 function! s:format_time(time)
-  let time = substitute(a:time, '\s', '', 'g')
+  let time = substitute(a:time, '^\s\+\|\s\+$', '', 'g')
   if time =~# '^\d\+-\d\+-\d\+T\s*$'
     return substitute(time, 'T\s*$', '', '')
   elseif time =~# '^\d\+[-/]\d\+[-/]\d\+\s*$'
@@ -192,12 +200,23 @@ function! s:format_time(time)
     let [m, d] = split(time, '[-/]')
     let y = b:calendar.day().get_year()
     return join([y, m, d], '-')
+  elseif time =~# '^\d\+[-/]\d\+\s\+\d\+:'
+    let [date, t] = split(time, '\s\+')
+    let [m, d] = split(date, '[-/]')
+    let y = b:calendar.day().get_year()
+    return join([y, m, d], '-') . 'T' . s:format_time(t)
+  elseif time =~# '^\d\+[-/]\d\+[-/]\d\+\s\+\d\+:'
+    let [date, t] = split(time, '\s\+')
+    let [y, m, d] = split(date, '[-/]')
+    return join([y, m, d], '-') . 'T' . s:format_time(t)
   elseif time =~# '^\d\+-\d\+-\d\+T\d\+$'
     return time . ':00:00'
   elseif time =~# '^\d\+-\d\+-\d\+T\d\+:\d\+$'
     return time . ':00'
   elseif time =~# '^\d\+-\d\+-\d\+T\d\+:\d\+:\d\+$'
     return time
+  elseif time =~# '^\d\+:\d\+$'
+    return time . ':00'
   endif
   return time
 endfunction

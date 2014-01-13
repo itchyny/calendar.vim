@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_days.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/13 11:03:15.
+" Last Change: 2014/01/13 16:12:59.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -201,7 +201,7 @@ function! s:get_timeevts(events, blockmin)
       let minstr = matchstr(a:events[i].start.dateTime, '\%(T\d\+:\)\@<=\d\+')
       let endhourstr = matchstr(a:events[i].end.dateTime, 'T\@<=\d\+')
       let endminstr = matchstr(a:events[i].end.dateTime, '\%(T\d\+:\)\@<=\d\+')
-      if len(hourstr) && len(minstr) && len(endhourstr) && len(endminstr)
+      if a:events[i].ymd == a:events[i].endymd && len(hourstr) && len(minstr) && len(endhourstr) && len(endminstr)
         let hour = hourstr * 1
         let min = minstr * 1
         let endhour = endhourstr * 1
@@ -527,23 +527,23 @@ function! s:instance.contents() dict
   let select = []
   let select_over = []
   let cursor = []
-  let i = b:calendar.day().sub(self.get_min_day())
-  let hour = b:calendar.time().hour()
   let now = calendar#time#now()
   if self.is_selected()
-    for h in range(v.hourheight - 1)
-      let y = v.offset + v.dayheight + v.hourheight * (hour - self.min_hour) + h
-      let x = len(calendar#string#truncate(self.days[y].s, v.width * i + f.width))
-      let z = len(calendar#string#truncate(self.days[y].s, v.width * (i + 1)))
-      let timestr = printf('%d:%d', hour, v.blockmin * h)
-      if has_key(self.timeevent_syntax[i], timestr)
-        for time_event in self.timeevent_syntax[i][timestr]
-          if len(time_event) == 8
-            call add(select_over, calendar#text#new(time_event[4], time_event[5], time_event[6], time_event[7] . 'Select'))
-          endif
-        endfor
-      endif
-      call add(select, calendar#text#new(z - x, x, y, 'Select'))
+    for [i, hour] in self.select_index()
+      for h in range(v.hourheight - 1)
+        let y = v.offset + v.dayheight + v.hourheight * (hour - self.min_hour) + h
+        let x = len(calendar#string#truncate(self.days[y].s, v.width * i + f.width))
+        let z = len(calendar#string#truncate(self.days[y].s, v.width * (i + 1)))
+        let timestr = printf('%d:%d', hour, v.blockmin * h)
+        if has_key(self.timeevent_syntax[i], timestr)
+          for time_event in self.timeevent_syntax[i][timestr]
+            if len(time_event) == 8
+              call add(select_over, calendar#text#new(time_event[4], time_event[5], time_event[6], time_event[7] . 'Select'))
+            endif
+          endfor
+        endif
+        call add(select, calendar#text#new(z - x, x, y, 'Select'))
+      endfor
     endfor
     let y = v.offset + v.dayheight + v.hourheight * (hour - self.min_hour)
     let x = len(calendar#string#truncate(self.days[y].s, v.width * i + f.width))
@@ -566,13 +566,102 @@ function! s:instance.contents() dict
   return deepcopy(self.days) + select + deepcopy(self.syntax) + nowsyn + select_over + cursor
 endfunction
 
+function! s:instance.select_index() dict
+  let lasti = b:calendar.day().sub(self.get_min_day())
+  let lasthour = b:calendar.time().hour()
+  if !b:calendar.visual_mode()
+    return [[lasti, lasthour]]
+  endif
+  let last = lasti * 24 + lasthour
+  let starti = b:calendar.visual_start_day().sub(self.get_min_day())
+  let starthour = b:calendar.visual_start_time().hour()
+  let start = starti * 24 + starthour
+  let ret = []
+  if b:calendar.is_visual()
+    for i in range(min([start, last]), max([start, last]))
+      let j = s:div(i, 24)
+      let k = i - j * 24
+      if [j, k] != [lasti, lasthour] && 0 <= j && j < self.daynum && self.min_hour <= k && k <= self.max_hour
+        call add(ret, [j, k])
+      endif
+    endfor
+  elseif b:calendar.is_line_visual()
+    for j in range(min([starti, lasti]), max([starti, lasti]))
+      for k in range(24)
+        if [j, k] != [lasti, lasthour] && 0 <= j && j < self.daynum && self.min_hour <= k && k <= self.max_hour
+          call add(ret, [j, k])
+        endif
+      endfor
+    endfor
+  elseif b:calendar.is_block_visual()
+    for j in range(min([starti, lasti]), max([starti, lasti]))
+      for k in range(min([starthour, lasthour]), max([starthour, lasthour]))
+        if [j, k] != [lasti, lasthour] && 0 <= j && j < self.daynum && self.min_hour <= k && k <= self.max_hour
+          call add(ret, [j, k])
+        endif
+      endfor
+    endfor
+  else
+  endif
+  call add(ret, [lasti, lasthour])
+  return ret
+endfunction
+
 function! s:div(x, y)
   return a:x/a:y-((a:x<0)&&(a:x%a:y))
 endfunction
 
 function! s:instance.timerange() dict
   let hour = b:calendar.time().hour()
-  return printf('%d:00-%d:00 ', hour, hour + 1)
+  if !b:calendar.visual_mode()
+    return printf('%d:00-%d:00 ', hour, hour + 1)
+  endif
+  let x = b:calendar.day()
+  let xh = b:calendar.time().hour()
+  let y = b:calendar.visual_start_day()
+  let yh = b:calendar.visual_start_time().hour()
+  let recurrence = ''
+  if b:calendar.is_line_visual()
+    if x.sub(y) >= 0
+      if x.get_year() == y.get_year()
+        return printf('%d/%d-%d/%d ', y.get_month(), y.get_day(), x.get_month(), x.get_day()) . recurrence
+      else
+        return printf('%d/%d/%d-%d/%d/%d ', y.get_year(), y.get_month(), y.get_day(), x.get_year(), x.get_month(), x.get_day()) . recurrence
+      endif
+    else
+      if x.get_year() == y.get_year()
+        return printf('%d/%d-%d/%d ', x.get_month(), x.get_day(), y.get_month(), y.get_day()) . recurrence
+      else
+        return printf('%d/%d/%d-%d/%d/%d ', x.get_year(), x.get_month(), x.get_day(), y.get_year(), y.get_month(), y.get_day()) . recurrence
+      endif
+    endif
+  elseif b:calendar.is_block_visual()
+    if x.sub(y) >= 0
+      let rec = x.sub(y) + 1
+      let [yh, xh] = [min([xh, yh]), max([xh, yh])]
+      let x = y
+    else
+      let rec = y.sub(x) + 1
+      let [xh, yh] = [min([xh, yh]), max([xh, yh])]
+      let y = x
+    endif
+    let recurrence = rec > 1 ? rec . 'days ' : ''
+  endif
+  if x.sub(y) == 0 && !len(recurrence)
+    return printf('%d:00-%d:00 ', min([xh, yh]), max([xh, yh]) + 1)
+  elseif x.sub(y) >= 0
+    if x.get_year() == y.get_year()
+      return printf('%d/%d %d:00-%d/%d %d:00 ', y.get_month(), y.get_day(), yh, x.get_month(), x.get_day(), xh + 1) . recurrence
+    else
+      return printf('%d/%d/%d %d:00-%d/%d/%d %d:00 ', y.get_year(), y.get_month(), y.get_day(), yh, x.get_year(), x.get_month(), x.get_day(), xh + 1) . recurrence
+    endif
+  else
+    if x.get_year() == y.get_year()
+      return printf('%d/%d %d:00-%d/%d %d:00 ', x.get_month(), x.get_day(), xh, y.get_month(), y.get_day(), yh + 1) . recurrence
+    else
+      return printf('%d/%d/%d %d:00-%d/%d/%d %d:00 ', x.get_year(), x.get_month(), x.get_day(), xh, y.get_year(), y.get_month(), y.get_day(), yh + 1) . recurrence
+    endif
+  endif
 endfunction
 
 function! s:instance.action(action) dict
