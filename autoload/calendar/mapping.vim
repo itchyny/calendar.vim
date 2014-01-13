@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/mapping.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/14 07:23:37.
+" Last Change: 2014/01/14 07:46:46.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -38,8 +38,8 @@ function! calendar#mapping#new()
   nmap <buffer><silent><expr> <Plug>(calendar_escape)
         \ b:calendar.view._help ? "\<Plug>(calendar_help)" :
         \ b:calendar.view._event ? "\<Plug>(calendar_event)" :
-        \ b:calendar.view._task ? "\<Plug>(calendar_task)" :
         \ b:calendar.visual_mode() ? "\<Plug>(calendar_exit_visual)" :
+        \ b:calendar.view._task ? "\<Plug>(calendar_task)" :
         \ ""
 
   " mark
