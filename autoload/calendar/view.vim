@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/07 20:26:04.
+" Last Change: 2014/01/13 16:57:08.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -171,6 +171,7 @@ function! s:self.ymax() dict
   return ymax
 endfunction
 
+let [s:height, s:width] = [0, 0]
 function! s:self.gather(...) dict
   let d = len(self.order)
   let updated = self.updated || a:0 && a:1
@@ -183,8 +184,13 @@ function! s:self.gather(...) dict
   if !updated | return 1 | endif
   let self.updated = 0
   let [height, width] = [calendar#util#winheight(), calendar#util#winwidth()]
-  let texts = map(range(height), 'calendar#text#new(repeat(" ", width), 0, v:val, "")')
-  let llen = map(range(height), '0')
+  if [s:height, s:width] != [height, width]
+    let [s:height, s:width] = [height, width]
+    let s:texts = map(range(s:height), 'calendar#text#new(repeat(" ", s:width), 0, v:val, "")')
+    let s:llen = map(range(s:height), '0')
+  endif
+  let texts = deepcopy(s:texts)
+  let llen = deepcopy(s:llen)
   let index = self.current_view_index()
   let [f, v, diffy] = self.get_overlap()
   for i in range(d)
@@ -200,23 +206,7 @@ function! s:self.gather(...) dict
           call t.move(llen[t.y], 0)
         endif
         if f && t.t
-          if len(t.syn) && len(t.syn[0]) == 5
-            let flg = 0
-            for k in range(len(t.syn))
-              for j in range(min([t.syn[k][4], height - t.y]))
-                let flg = flg || len(v[t.y + j]) > 1 && v[t.y + j][0] != i
-              endfor
-              if flg | break | endif
-            endfor
-            if flg
-              for s in t.split()
-                if s.y < height
-                  call s.move(llen[s.y] - llen[t.y], 0)
-                  call texts[s.y].over(s)
-                endif
-              endfor
-            endif
-          endif
+          call s:split_over(t, texts, v, llen, i, height)
         endif
         let l = texts[t.y].over(t)
         if !t.t | let llen[t.y] = l | endif
@@ -224,6 +214,27 @@ function! s:self.gather(...) dict
     endfor
   endfor
   return texts
+endfunction
+
+function! s:split_over(t, texts, v, llen, i, height)
+  let t = a:t
+  if len(t.syn) && len(t.syn[0]) == 5
+    let flg = 0
+    for k in range(len(t.syn))
+      for j in range(min([t.syn[k][4], a:height - t.y]))
+        let flg = flg || len(a:v[t.y + j]) > 1 && a:v[t.y + j][0] != a:i
+      endfor
+      if flg | break | endif
+    endfor
+    if flg
+      for s in t.split()
+        if s.y < a:height
+          call s.move(a:llen[s.y] - a:llen[t.y], 0)
+          call a:texts[s.y].over(s)
+        endif
+      endfor
+    endif
+  endif
 endfunction
 
 function! s:self.action(action) dict
