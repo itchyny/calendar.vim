@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/mapping.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/13 16:33:29.
+" Last Change: 2014/01/14 07:23:37.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -25,7 +25,7 @@ function! calendar#mapping#new()
         \ 'add', 'subtract', 'status', 'plus', 'minus', 'task', 'event', 'close_task', 'close_event',
         \ 'delete', 'delete_line', 'yank', 'yank_line', 'change', 'change_line',
         \ 'undo', 'undo_line', 'tab', 'shift_tab',
-        \ 'today', 'view_left',  'view_right', 'redraw', 'clear', 'help', 'exit',
+        \ 'today', 'enter', 'view_left',  'view_right', 'redraw', 'clear', 'help', 'exit',
         \ 'visual', 'visual_line', 'visual_block', 'exit_visual',
         \ 'start_insert', 'start_insert_append', 'start_insert_head', 'start_insert_last',
         \ 'start_insert_prev_line', 'start_insert_next_line',
@@ -157,6 +157,7 @@ function! calendar#mapping#new()
   nmap <buffer> <TAB> <Plug>(calendar_tab)
   nmap <buffer> <S-Tab> <Plug>(calendar_shift_tab)
   nmap <buffer> t <Plug>(calendar_today)
+  nmap <buffer> <CR> <Plug>(calendar_enter)
   nmap <buffer> <C-a> <Plug>(calendar_add)
   nmap <buffer> <C-x> <Plug>(calendar_subtract)
   nmap <buffer> <C-g> <Plug>(calendar_status)
