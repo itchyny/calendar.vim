@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/13 16:57:08.
+" Last Change: 2014/01/13 23:20:55.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -373,7 +373,7 @@ function! s:self.action(action) dict
         call self.action('event')
       endif
     elseif a:action ==# 'exit'
-      bdelete!
+      bunload!
       return 1
     elseif a:action ==# 'view_left'
       call self.change_index(-v:count1)
