@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/color.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/07 05:35:18.
+" Last Change: 2014/01/13 11:03:27.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -72,7 +72,7 @@ function! calendar#color#convert(rgb)
     return 7
   elseif rgb[0] == 0x80 && rgb[1] == 0x80 && rgb[2] == 0x80
     return 8
-  elseif s:is_win32cui 
+  elseif s:is_win32cui
     if rgb[0] > 127 && rgb[1] > 127 && rgb[2] > 127
       let min = 0
       for r in rgb

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/time.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/09 00:39:55.
+" Last Change: 2014/01/13 11:03:30.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -10,8 +10,8 @@ set cpo&vim
 
 " Time object
 "   h: hour
-"   m: minute 
-"   s: second 
+"   m: minute
+"   s: second
 function! calendar#time#new(h, m, s)
   return extend(copy(s:self), { 'h': a:h, 'm': a:m, 's': a:s })
 endfunction

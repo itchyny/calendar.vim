@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_days.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/13 00:43:41.
+" Last Change: 2014/01/13 11:03:15.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -431,8 +431,8 @@ function! s:instance.set_contents() dict
                   if flg < 3
                     if (k % v.hourheight) == 0 && k
                       let cutlen = len(s[ya][(xx):])
-                      let leftpart = s[ya][:len(s[ya]) - cutlen - 1] 
-                      let rightpart = s[ya][len(s[ya]) - cutlen + l / f.width * f.strlen :] 
+                      let leftpart = s[ya][:len(s[ya]) - cutlen - 1]
+                      let rightpart = s[ya][len(s[ya]) - cutlen + l / f.width * f.strlen :]
                       let s[ya] = leftpart . f.vertical . repeat(' ', l - f.width * 2) . f.vertical . rightpart
                       call add(syntax, calendar#text#new(l - f.width * 2 + f.strlen * 2, xx, ya, get(tevts[ii], 'syntax', '')))
                       let xx += l - 2 * f.width + 2 * f.strlen + f.strlen
