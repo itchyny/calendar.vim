@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/09 07:45:36.
+" Last Change: 2014/01/13 10:30:38.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -102,12 +102,7 @@ function! s:self.insert_new_event(action, ...) dict
   let calendarId = get(event, 'calendarId', '')
   let [year, month, day] = b:calendar.day().get_ymd()
   let [nyear, nmonth, nday] = b:calendar.day().new(year, month, day).add(1).get_ymd()
-  let timerange = b:calendar.view.current_view().timerange()
-  if len(timerange) == 2
-    let input_prefix = printf('%d:00-%d:00 ', timerange[0], timerange[1])
-  else
-    let input_prefix = ''
-  endif
+  let input_prefix = b:calendar.view.current_view().timerange()
   let title = input(calendar#message#get('input_event'), input_prefix)
   if title !=# ''
     let next = a:action ==# 'start_insert_next_line'
@@ -122,14 +117,22 @@ function! s:self.insert_new_event(action, ...) dict
       let endtime = matchstr(time[len(starttime):], '\d\+:\d\+\%(:\d\+\)\?')
       let title = substitute(title[len(time):], '^\s*', '', '')
       let [startdate, enddate] = [s:format_time(date . 'T' . starttime), s:format_time(date . 'T' . endtime)]
-    elseif title =~# '^\s*\d\+[-/]\d\+\s*-\s*\d\+[-/]\d\+'
-      let time = matchstr(title, '^\s*\d\+[-/]\d\+\s*-\s*\d\+[-/]\d\+')
-      let starttime = matchstr(time, '^\s*\d\+[-/]\d\+\s*')
-      let endtime = matchstr(time[len(starttime):], '\d\+[-/]\d\+')
+    elseif title =~# '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s*-\s*\d\+[-/]\d\+\%([-/]\d\+\)\?'
+      let time = matchstr(title, '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s*-\s*\d\+[-/]\d\+\%([-/]\d\+\)\?')
+      let starttime = matchstr(time, len(split(time, '-')) == 2 ? '^\s*\d\+/\d\+\%(/\d\+\)\?\s*' : '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s*')
+      let endtime = matchstr(time[len(starttime):], '\d\+[-/]\d\+\%([-/]\d\+\)\?')
       let title = substitute(title[len(time):], '^\s*', '', '')
       let [startdate, enddate] = [s:format_time(starttime), s:format_time_end(endtime)]
     else
       let [startdate, enddate] = [date, ndate]
+    endif
+    let recurrence = {}
+    if title =~# '^\s*\d\+\%(weeks\|days\)\s\+'
+      let rec = matchstr(title, '^\s*\d\+\%(weeks\|days\)\s\+')
+      let title = substitute(title[len(rec):], '^\s*', '', '')
+      let recurrence = {}
+      let key = matchstr(rec, '\(week\|day\)')
+      let recurrence[key] = matchstr(rec, '\d\+') + 0
     endif
     let calendars = b:calendar.event.calendarList()
     if len(calendars) == 0
@@ -174,7 +177,7 @@ function! s:self.insert_new_event(action, ...) dict
       let idx = 0
     endif
     let calendarId = get(get(calendars, idx, get(calendars, 0, {})), 'id', '')
-    call b:calendar.event.insert(calendarId, title, startdate, enddate, year, month)
+    call b:calendar.event.insert(calendarId, title, startdate, enddate, year, month, recurrence)
   endif
 endfunction
 
@@ -182,6 +185,9 @@ function! s:format_time(time)
   let time = substitute(a:time, '\s', '', 'g')
   if time =~# '^\d\+-\d\+-\d\+T\s*$'
     return substitute(time, 'T\s*$', '', '')
+  elseif time =~# '^\d\+[-/]\d\+[-/]\d\+\s*$'
+    let [y, m, d] = split(time, '[-/]')
+    return join([y, m, d], '-')
   elseif time =~# '^\d\+[-/]\d\+\s*$'
     let [m, d] = split(time, '[-/]')
     let y = b:calendar.day().get_year()
@@ -198,7 +204,7 @@ endfunction
 
 function! s:format_time_end(time)
   let time = s:format_time(a:time)
-  if time =~# '^\d\+-\d\+-\d\+$' 
+  if time =~# '^\d\+-\d\+-\d\+$'
     let ymdstr = matchstr(time, '^\d\+-\d\+-\d\+$')
     let ymd = map(split(ymdstr, '-'), 'v:val + 0')
     if len(ymd) == 3

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/10 11:28:00.
+" Last Change: 2014/01/13 10:33:33.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -395,13 +395,22 @@ function! calendar#google#calendar#update_response(id, response)
   endif
 endfunction
 
-function! calendar#google#calendar#insert(calendarId, title, start, end, year, month)
+function! calendar#google#calendar#insert(calendarId, title, start, end, year, month, ...)
   let start = a:start =~# 'T\d' && len(a:start) > 10 ? { 'dateTime': a:start } : { 'date': a:start }
   let end = a:end =~# 'T\d' && len(a:end) > 10 ? { 'dateTime': a:end } : { 'date': a:end }
   let calendars = filter(calendar#google#calendar#getMyCalendarList(), 'v:val.id ==# a:calendarId')
   let timezone = get(get(calendars, 0, get(calendar#google#calendar#getMyCalendarList(), 0, {})), 'timeZone', 'Z')
   let location = matchstr(a:title, '\%( at \)\@<=.\+$')
   let loc = len(location) ? { 'location': location } : {}
+  let recurrence = a:0 ? a:1 : {}
+  if has_key(recurrence, 'week') || has_key(recurrence, 'day')
+    let rec = { 'recurrence': [ 'RRULE:' . (
+          \ has_key(recurrence, 'week') ? ('FREQ=WEEKLY;COUNT=' . recurrence.week) :
+          \ has_key(recurrence, 'day') ? ('FREQ=DAILY;COUNT=' . recurrence.day) :
+          \ '') ] }
+  else
+    let rec = {}
+  endif
   if timezone ==# 'Z'
     if has_key(start, 'dateTime')
       let start.dateTime .= timezone
@@ -422,7 +431,7 @@ function! calendar#google#calendar#insert(calendarId, title, start, end, year, m
         \ 'calendar#google#calendar#insert_response',
         \ calendar#google#calendar#get_url('calendars/' . a:calendarId . '/events'),
         \ { 'calendarId': a:calendarId },
-        \ extend({ 'summary': a:title, 'start': start, 'end': end, 'transparency': 'transparent' }, loc))
+        \ extend(extend({ 'summary': a:title, 'start': start, 'end': end, 'transparency': 'transparent' }, loc), rec))
 endfunction
 
 function! calendar#google#calendar#insert_response(id, response)

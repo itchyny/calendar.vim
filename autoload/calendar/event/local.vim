@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/event/local.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/08 15:04:46.
+" Last Change: 2014/01/13 10:05:33.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -78,7 +78,7 @@ function! s:self.update(calendarId, eventId, title, year, month) dict
   endfor
 endfunction
 
-function! s:self.insert(calendarId, title, start, end, year, month) dict
+function! s:self.insert(calendarId, title, start, end, year, month, ...) dict
   let calendarList = self.calendarList()
   for calendar in calendarList
     if calendar.id ==# a:calendarId

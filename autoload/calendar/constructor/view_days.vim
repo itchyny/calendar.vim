@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_days.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/09 07:36:39.
+" Last Change: 2014/01/13 00:43:41.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -572,7 +572,7 @@ endfunction
 
 function! s:instance.timerange() dict
   let hour = b:calendar.time().hour()
-  return [hour, hour + 1]
+  return printf('%d:00-%d:00 ', hour, hour + 1)
 endfunction
 
 function! s:instance.action(action) dict

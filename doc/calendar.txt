@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/01/10 21:18:01.
+Last Change: 2014/01/13 10:45:26.
 
 CONTENTS					*calendar-contents*
 
@@ -460,6 +460,12 @@ Insert mode
 <Plug>(calendar_start_insert_prev_line)		*<Plug>(calendar_start_insert_prev_line)*
 <Plug>(calendar_start_insert_next_line)		*<Plug>(calendar_start_insert_next_line)*
 
+Visual mode
+<Plug>(calendar_visual)				*<Plug>(calendar_visual)*
+<Plug>(calendar_visual_line)			*<Plug>(calendar_visual_line)*
+<Plug>(calendar_visual_block)			*<Plug>(calendar_visual_block)*
+<Plug>(calendar_exit_visual)			*<Plug>(calendar_exit_visual)*
+
 Normal mode default mappings.
 {lhs}		{rhs}
 --------	---------------------------------------
@@ -569,6 +575,13 @@ I		|<Plug>(calendar_start_insert_head)|
 A		|<Plug>(calendar_start_insert_last)|
 O		|<Plug>(calendar_start_insert_prev_line)|
 o		|<Plug>(calendar_start_insert_next_line)|
+v		|<Plug>(calendar_visual)|
+V		|<Plug>(calendar_visual_line)|
+<C-v>		|<Plug>(calendar_visual_block)|
+gh		same as v
+gH		same as V
+g<C-h>		same as <C-v>
+<ESC>		close help, event, task or exit visual mode.
 
 ------------------------------------------------------------------------------
 MARKS						*calendar-marks*

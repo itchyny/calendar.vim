@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/controller.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/10 13:12:49.
+" Last Change: 2014/01/12 21:53:42.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -31,7 +31,7 @@ let s:self.action_name = ''
 
 let s:self.syntaxnames = ['Select', 'Sunday', 'Saturday',
       \ 'TodaySunday', 'TodaySaturday', 'Today',
-      \ 'OtherMonth', 'DayTitle', 'SundayTitle', 'SaturdayTitle',
+      \ 'OtherMonth', 'OtherMonthSelect', 'DayTitle', 'SundayTitle', 'SaturdayTitle',
       \ 'NormalSpace', 'Comment', 'SelectComment']
 
 function! s:self.time() dict
@@ -100,6 +100,46 @@ endfunction
 
 function! s:self.move_year(diff) dict
   call self.model.move_year(a:diff)
+endfunction
+
+function! s:self.start_visual() dict
+  call self.model.start_visual()
+endfunction
+
+function! s:self.start_line_visual() dict
+  call self.model.start_line_visual()
+endfunction
+
+function! s:self.start_block_visual() dict
+  call self.model.start_block_visual()
+endfunction
+
+function! s:self.exit_visual() dict
+  call self.model.exit_visual()
+endfunction
+
+function! s:self.visual_mode() dict
+  return self.model.visual_mode()
+endfunction
+
+function! s:self.is_visual() dict
+  return self.model.is_visual()
+endfunction
+
+function! s:self.is_line_visual() dict
+  return self.model.is_line_visual()
+endfunction
+
+function! s:self.is_block_visual() dict
+  return self.model.is_block_visual()
+endfunction
+
+function! s:self.visual_start_day() dict
+  return self.model.visual_start_day()
+endfunction
+
+function! s:self.visual_start_time() dict
+  return self.model.visual_start_time()
 endfunction
 
 function! s:self.go(day) dict

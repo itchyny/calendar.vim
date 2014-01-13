@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/mapping.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/09 19:37:20.
+" Last Change: 2014/01/13 10:45:25.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -26,6 +26,7 @@ function! calendar#mapping#new()
         \ 'delete', 'delete_line', 'yank', 'yank_line', 'change', 'change_line',
         \ 'undo', 'undo_line', 'tab', 'shift_tab',
         \ 'today', 'view_left',  'view_right', 'redraw', 'clear', 'help', 'exit',
+        \ 'visual', 'visual_line', 'visual_block', 'exit_visual',
         \ 'start_insert', 'start_insert_append', 'start_insert_head', 'start_insert_last',
         \ 'start_insert_prev_line', 'start_insert_next_line',
         \ ]
@@ -173,11 +174,6 @@ function! calendar#mapping#new()
   nmap <buffer> r <Nop>
   nmap <buffer> R <Nop>
 
-  " visual mode
-  nmap <buffer> v <Nop>
-  nmap <buffer> V <Nop>
-  nmap <buffer> <C-v> <Nop>
-
   " insert mode
   nmap <buffer> i <Plug>(calendar_start_insert)
   nmap <buffer> a <Plug>(calendar_start_insert_append)
@@ -185,6 +181,22 @@ function! calendar#mapping#new()
   nmap <buffer> A <Plug>(calendar_start_insert_last)
   nmap <buffer> O <Plug>(calendar_start_insert_prev_line)
   nmap <buffer> o <Plug>(calendar_start_insert_next_line)
+
+  " visual mode
+  nmap <buffer> v <Plug>(calendar_visual)
+  nmap <buffer> V <Plug>(calendar_visual_line)
+  nmap <buffer> <C-v> <Plug>(calendar_visual_block)
+  nmap <buffer> gh v
+  nmap <buffer> gH V
+  nmap <buffer> g<C-h> <C-v>
+
+  " escape key
+  nmap <buffer><expr> <ESC>
+        \ b:calendar.view._help ? "\<Plug>(calendar_help)" :
+        \ b:calendar.view._event ? "\<Plug>(calendar_event)" :
+        \ b:calendar.view._task ? "\<Plug>(calendar_task)" :
+        \ b:calendar.visual_mode() ? "\<Plug>(calendar_exit_visual)" :
+        \ "\<ESC>"
 
   " command line
   cmap <buffer> <CR> <Plug>(calendar_command_enter)

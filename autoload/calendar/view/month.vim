@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/month.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/07 10:06:22.
+" Last Change: 2014/01/13 09:58:41.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -152,6 +152,7 @@ function! s:self.set_contents() dict
   let self.syntax_name = {}
   for p in range(v.week_count * 7)
     let d = p < wn ? prev_days[-wn + p] : p < ld ? days[p - wn] : next_days[p - ld]
+    let key = i . ',' . j
     let othermonth = p < wn || ld <= p
     let evts = get(events, printf('%d-%02d-%02d', d.get_year(), d.get_month(), d.get_day()), { 'events': [] } )
     let y = v.offset + h * j
@@ -181,7 +182,7 @@ function! s:self.set_contents() dict
         let x += 2
         let l -= 2
       endif
-      call self.add_syntax(x, y, l, syn)
+      call self.add_syntax(x, y, l, syn, syn ==# so ? key : '')
       if len(syn2)
         let l = 2
         let x = len(calendar#string#truncate(s[y], w * i + f.width))
@@ -200,9 +201,9 @@ function! s:self.set_contents() dict
         let xx = len(s[y + x]) - l
         let yy = y + x
         if othermonth
-          call self.add_syntax(xx, yy, l, so)
+          call self.add_syntax(xx, yy, l, so, key)
         elseif has_key(longevt[longevtIndex], 'syntax')
-          call self.add_syntax(xx, yy, l, longevt[longevtIndex].syntax, i . ',' . j)
+          call self.add_syntax(xx, yy, l, longevt[longevtIndex].syntax, key)
         endif
         let longevtIndex += 1
       else
@@ -222,9 +223,9 @@ function! s:self.set_contents() dict
           let xx = len(s[y + x]) - l
           let yy = y + x
           if othermonth
-            call self.add_syntax(xx, yy, l, so)
+            call self.add_syntax(xx, yy, l, so, key)
           elseif has_key(evts.events[z], 'syntax')
-            call self.add_syntax(xx, yy, l, evts.events[z].syntax, i . ',' . j)
+            call self.add_syntax(xx, yy, l, evts.events[z].syntax, key)
           endif
           let z += 1
         else
@@ -273,28 +274,114 @@ function! s:self.contents() dict
   let cursor = []
   if self.is_selected()
     let [f, v, n] = [self.frame, self.view, self.syntax_name]
-    let ij = b:calendar.day().sub(b:calendar.get_days()[0]) + calendar#week#week_number(b:calendar.get_days()[0])
-    let [i, j] = [ij % 7, ij / 7]
-    let key = i . ',' . j
-    let l = v.width * i + f.width
-    let r = v.width * (i + 1)
-    let hh = range(max([v.height - 1, 1]))
-    let y = v.offset + v.height * j
-    for h in hh
-      let x = len(calendar#string#strwidthpart(self.days[y].s, l))
-      let z = len(calendar#string#strwidthpart(self.days[y].s, r))
-      if !h
-        let cursor = [calendar#text#new(0, x + 2, y, 'Cursor')]
-      endif
-      if has_key(n, key) && has_key(n[key], y)
-        call add(select_over, calendar#text#new(z - x, x, y, n[key][y] . 'Select'))
-      else
-        call add(select, calendar#text#new(z - x, x, y, 'Select'))
-      endif
-      let y += 1
+    for [i, j] in self.select_index()
+      let key = i . ',' . j
+      let l = v.width * i + f.width
+      let r = v.width * (i + 1)
+      let hh = range(max([v.height - 1, 1]))
+      let y = v.offset + v.height * j
+      for h in hh
+        let x = len(calendar#string#strwidthpart(self.days[y].s, l))
+        let z = len(calendar#string#strwidthpart(self.days[y].s, r))
+        if !h
+          let cursor = [calendar#text#new(0, x + 2, y, 'Cursor')]
+        endif
+        if has_key(n, key) && has_key(n[key], y)
+          call add(select_over, calendar#text#new(z - x, x, y, n[key][y] . 'Select'))
+        else
+          call add(select, calendar#text#new(z - x, x, y, 'Select'))
+        endif
+        let y += 1
+      endfor
     endfor
   endif
   return deepcopy(self.days) + select + deepcopy(self.syntax) + select_over + cursor
+endfunction
+
+function! s:self.select_index() dict
+  let head = b:calendar.get_days()[0]
+  let wn = calendar#week#week_number(head)
+  let lastij = b:calendar.day().sub(head) + wn
+  let [lasti, lastj] = [lastij % 7, lastij / 7]
+  if !b:calendar.visual_mode()
+    return [[lasti, lastj]]
+  endif
+  let startij = b:calendar.visual_start_day().sub(head) + wn
+  let [starti, startj] = [startij % 7, startij / 7]
+  if starti < 0
+    let [starti, startj] = [starti + 7, startj - 1]
+  endif
+  let ijs = []
+  if b:calendar.is_visual()
+    for ij in range(min([startij, lastij]), max([startij, lastij]))
+      let [i, j] = [ij % 7, ij / 7]
+      if [i, j] != [lasti, lastj] && j >= 0 && j < self.view.week_count
+        call add(ijs, [i, j])
+      endif
+    endfor
+  elseif b:calendar.is_line_visual()
+    for j in range(min([startj, lastj]), max([startj, lastj]))
+      for i in range(7)
+        if [i, j] != [lasti, lastj] && j >= 0 && j < self.view.week_count
+          call add(ijs, [i, j])
+        endif
+      endfor
+    endfor
+  elseif b:calendar.is_block_visual()
+    for j in range(min([startj, lastj]), max([startj, lastj]))
+      for i in range(min([starti, lasti]), max([starti, lasti]))
+        if [i, j] != [lasti, lastj] && j >= 0 && j < self.view.week_count
+          call add(ijs, [i, j])
+        endif
+      endfor
+    endfor
+  endif
+  call add(ijs, [lasti, lastj])
+  return ijs
+endfunction
+
+function! s:self.timerange() dict
+  if !b:calendar.visual_mode()
+    return ''
+  endif
+  let y = b:calendar.day()
+  let x = b:calendar.visual_start_day()
+  let recurrence = ''
+  let xn = calendar#week#week_number(x)
+  let yn = calendar#week#week_number(y)
+  if b:calendar.is_line_visual()
+    if x.sub(y) >= 0
+      let y = y.add(-yn)
+      let x = x.add(-xn+6)
+    else
+      let x = x.add(-xn)
+      let y = y.add(-yn+6)
+    endif
+  elseif b:calendar.is_block_visual()
+    let yh = y.add(-yn)
+    let xh = x.add(-xn)
+    if x.sub(y) >= 0
+      let recweek = xh.sub(yh) / 7 + 1
+      let x = y.add(-yn+xn)
+    else
+      let recweek = yh.sub(xh) / 7 + 1
+      let y = x.add(-xn+yn)
+    endif
+    let recurrence = recweek > 1 ? recweek . 'weeks ' : ''
+  endif
+  if x.sub(y) >= 0
+    if x.get_year() == y.get_year()
+      return printf('%d/%d-%d/%d ', y.get_month(), y.get_day(), x.get_month(), x.get_day()) . recurrence
+    else
+      return printf('%d/%d/%d-%d/%d/%d ', y.get_year(), y.get_month(), y.get_day(), x.get_year(), x.get_month(), x.get_day()) . recurrence
+    endif
+  else
+    if x.get_year() == y.get_year()
+      return printf('%d/%d-%d/%d ', x.get_month(), x.get_day(), y.get_month(), y.get_day()) . recurrence
+    else
+      return printf('%d/%d/%d-%d/%d/%d ', x.get_year(), x.get_month(), x.get_day(), y.get_year(), y.get_month(), y.get_day()) . recurrence
+    endif
+  endif
 endfunction
 
 function! s:self.action(action) dict

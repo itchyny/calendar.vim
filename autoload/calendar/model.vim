@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/model.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/11/22 21:49:10.
+" Last Change: 2014/01/13 00:14:19.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -101,6 +101,55 @@ endfunction
 function! s:self.move_year(diff) dict
   call self.set_day(self.day().add_year(a:diff))
   call self.set_month_from_day()
+endfunction
+
+function! s:self._start_visual(mode) dict
+  if self.visual_mode() == 0
+    let self._visual_start_day = deepcopy(self._day)
+    let self._visual_start_time = deepcopy(self._time)
+  endif
+  let self._visual = get(self, '_visual') == a:mode ? 0 : a:mode
+endfunction
+
+function! s:self.start_visual() dict
+  call self._start_visual(1)
+endfunction
+
+function! s:self.start_line_visual() dict
+  call self._start_visual(2)
+endfunction
+
+function! s:self.start_block_visual() dict
+  call self._start_visual(3)
+endfunction
+
+function! s:self.exit_visual() dict
+  let self._visual = 0
+  return self
+endfunction
+
+function! s:self.visual_mode() dict
+  return get(self, '_visual')
+endfunction
+
+function! s:self.is_visual() dict
+  return get(self, '_visual') == 1
+endfunction
+
+function! s:self.is_line_visual() dict
+  return get(self, '_visual') == 2
+endfunction
+
+function! s:self.is_block_visual() dict
+  return get(self, '_visual') == 3
+endfunction
+
+function! s:self.visual_start_day() dict
+  return get(self, '_visual_start_day', self._day)
+endfunction
+
+function! s:self.visual_start_time() dict
+  return get(self, '_visual_start_time', self._time)
 endfunction
 
 let &cpo = s:save_cpo
