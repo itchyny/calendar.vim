@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/13 23:20:55.
+" Last Change: 2014/01/13 23:49:17.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -26,7 +26,9 @@ let s:self._height = 0
 let s:self._help = 0
 let s:self._task = 0
 let s:self._event = 0
-let s:self._order = []
+let s:self._help_order = []
+let s:self._event_order = []
+let s:self._task_order = []
 
 function! s:self.set_calendar_views(views) dict
   let views = [ 'year', 'month', 'week', 'weekday', 'day_7', 'day_6', 'day_5', 'day_4', 'day_3', 'day_2', 'day_1', 'day', 'clock' ]
@@ -310,14 +312,14 @@ function! s:self.action(action) dict
       endfor
       let self._help = !self._help
       if ii >= 0 && self._help
-        let self._order = copy(self.order)
+        let self._help_order = copy(self.order)
         let i = index(self.order, ii)
         if i >= 0
           call remove(self.order, i)
           let self.order = add(self.order, ii)
         endif
-      elseif has_key(self, '_order')
-        let self.order = self._order
+      elseif has_key(self, '_help_order')
+        let self.order = self._help_order
         let self._help = 0
       endif
     elseif a:action ==# 'task'
@@ -333,13 +335,13 @@ function! s:self.action(action) dict
       endfor
       let self._task = !self._task
       if ii >= 0 && self._task
-        let self._order = copy(self.order)
+        let self._task_order = copy(self.order)
         let i = index(self.order, ii)
         if i >= 0
           let self.order = self.order[i + 1:] + self.order[:i]
         endif
-      elseif has_key(self, '_order')
-        let self.order = self._order
+      elseif has_key(self, '_task_order')
+        let self.order = self._task_order
         let self._task = 0
       endif
     elseif a:action ==# 'close_task'
@@ -359,13 +361,13 @@ function! s:self.action(action) dict
       endfor
       let self._event = !self._event
       if ii >= 0 && self._event
-        let self._order = copy(self.order)
+        let self._event_order = copy(self.order)
         let i = index(self.order, ii)
         if i >= 0
           let self.order = self.order[i + 1:] + self.order[:i]
         endif
-      elseif has_key(self, '_order')
-        let self.order = self._order
+      elseif has_key(self, '_event_order')
+        let self.order = self._event_order
         let self._event = 0
       endif
     elseif a:action ==# 'close_event'
