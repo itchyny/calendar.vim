@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/mapping.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/13 10:45:25.
+" Last Change: 2014/01/13 16:33:29.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -34,6 +34,15 @@ function! calendar#mapping#new()
     exec printf("nnoremap <buffer><silent> <Plug>(calendar_%s) :<C-u>call b:calendar.action('%s')<CR>", action, action)
   endfor
 
+  " escape
+  nmap <buffer><silent><expr> <Plug>(calendar_escape)
+        \ b:calendar.view._help ? "\<Plug>(calendar_help)" :
+        \ b:calendar.view._event ? "\<Plug>(calendar_event)" :
+        \ b:calendar.view._task ? "\<Plug>(calendar_task)" :
+        \ b:calendar.visual_mode() ? "\<Plug>(calendar_exit_visual)" :
+        \ ""
+
+  " mark
   let marks = map(range(97, 97 + 25), 'nr2char(v:val)')
   for mark in marks
     exec printf("nmap <buffer><silent> m%s :<C-u>call b:calendar.mark.set('%s')<CR>", mark, mark)
@@ -191,12 +200,7 @@ function! calendar#mapping#new()
   nmap <buffer> g<C-h> <C-v>
 
   " escape key
-  nmap <buffer><expr> <ESC>
-        \ b:calendar.view._help ? "\<Plug>(calendar_help)" :
-        \ b:calendar.view._event ? "\<Plug>(calendar_event)" :
-        \ b:calendar.view._task ? "\<Plug>(calendar_task)" :
-        \ b:calendar.visual_mode() ? "\<Plug>(calendar_exit_visual)" :
-        \ "\<ESC>"
+  nmap <buffer> <ESC> <Plug>(calendar_escape)
 
   " command line
   cmap <buffer> <CR> <Plug>(calendar_command_enter)

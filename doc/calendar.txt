@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/01/13 10:45:26.
+Last Change: 2014/01/13 16:22:16.
 
 CONTENTS					*calendar-contents*
 
@@ -450,6 +450,7 @@ Utility
 <Plug>(calendar_redraw)				*<Plug>(calendar_redraw)*
 <Plug>(calendar_clear)				*<Plug>(calendar_clear)*
 <Plug>(calendar_help)				*<Plug>(calendar_help)*
+<Plug>(calendar_escape)				*<Plug>(calendar_escape)*
 <Plug>(calendar_exit)				*<Plug>(calendar_exit)*
 
 Insert mode
@@ -581,8 +582,7 @@ V		|<Plug>(calendar_visual_line)|
 gh		same as v
 gH		same as V
 g<C-h>		same as <C-v>
-<ESC>		close help, event, task or exit visual mode.
-
+<ESC>		|<Plug>(calendar_escape)|
 ------------------------------------------------------------------------------
 MARKS						*calendar-marks*
 In the |calendar| buffer, you can use |mark|s.
