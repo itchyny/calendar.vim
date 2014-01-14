@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_days.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/14 17:02:04.
+" Last Change: 2014/01/14 22:30:16.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -226,6 +226,9 @@ function! s:get_timeevts(events, blockmin)
         if len(prev) > 1 && prev[1]
           let prev[1] = 2
         endif
+        if prev[1] == 0
+          let prev[1] = 4
+        endif
       endif
     endif
   endfor
@@ -426,7 +429,7 @@ function! s:instance.set_contents() dict
                 let flg = time_events[timestr][ii][1]
                 let border = flg == 3 ? [repeat(' ', f.width), repeat(' ', f.width)] : flg == 1 ? repeat([f.vertical], 2) : [f.bottomleft, f.bottomright]
                 let rep = flg == 3 || flg == 1 ? repeat(' ', f.width) : f.horizontal
-                if flg
+                if flg && flg < 4
                   call add(texts, border[0] . repeat(rep, l / f.width - 2) . border[1])
                   if flg < 3
                     if (k % v.hourheight) == 0 && k
@@ -443,7 +446,7 @@ function! s:instance.set_contents() dict
                 else
                   let eventsummary = get(tevts[ii], 'summary', '')
                   let smallspace = repeat(' ', f.width - 1 - (calendar#string#strdisplaywidth(eventsummary) + f.width - 1) % f.width)
-                  let newtext = calendar#string#truncate(eventsummary . smallspace . repeat(f.horizontal, l), l - f.width) . f.topright
+                  let newtext = calendar#string#truncate(eventsummary . smallspace . repeat(f.horizontal, l), l - f.width) . (flg ? f.horizontal : f.topright)
                   call add(texts, newtext)
                   let xx += l / f.width * f.strlen + f.strlen
                 endif
