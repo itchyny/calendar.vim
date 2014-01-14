@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_days.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/13 16:12:59.
+" Last Change: 2014/01/14 17:02:04.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -563,7 +563,7 @@ function! s:instance.contents() dict
   else
     let nowsyn = []
   endif
-  return deepcopy(self.days) + select + deepcopy(self.syntax) + nowsyn + select_over + cursor
+  return deepcopy(self.days) + select + deepcopy(self.syntax) + select_over + cursor + nowsyn
 endfunction
 
 function! s:instance.select_index() dict
