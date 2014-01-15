@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/01/15 16:44:16.
+Last Change: 2014/01/15 18:13:36.
 
 CONTENTS					*calendar-contents*
 
@@ -618,19 +618,22 @@ Problem 5:				|calendar-problem-5|
 	The frame collapses (on Ubuntu).
 
 Problem 6:				|calendar-problem-6|
-	How to change the cache directory.
+	The clock is invisible.
 
 Problem 7:				|calendar-problem-7|
-	The clock stops to update after the cursor gets out of the window.
+	How to change the cache directory.
 
 Problem 8:				|calendar-problem-8|
+	The clock stops to update after the cursor gets out of the window.
+
+Problem 9:				|calendar-problem-9|
 	How to connect to Google Calendar / Google Task.
 	How to disconnect my Google account.
 
-Problem 9:				|calendar-problem-9|
+Problem 10:				|calendar-problem-10|
 	Which should we use, arguments or global variables.
 
-Problem 10:				|calendar-problem-10|
+Problem 11:				|calendar-problem-11|
 	Found a bug of this application.
 	Got many errors while using this application.
 	Vim hangs up while using this application.
@@ -730,19 +733,25 @@ Problem 5:					*calendar-problem-5*
 		let g:calendar_frame = 'default'
 
 Problem 6:					*calendar-problem-6*
+	The clock is invisible.
+
+		Add the following configuration to your *shrc (e.g. zshrc). >
+			export TERM=xterm-256color
+<
+Problem 7:					*calendar-problem-7*
 	How to change the cache directory.
 
 		For example, add the following configuration to your vimrc. >
 		let g:calendar_cache_directory = expand('~/.vim/cache/calendar.vim/')
 <		See |g:calendar_cache_directory|.
 
-Problem 7:					*calendar-problem-7*
+Problem 8:					*calendar-problem-8*
 	The clock stops to update after the cursor gets out of the window.
 
 		It is feature. Updating a specific buffer from other windows
 		causes many problems.
 
-Problem 8:					*calendar-problem-8*
+Problem 9:					*calendar-problem-9*
 	How to connect to Google Calendar / Google Task.
 	How to disconnect my Google account.
 
@@ -757,7 +766,7 @@ Problem 8:					*calendar-problem-8*
 		rm -rf ~/.cache/calendar.vim/
 <		See |g:calendar_cache_directory|.
 
-Problem 9:					*calendar-problem-9*
+Problem 10:					*calendar-problem-10*
 	Which should we use, arguments or global variables.
 
 		Arguments have priority over global variables. For example, if
@@ -770,7 +779,7 @@ Problem 9:					*calendar-problem-9*
 		settings in your vimrc file and give the arguments in order to
 		overwrite the settings.
 
-Problem 10:					*calendar-problem-10*
+Problem 11:					*calendar-problem-11*
 	Found a bug of this application.
 	Got many errors while using this application.
 	Vim hangs up while using this application.
