@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/echo.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/27 00:19:48.
+" Last Change: 2014/01/15 21:55:09.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -26,7 +26,7 @@ function! calendar#echo#message_raw(msg)
 endfunction
 
 function! calendar#echo#error(msg)
-  call calendar#echo#error_raw(calendar#util#name() . a:msg)
+  call calendar#echo#error_raw(calendar#util#name() . ': ' . a:msg)
 endfunction
 
 function! calendar#echo#error_raw(msg)
