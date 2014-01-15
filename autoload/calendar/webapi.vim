@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/07 12:26:13.
+" Last Change: 2014/01/15 19:00:30.
 " =============================================================================
 
 " Web interface.
@@ -350,7 +350,7 @@ endfunction
 
 function! calendar#webapi#open_url(url)
   if has('win32') || has('win64')
-    silent! call calendar#util#system('start rundll32 url.dll,FileProtocolHandler "' . a:url . '" &')
+    silent! call calendar#util#system('cmd /c start "" "' . a:url . '"')
   elseif executable('xdg-open')
     silent! call calendar#util#system('xdg-open "' . a:url . '" &')
   elseif executable('open')
