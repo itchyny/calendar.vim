@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_textbox.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/14 22:08:13.
+" Last Change: 2014/01/15 09:04:34.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -193,7 +193,7 @@ function! s:instance.move_select(diff) dict
     let self.select += diff
   endwhile
   let self.select = max([min([self.select, self.length - 1]), 0])
-  let self.updated = 1
+  let self.__updated = 1
   let [self.min_index, self.max_index] = self.min_max_index(self.length)
 endfunction
 
@@ -211,7 +211,7 @@ endfunction
 
 function! s:instance._action(action) dict
   let hour = self.select
-  let self.updated = 0
+  let self.__updated = 0
   let [select, min_index, max_index] = [self.select, self.min_index, self.max_index]
   if index(['down', 'up'], a:action) >= 0
     call self.move_select(v:count1 * (a:action ==# 'down' ? 1 : -1))
@@ -275,7 +275,7 @@ function! s:instance._action(action) dict
       return calendar#util#update_keys()
     endif
   endif
-  if self.updated && [select, max_index] == [self.select, self.max_index] && (min_index == self.min_index || !min_index)
+  if self.__updated && [select, max_index] == [self.select, self.max_index] && (min_index == self.min_index || !min_index)
     return ''
   endif
 endfunction
