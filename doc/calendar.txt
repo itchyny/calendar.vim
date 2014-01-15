@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/01/14 07:35:23.
+Last Change: 2014/01/15 16:44:16.
 
 CONTENTS					*calendar-contents*
 
@@ -624,7 +624,8 @@ Problem 7:				|calendar-problem-7|
 	The clock stops to update after the cursor gets out of the window.
 
 Problem 8:				|calendar-problem-8|
-	How to connect to Google Calendar.
+	How to connect to Google Calendar / Google Task.
+	How to disconnect my Google account.
 
 Problem 9:				|calendar-problem-9|
 	Which should we use, arguments or global variables.
@@ -742,12 +743,19 @@ Problem 7:					*calendar-problem-7*
 		causes many problems.
 
 Problem 8:					*calendar-problem-8*
-	How to connect to Google Calendar.
+	How to connect to Google Calendar / Google Task.
+	How to disconnect my Google account.
 
 		Add the following configuration to your vimrc. >
 		let g:calendar_google_calendar = 1
 		let g:calendar_google_task = 1
 <		See |g:calendar_google_calendar|, |g:calendar_google_task|.
+
+		To disconnect, remove the cache directory. On default, the
+		cache directory is ~/.cache/calendar.vim/. So execute the
+		following command. >
+		rm -rf ~/.cache/calendar.vim/
+<		See |g:calendar_cache_directory|.
 
 Problem 9:					*calendar-problem-9*
 	Which should we use, arguments or global variables.
