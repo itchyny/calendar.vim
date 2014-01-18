@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/18 11:30:58.
+" Last Change: 2014/01/18 16:16:47.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -386,11 +386,13 @@ function! calendar#google#calendar#update_response(id, response)
   elseif a:response.status == 401
     if err == 0
       call calendar#google#client#refresh_token()
-      call calendar#google#client#patch_async(s:newid(['update', 0, year, month, calendarId, eventId, title]),
+      call calendar#google#client#patch_async(s:newid(['update', 1, year, month, calendarId, eventId, title]),
             \ 'calendar#google#calendar#update_response',
             \ calendar#google#calendar#get_url('calendars/' . calendarId . '/events/' . eventId),
             \ { 'calendarId': calendarId, 'eventId': eventId },
             \ { 'id': eventId, 'summary': title })
+    else
+      call calendar#webapi#echo_error(a:response)
     endif
   else
     call calendar#webapi#echo_error(a:response)
@@ -443,7 +445,7 @@ function! calendar#google#calendar#insert_response(id, response)
   elseif a:response.status == 401
     if err == 0
       call calendar#google#client#refresh_token()
-      call calendar#google#client#post_async(s:newid(['insert', 0, year, month, calendarId, start, end, title]),
+      call calendar#google#client#post_async(s:newid(['insert', 1, year, month, calendarId, start, end, title]),
             \ 'calendar#google#calendar#insert_response',
             \ calendar#google#calendar#get_url('calendars/' . calendarId . '/events'),
             \ { 'calendarId': calendarId },
