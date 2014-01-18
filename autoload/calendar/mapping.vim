@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/mapping.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/15 23:31:31.
+" Last Change: 2014/01/18 10:50:25.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -13,10 +13,16 @@ set cpo&vim
 function! calendar#mapping#new()
 
   if &l:filetype ==# 'calendar'
-    if maparg('<ESC>', 'n') !=# '<Plug>(calendar_escape)' && has_key(get(b:, 'calendar', {}), 'view')
+    if has_key(get(b:, 'calendar', {}), 'view')
       let v = b:calendar.view
-      if v._help || v._event || v._task || b:calendar.visual_mode()
-        nmap <buffer> <ESC> <Plug>(calendar_escape)
+      if maparg('<ESC>', 'n') !=# '<Plug>(calendar_escape)'
+        if v._help || v._event || v._task || b:calendar.visual_mode()
+          nmap <buffer> <ESC> <Plug>(calendar_escape)
+        endif
+      else
+        if !(v._help || v._event || v._task || b:calendar.visual_mode())
+          nunmap <buffer> <ESC>
+        endif
       endif
     endif
     return
