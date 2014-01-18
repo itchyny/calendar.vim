@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/13 10:33:33.
+" Last Change: 2014/01/18 11:06:01.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -464,7 +464,7 @@ function! calendar#google#calendar#delete_response(id, response)
   elseif a:response.status == 401
     if err == 0
       call calendar#google#client#refresh_token()
-      call calendar#google#client#delete_async(s:newid(['delete', 0, calendarId, eventId]),
+      call calendar#google#client#delete_async(s:newid(['delete', 1, year, month, calendarId, eventId]),
             \ 'calendar#google#calendar#delete_response',
             \ calendar#google#calendar#get_url('calendars/' . calendarId . '/events/' . eventId),
             \ { 'calendarId': calendarId, 'eventId': eventId })
