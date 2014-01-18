@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/15 19:00:30.
+" Last Change: 2014/01/18 11:31:05.
 " =============================================================================
 
 " Web interface.
@@ -355,6 +355,19 @@ function! calendar#webapi#open_url(url)
     silent! call calendar#util#system('xdg-open "' . a:url . '" &')
   elseif executable('open')
     silent! call calendar#util#system('open "' . a:url . '" &')
+  endif
+endfunction
+
+function! calendar#webapi#echo_error(response)
+  let message = get(a:response, 'message', '')
+  if has_key(a:response, 'content')
+    let cnt = calendar#webapi#decode(a:response.content)
+    if type(cnt) == type({}) && len(get(get(cnt, 'error', {}), 'message', ''))
+      let message = get(get(cnt, 'error', {}), 'message', '')
+    endif
+  endif
+  if len(message)
+    call calendar#echo#error(message)
   endif
 endfunction
 

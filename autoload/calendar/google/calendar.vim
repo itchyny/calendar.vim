@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/18 11:06:01.
+" Last Change: 2014/01/18 11:30:58.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -392,6 +392,8 @@ function! calendar#google#calendar#update_response(id, response)
             \ { 'calendarId': calendarId, 'eventId': eventId },
             \ { 'id': eventId, 'summary': title })
     endif
+  else
+    call calendar#webapi#echo_error(a:response)
   endif
 endfunction
 
@@ -447,6 +449,8 @@ function! calendar#google#calendar#insert_response(id, response)
             \ { 'calendarId': calendarId },
             \ { 'summary': title, 'start': start, 'end': end })
     endif
+  else
+    call calendar#webapi#echo_error(a:response)
   endif
 endfunction
 
@@ -468,7 +472,11 @@ function! calendar#google#calendar#delete_response(id, response)
             \ 'calendar#google#calendar#delete_response',
             \ calendar#google#calendar#get_url('calendars/' . calendarId . '/events/' . eventId),
             \ { 'calendarId': calendarId, 'eventId': eventId })
+    else
+      call calendar#webapi#echo_error(a:response)
     endif
+  else
+    call calendar#webapi#echo_error(a:response)
   endif
 endfunction
 
