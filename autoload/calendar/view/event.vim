@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/13 16:14:09.
+" Last Change: 2014/01/19 18:24:46.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -85,7 +85,16 @@ function! s:self.action(action) dict
       let msg = calendar#message#get('input_event') . (change ? get(event, 'summary', get(event, 'title', '')) . ' -> ' : '')
       let title = input(msg, change ? '' : get(event, 'summary', get(event, 'title', '')) . (head ? "\<Home>" : ''))
       if title !=# ''
-        call b:calendar.event.update(calendarId, eventid, title, year, month)
+        let [title, startdate, enddate, recurrence] = s:parse_title(title, 1)
+        let opt = {}
+        if startdate !=# ''
+          call extend(opt, { 'start': startdate =~# 'T\d' ? { 'dateTime': startdate } : { 'date': startdate } })
+        endif
+        if enddate !=# ''
+          call extend(opt, { 'end': enddate =~# 'T\d' ? { 'dateTime': enddate } : { 'date': enddate } })
+        endif
+        call extend(opt, recurrence)
+        call b:calendar.event.update(calendarId, eventid, title, year, month, opt)
       endif
     else
       return self.action('start_insert_next_line')
@@ -101,7 +110,6 @@ function! s:self.insert_new_event(action, ...) dict
   let event = a:0 ? a:1 : self.current_contents()
   let calendarId = get(event, 'calendarId', '')
   let [year, month, day] = b:calendar.day().get_ymd()
-  let [nyear, nmonth, nday] = b:calendar.day().new(year, month, day).add(1).get_ymd()
   let input_prefix = b:calendar.view.current_view().timerange()
   let title = input(calendar#message#get('input_event'), input_prefix)
   if title !=# ''
@@ -109,39 +117,7 @@ function! s:self.insert_new_event(action, ...) dict
     if next
       let self.select += 1
     endif
-    let date = printf('%d-%d-%d', year, month, day)
-    let ndate = printf('%d-%d-%d', nyear, nmonth, nday)
-    if title =~# '^\s*\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+:\d\+\%(:\d\+\)\?'
-      let time = matchstr(title, '^\s*\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+:\d\+\%(:\d\+\)\?')
-      let starttime = matchstr(time, '^\s*\d\+:\d\+\%(:\d\+\)\?')
-      let endtime = matchstr(time[len(starttime):], '\d\+:\d\+\%(:\d\+\)\?')
-      let title = substitute(title[len(time):], '^\s*', '', '')
-      let [startdate, enddate] = [s:format_time(date . 'T' . starttime), s:format_time(date . 'T' . endtime)]
-    elseif title =~# '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s*-\s*\d\+[-/]\d\+\%([-/]\d\+\)\?'
-      let time = matchstr(title, '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s*-\s*\d\+[-/]\d\+\%([-/]\d\+\)\?')
-      let starttime = matchstr(time, len(split(time, '-')) == 2 ? '^\s*\d\+/\d\+\%(/\d\+\)\?\s*' : '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s*')
-      let endtime = matchstr(time[len(starttime):], '\d\+[-/]\d\+\%([-/]\d\+\)\?')
-      let title = substitute(title[len(time):], '^\s*', '', '')
-      let [startdate, enddate] = [s:format_time(starttime), s:format_time_end(endtime)]
-    elseif title =~# '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?'
-      let time = matchstr(title, '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?')
-      let starttime = matchstr(time, '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?\s*')
-      let endtime = matchstr(time[len(starttime):], '\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?')
-      let starttime = substitute(starttime, '^\s*\|\s*$', '', 'g')
-      let endtime = substitute(endtime, '^\s*\|\s*$', '', 'g')
-      let title = substitute(title[len(time):], '^\s*', '', '')
-      let [startdate, enddate] = [s:format_time(starttime), s:format_time(endtime)]
-    else
-      let [startdate, enddate] = [date, ndate]
-    endif
-    let recurrence = {}
-    if title =~# '^\s*\d\+\%(weeks\|days\)\s\+'
-      let rec = matchstr(title, '^\s*\d\+\%(weeks\|days\)\s\+')
-      let title = substitute(title[len(rec):], '^\s*', '', '')
-      let recurrence = {}
-      let key = matchstr(rec, '\(week\|day\)')
-      let recurrence[key] = matchstr(rec, '\d\+') + 0
-    endif
+    let [title, startdate, enddate, recurrence] = s:parse_title(title)
     let calendars = b:calendar.event.calendarList()
     if len(calendars) == 0
       if calendar#setting#get('google_calendar')
@@ -187,6 +163,47 @@ function! s:self.insert_new_event(action, ...) dict
     let calendarId = get(get(calendars, idx, get(calendars, 0, {})), 'id', '')
     call b:calendar.event.insert(calendarId, title, startdate, enddate, year, month, recurrence)
   endif
+endfunction
+
+function! s:parse_title(title, ...)
+  let title = a:title
+  let [year, month, day] = b:calendar.day().get_ymd()
+  let [nyear, nmonth, nday] = b:calendar.day().new(year, month, day).add(1).get_ymd()
+  let date = join([year, month, day], '-')
+  let ndate = join([nyear, nmonth, nday], '-')
+  let [startdate, enddate] = ['', '']
+  if title =~# '^\s*\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+:\d\+\%(:\d\+\)\?'
+    let time = matchstr(title, '^\s*\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+:\d\+\%(:\d\+\)\?')
+    let starttime = matchstr(time, '^\s*\d\+:\d\+\%(:\d\+\)\?')
+    let endtime = matchstr(time[len(starttime):], '\d\+:\d\+\%(:\d\+\)\?')
+    let title = substitute(title[len(time):], '^\s*', '', '')
+    let [startdate, enddate] = [s:format_time(date . 'T' . starttime), s:format_time(date . 'T' . endtime)]
+  elseif title =~# '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s*-\s*\d\+[-/]\d\+\%([-/]\d\+\)\?'
+    let time = matchstr(title, '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s*-\s*\d\+[-/]\d\+\%([-/]\d\+\)\?')
+    let starttime = matchstr(time, len(split(time, '-')) == 2 ? '^\s*\d\+/\d\+\%(/\d\+\)\?\s*' : '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s*')
+    let endtime = matchstr(time[len(starttime):], '\d\+[-/]\d\+\%([-/]\d\+\)\?')
+    let title = substitute(title[len(time):], '^\s*', '', '')
+    let [startdate, enddate] = [s:format_time(starttime), s:format_time_end(endtime)]
+  elseif title =~# '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?'
+    let time = matchstr(title, '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?')
+    let starttime = matchstr(time, '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?\s*')
+    let endtime = matchstr(time[len(starttime):], '\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?')
+    let starttime = substitute(starttime, '^\s*\|\s*$', '', 'g')
+    let endtime = substitute(endtime, '^\s*\|\s*$', '', 'g')
+    let title = substitute(title[len(time):], '^\s*', '', '')
+    let [startdate, enddate] = [s:format_time(starttime), s:format_time(endtime)]
+  elseif !a:0 || !a:1
+    let [startdate, enddate] = [date, ndate]
+  endif
+  let recurrence = {}
+  if title =~# '^\s*\d\+\%(weeks\|days\)\s\+'
+    let rec = matchstr(title, '^\s*\d\+\%(weeks\|days\)\s\+')
+    let title = substitute(title[len(rec):], '^\s*', '', '')
+    let recurrence = {}
+    let key = matchstr(rec, '\(week\|day\)')
+    let recurrence[key] = matchstr(rec, '\d\+') + 0
+  endif
+  return [title, startdate, enddate, recurrence]
 endfunction
 
 function! s:format_time(time)

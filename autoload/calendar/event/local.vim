@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/event/local.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/13 10:05:33.
+" Last Change: 2014/01/19 18:28:38.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -61,7 +61,7 @@ function! s:self.get_events_one_month(year, month, ...) dict
   return events
 endfunction
 
-function! s:self.update(calendarId, eventId, title, year, month) dict
+function! s:self.update(calendarId, eventId, title, year, month, ...) dict
   let calendarList = self.calendarList()
   for calendar in calendarList
     if calendar.id ==# a:calendarId
@@ -70,6 +70,7 @@ function! s:self.update(calendarId, eventId, title, year, month) dict
       for i in range(len(cnt.items))
         if cnt.items[i].id ==# a:eventId
           let cnt.items[i].summary = a:title
+          call extend(cnt.items[i], a:0 ? a:1 : {})
           silent! call s:event_cache.new(calendar.id).new(printf('%04d', a:year)).new(printf('%02d', a:month)).save('0', cnt)
           return
         endif

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/18 16:16:47.
+" Last Change: 2014/01/19 18:17:50.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -371,16 +371,17 @@ function! calendar#google#calendar#response(id, response)
   endif
 endfunction
 
-function! calendar#google#calendar#update(calendarId, eventId, title, year, month)
-  call calendar#google#client#patch_async(s:newid(['update', 0, a:year, a:month, a:calendarId, a:eventId, a:title]),
+function! calendar#google#calendar#update(calendarId, eventId, title, year, month, ...)
+  let opt = a:0 ? a:1 : {}
+  call calendar#google#client#patch_async(s:newid(['update', 0, a:year, a:month, a:calendarId, a:eventId, a:title, opt]),
         \ 'calendar#google#calendar#update_response',
         \ calendar#google#calendar#get_url('calendars/' . a:calendarId . '/events/' . a:eventId),
         \ { 'calendarId': a:calendarId, 'eventId': a:eventId },
-        \ { 'id': a:eventId, 'summary': a:title })
+        \ extend({ 'id': a:eventId, 'summary': a:title }, opt))
 endfunction
 
 function! calendar#google#calendar#update_response(id, response)
-  let [_update, err, year, month, calendarId, eventId, title; rest] = s:getdata(a:id)
+  let [_update, err, year, month, calendarId, eventId, title, opt; rest] = s:getdata(a:id)
   if a:response.status =~# '^2'
     call calendar#google#calendar#downloadEvents(year, month, calendarId)
   elseif a:response.status == 401
@@ -390,7 +391,7 @@ function! calendar#google#calendar#update_response(id, response)
             \ 'calendar#google#calendar#update_response',
             \ calendar#google#calendar#get_url('calendars/' . calendarId . '/events/' . eventId),
             \ { 'calendarId': calendarId, 'eventId': eventId },
-            \ { 'id': eventId, 'summary': title })
+            \ extend({ 'id': eventId, 'summary': title }, opt))
     else
       call calendar#webapi#echo_error(a:response)
     endif
@@ -405,15 +406,13 @@ function! calendar#google#calendar#insert(calendarId, title, start, end, year, m
   let calendars = filter(calendar#google#calendar#getMyCalendarList(), 'v:val.id ==# a:calendarId')
   let timezone = get(get(calendars, 0, get(calendar#google#calendar#getMyCalendarList(), 0, {})), 'timeZone', 'Z')
   let location = matchstr(a:title, '\%( at \)\@<=.\+$')
-  let loc = len(location) ? { 'location': location } : {}
+  let opt = len(location) ? { 'location': location } : {}
   let recurrence = a:0 ? a:1 : {}
   if has_key(recurrence, 'week') || has_key(recurrence, 'day')
-    let rec = { 'recurrence': [ 'RRULE:' . (
+    call extend(opt, { 'recurrence': [ 'RRULE:' . (
           \ has_key(recurrence, 'week') ? ('FREQ=WEEKLY;COUNT=' . recurrence.week) :
           \ has_key(recurrence, 'day') ? ('FREQ=DAILY;COUNT=' . recurrence.day) :
-          \ '') ] }
-  else
-    let rec = {}
+          \ '') ] })
   endif
   if timezone ==# 'Z'
     if has_key(start, 'dateTime')
@@ -431,25 +430,25 @@ function! calendar#google#calendar#insert(calendarId, title, start, end, year, m
       let end.timeZone = timezone
     endif
   endif
-  call calendar#google#client#post_async(s:newid(['insert', 0, a:year, a:month, a:calendarId, a:start, a:end, a:title]),
+  call calendar#google#client#post_async(s:newid(['insert', 0, a:year, a:month, a:calendarId, a:start, a:end, a:title, opt]),
         \ 'calendar#google#calendar#insert_response',
         \ calendar#google#calendar#get_url('calendars/' . a:calendarId . '/events'),
         \ { 'calendarId': a:calendarId },
-        \ extend(extend({ 'summary': a:title, 'start': start, 'end': end, 'transparency': 'transparent' }, loc), rec))
+        \ extend({ 'summary': a:title, 'start': start, 'end': end, 'transparency': 'transparent' }, opt))
 endfunction
 
 function! calendar#google#calendar#insert_response(id, response)
-  let [_insert, err, year, month, calendarId, start, end, title; rest] = s:getdata(a:id)
+  let [_insert, err, year, month, calendarId, start, end, title, opt; rest] = s:getdata(a:id)
   if a:response.status =~# '^2'
     call calendar#google#calendar#downloadEvents(year, month, calendarId)
   elseif a:response.status == 401
     if err == 0
       call calendar#google#client#refresh_token()
-      call calendar#google#client#post_async(s:newid(['insert', 1, year, month, calendarId, start, end, title]),
+      call calendar#google#client#post_async(s:newid(['insert', 1, year, month, calendarId, start, end, title, opt]),
             \ 'calendar#google#calendar#insert_response',
             \ calendar#google#calendar#get_url('calendars/' . calendarId . '/events'),
             \ { 'calendarId': calendarId },
-            \ { 'summary': title, 'start': start, 'end': end })
+            \ extend({ 'summary': title, 'start': start, 'end': end }, opt))
     endif
   else
     call calendar#webapi#echo_error(a:response)
