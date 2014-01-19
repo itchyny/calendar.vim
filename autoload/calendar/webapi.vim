@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/18 11:31:05.
+" Last Change: 2014/01/20 08:34:51.
 " =============================================================================
 
 " Web interface.
@@ -233,7 +233,6 @@ function! s:request(json, async, url, ...)
   endif
 endfunction
 
-let s:callback_count = {}
 let s:callback_datalen = {}
 function! calendar#webapi#callback(id, cb)
   let data = s:cache.get_raw(a:id)
@@ -243,11 +242,6 @@ function! calendar#webapi#callback(id, cb)
     if len(data) == 0 || len(data) != prevdatalen
       return 1
     endif
-    let s:callback_count[a:id] = get(s:callback_count, a:id) + 1
-    if s:callback_count[a:id] < 3
-      return 1
-    endif
-    call remove(s:callback_count, a:id)
     if len(data)
       let i = 0
       while data[i] =~ '^HTTP/1.\d 3' || data[i] =~ '^HTTP/1\.\d 200 Connection established' || data[i] =~ '^HTTP/1\.\d 100 Continue'
