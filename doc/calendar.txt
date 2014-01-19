@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/01/15 18:13:36.
+Last Change: 2014/01/19 20:14:12.
 
 CONTENTS					*calendar-contents*
 
@@ -763,7 +763,7 @@ Problem 9:					*calendar-problem-9*
 		To disconnect, remove the cache directory. On default, the
 		cache directory is ~/.cache/calendar.vim/. So execute the
 		following command. >
-		rm -rf ~/.cache/calendar.vim/
+		rm -rf ~/.cache/calendar.vim/google/
 <		See |g:calendar_cache_directory|.
 
 Problem 10:					*calendar-problem-10*
