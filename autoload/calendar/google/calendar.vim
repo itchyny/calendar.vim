@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/19 18:17:50.
+" Last Change: 2014/01/19 20:38:37.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -387,7 +387,7 @@ function! calendar#google#calendar#update_response(id, response)
   elseif a:response.status == 401
     if err == 0
       call calendar#google#client#refresh_token()
-      call calendar#google#client#patch_async(s:newid(['update', 1, year, month, calendarId, eventId, title]),
+      call calendar#google#client#patch_async(s:newid(['update', 1, year, month, calendarId, eventId, title, opt]),
             \ 'calendar#google#calendar#update_response',
             \ calendar#google#calendar#get_url('calendars/' . calendarId . '/events/' . eventId),
             \ { 'calendarId': calendarId, 'eventId': eventId },
