@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_textbox.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/15 09:04:34.
+" Last Change: 2014/01/19 12:50:27.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -118,6 +118,9 @@ function! s:instance.get_contents() dict
       endif
       if !self._select_title
         call add(self.noindex, len(cnt))
+      endif
+      if len(cnt) == self.select
+        let self._current_contents = { 'title': t.title }
       endif
       call add(cnt, repeat(' ', max([(self.sizex() - 4 - width * 2 - calendar#string#strdisplaywidth(t.title)) / 2, 0])) . t.title)
       if !self._select_title
