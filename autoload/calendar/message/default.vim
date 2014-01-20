@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/message/default.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/10 07:26:09.
+" Last Change: 2014/01/21 08:24:21.
 " =============================================================================
 
 scriptencoding utf-8
@@ -16,16 +16,20 @@ endfunction
 
 let s:english_message = deepcopy(calendar#message#en#get())
 
-function! s:message()
-  let message = {}
-  if exists('*strftime')
+if exists('*strftime')
+  function! s:message()
+    let message = {}
     let message.day_name        = map(range(3, 9), "strftime('%a', 60 * 60 * (24 * v:val + 10))")
     let message.day_name_long   = map(range(3, 9), "strftime('%A', 60 * 60 * (24 * v:val + 10))")
     let message.month_name      = map(range(12), "strftime('%b', 60 * 60 * 24 * (32 * v:val + 5))")
     let message.month_name_long = map(range(12), "strftime('%B', 60 * 60 * 24 * (32 * v:val + 5))")
-  endif
-  return message
-endfunction
+    return message
+  endfunction
+else
+  function! s:message()
+    return {}
+  endfunction
+endif
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
