@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/argument.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/10 21:14:49.
+" Last Change: 2014/01/20 22:43:32.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -31,7 +31,7 @@ let s:all_value_options = {
       \ '-width': [],
       \ '-height': [],
       \ }
-let s:all_novalue_options = [ '-google_calendar', '-google_task', '-date_month_name', '-clock_12hour' ]
+let s:all_novalue_options = [ '-google_calendar', '-google_task', '-date_month_name', '-clock_12hour', '-debug' ]
 if len(split(globpath(&rtp, 'autoload/calendar.vim'), '\n')) > 1
   call add(s:all_novalue_options, '-mattn')
 endif

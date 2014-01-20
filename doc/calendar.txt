@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/01/19 20:14:12.
+Last Change: 2014/01/20 22:47:40.
 
 CONTENTS					*calendar-contents*
 
@@ -352,6 +352,15 @@ Other miscellaneous options.
 		let g:calendar_cache_directory = [dir]
 		Specify the cache directory for this plugin.
 		The default value is ~/.cache/calendar.vim/.
+
+						*calendar-options-debug*
+						*g:calendar_debug*
+		-debug[!]
+		let g:calendar_debug = {0/1}
+		If the value is 1 or the argument is given, the application
+		runs in debug mode. In debug mode:
+			1. It does not delete all the downloaded files.
+		The default value is 0.
 
 ------------------------------------------------------------------------------
 VIEW						*calendar-view*

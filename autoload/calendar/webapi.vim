@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/20 08:34:51.
+" Last Change: 2014/01/20 22:43:07.
 " =============================================================================
 
 " Web interface.
@@ -20,7 +20,9 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 let s:cache = calendar#cache#new('download')
-call s:cache.rmdir_on_exit()
+if !calendar#setting#get('debug')
+  call s:cache.rmdir_on_exit()
+endif
 
 function! s:response()
   return { 'status': 500, 'message': '', 'header': [], 'content': [] }
@@ -216,7 +218,9 @@ function! s:request(json, async, url, ...)
     call writefile(split(postdatastr, "\n"), file, "b")
   endif
   if a:async != {}
-    call s:cache.delete(a:async.id)
+    if !calendar#setting#get('debug')
+      call s:cache.delete(a:async.id)
+    endif
     call calendar#async#new('calendar#webapi#callback(' . string(a:async.id) . ',' . string(a:async.cb) . ')')
     if has("win32") || has("win64")
       call calendar#util#system('cmd /c start /min ' . command)
@@ -278,7 +282,9 @@ function! calendar#webapi#callback(id, cb)
     else
       return 1
     endif
-    call s:cache.delete(a:id)
+    if !calendar#setting#get('debug')
+      call s:cache.delete(a:id)
+    endif
     return 0
   endif
   return 1

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/setting.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/09 00:24:26.
+" Last Change: 2014/01/20 22:33:24.
 " =============================================================================
 
 scriptencoding utf-8
@@ -203,6 +203,10 @@ function! s:google_client()
         \ 'api_key': 'FN fX~GKkSs}QJgNYquJ=^sJJU:u<[9_dmT:MF=',
         \ 'client_secret': 'FZShKZt{{9|G2U ku[WYLOut'}, 100)
   return s:g
+endfunction
+
+function! s:debug()
+  return 0
 endfunction
 
 let &cpo = s:save_cpo
