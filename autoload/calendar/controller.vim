@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/controller.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/12 21:53:42.
+" Last Change: 2014/01/20 20:30:37.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -220,10 +220,13 @@ function! s:self.cursor() dict
 endfunction
 
 function! s:self.cursor_moved() dict
-  let [g, l, c] = [getline('.'), line('.'), col('.')]
+  let [l, c] = [line('.'), col('.')]
   let [pl, pc] = b:calendar.cursor_pos
-  if [pl, pc] != [l, c]
-   let [wp, wn] = map([getline(pl)[:pc + 1], g[:c + 1]], 'calendar#string#strdisplaywidth(v:val)')
+  if [pl, pc] == [l, c]
+    return
+  else
+    let g = getline('.')
+    let [wp, wn] = map([getline(pl)[:pc + 1], g[:c + 1]], 'calendar#string#strdisplaywidth(v:val)')
     if pl == l
       call self.action(len(g) <= c * 2 && c * 2 <= (len(g) + 3) ? 'line_middle'
             \ : g[:c - 2] =~? '^\s*$' ? 'line_head'
