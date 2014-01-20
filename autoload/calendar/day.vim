@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/day.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/28 12:44:55.
+" Last Change: 2014/01/20 21:23:47.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -25,18 +25,25 @@ endfunction
 
 " Today's mjd.
 function! calendar#day#today_mjd()
-  if exists('*strftime')
-    let [y, m, d] = [strftime('%Y') * 1, strftime('%m') * 1, strftime('%d') * 1]
-  else
-    let [y, m, d] = [system('date "+%Y"') * 1, system('date "+%m"') * 1, system('date "+%d"') * 1]
+  let [y, m, d] = s:ymd()
+  if has_key(s:, '_y') && s:_y == [y, m, d]
+    return s:_m
   endif
-  if has_key(s:, 'today_ymd') && s:today_ymd == [y, m, d]
-    return s:today_mjd
-  endif
-  let s:today_ymd = [y, m, d]
-  let s:today_mjd = calendar#day#gregorian#new(y, m, d).mjd
-  return s:today_mjd
+  let s:_y = [y, m, d]
+  let s:_m = calendar#day#gregorian#new(y, m, d).mjd
+  return s:_m
 endfunction
+
+" Today's [ year, month, day ].
+if exists('*strftime')
+  function! s:ymd()
+    return [strftime('%Y') * 1, strftime('%m') * 1, strftime('%d') * 1]
+  endfunction
+else
+  function! s:ymd()
+    return [system('date "+%Y"') * 1, system('date "+%m"') * 1, system('date "+%d"') * 1]
+  endfunction
+endif
 
 " Join the year, month and day using the endian, separator settings.
 function! calendar#day#join_date(ymd)
