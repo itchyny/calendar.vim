@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/19 20:38:37.
+" Last Change: 2014/01/20 17:39:31.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -373,6 +373,12 @@ endfunction
 
 function! calendar#google#calendar#update(calendarId, eventId, title, year, month, ...)
   let opt = a:0 ? a:1 : {}
+  if has_key(opt, 'start')
+    call s:set_timezone(a:calendarId, opt.start)
+  endif
+  if has_key(opt, 'end')
+    call s:set_timezone(a:calendarId, opt.end)
+  endif
   call calendar#google#client#patch_async(s:newid(['update', 0, a:year, a:month, a:calendarId, a:eventId, a:title, opt]),
         \ 'calendar#google#calendar#update_response',
         \ calendar#google#calendar#get_url('calendars/' . a:calendarId . '/events/' . a:eventId),
@@ -403,8 +409,6 @@ endfunction
 function! calendar#google#calendar#insert(calendarId, title, start, end, year, month, ...)
   let start = a:start =~# 'T\d' && len(a:start) > 10 ? { 'dateTime': a:start } : { 'date': a:start }
   let end = a:end =~# 'T\d' && len(a:end) > 10 ? { 'dateTime': a:end } : { 'date': a:end }
-  let calendars = filter(calendar#google#calendar#getMyCalendarList(), 'v:val.id ==# a:calendarId')
-  let timezone = get(get(calendars, 0, get(calendar#google#calendar#getMyCalendarList(), 0, {})), 'timeZone', 'Z')
   let location = matchstr(a:title, '\%( at \)\@<=.\+$')
   let opt = len(location) ? { 'location': location } : {}
   let recurrence = a:0 ? a:1 : {}
@@ -414,22 +418,8 @@ function! calendar#google#calendar#insert(calendarId, title, start, end, year, m
           \ has_key(recurrence, 'day') ? ('FREQ=DAILY;COUNT=' . recurrence.day) :
           \ '') ] })
   endif
-  if timezone ==# 'Z'
-    if has_key(start, 'dateTime')
-      let start.dateTime .= timezone
-    endif
-    if has_key(end, 'dateTime')
-      let end.dateTime .= timezone
-    endif
-    let tz = {}
-  else
-    if has_key(start, 'dateTime')
-      let start.timeZone = timezone
-    endif
-    if has_key(end, 'dateTime')
-      let end.timeZone = timezone
-    endif
-  endif
+  call s:set_timezone(a:calendarId, start)
+  call s:set_timezone(a:calendarId, end)
   call calendar#google#client#post_async(s:newid(['insert', 0, a:year, a:month, a:calendarId, a:start, a:end, a:title, opt]),
         \ 'calendar#google#calendar#insert_response',
         \ calendar#google#calendar#get_url('calendars/' . a:calendarId . '/events'),
@@ -478,6 +468,20 @@ function! calendar#google#calendar#delete_response(id, response)
     endif
   else
     call calendar#webapi#echo_error(a:response)
+  endif
+endfunction
+
+function! s:set_timezone(calendarId, obj)
+  let calendars = filter(calendar#google#calendar#getMyCalendarList(), 'v:val.id ==# a:calendarId')
+  let timezone = get(get(calendars, 0, get(calendar#google#calendar#getMyCalendarList(), 0, {})), 'timeZone', 'Z')
+  if timezone ==# 'Z'
+    if has_key(a:obj, 'dateTime')
+      let a:obj.dateTime .= timezone
+    endif
+  else
+    if has_key(a:obj, 'dateTime')
+      let a:obj.timeZone = timezone
+    endif
   endif
 endfunction
 

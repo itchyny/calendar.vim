@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/19 18:24:46.
+" Last Change: 2014/01/20 14:28:02.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -88,10 +88,10 @@ function! s:self.action(action) dict
         let [title, startdate, enddate, recurrence] = s:parse_title(title, 1)
         let opt = {}
         if startdate !=# ''
-          call extend(opt, { 'start': startdate =~# 'T\d' ? { 'dateTime': startdate } : { 'date': startdate } })
+          call extend(opt, { 'start': startdate =~# 'T\d' ? { 'dateTime': startdate, 'date': function('calendar#webapi#null') } : { 'date': startdate, 'dateTime': function('calendar#webapi#null')  } })
         endif
         if enddate !=# ''
-          call extend(opt, { 'end': enddate =~# 'T\d' ? { 'dateTime': enddate } : { 'date': enddate } })
+          call extend(opt, { 'end': enddate =~# 'T\d' ? { 'dateTime': enddate, 'date': function('calendar#webapi#null') } : { 'date': enddate, 'dateTime': function('calendar#webapi#null') } })
         endif
         call extend(opt, recurrence)
         call b:calendar.event.update(calendarId, eventid, title, year, month, opt)
