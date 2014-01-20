@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/util.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/10 09:11:15.
+" Last Change: 2014/01/20 21:30:33.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -113,25 +113,28 @@ else
 endif
 
 " xor function from vital.vim
-function! calendar#util#xor(a, b)
-  if exists('*xor')
+if exists('*xor')
+  function! calendar#util#xor(a, b)
     return xor(a:a, a:b)
-  endif
-  let a = a:a < 0 ? a:a - 0x80000000 : a:a
-  let b = a:b < 0 ? a:b - 0x80000000 : a:b
-  let r = 0
-  let n = 1
-  while a || b
-    let r += s:xor[a % 0x10][b % 0x10] * n
-    let a = a / 0x10
-    let b = b / 0x10
-    let n = n * 0x10
-  endwhile
-  if (a:a < 0) != (a:b < 0)
-    let r += 0x80000000
-  endif
-  return r
-endfunction
+  endfunction
+else
+  function! calendar#util#xor(a, b)
+    let a = a:a < 0 ? a:a - 0x80000000 : a:a
+    let b = a:b < 0 ? a:b - 0x80000000 : a:b
+    let r = 0
+    let n = 1
+    while a || b
+      let r += s:xor[a % 0x10][b % 0x10] * n
+      let a = a / 0x10
+      let b = b / 0x10
+      let n = n * 0x10
+    endwhile
+    if (a:a < 0) != (a:b < 0)
+      let r += 0x80000000
+    endif
+    return r
+  endfunction
+endif
 
 " xor table from vital.vim
 let s:xor = [
