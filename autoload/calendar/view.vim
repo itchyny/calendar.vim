@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/14 05:40:02.
+" Last Change: 2014/01/20 18:12:01.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -137,7 +137,9 @@ function! s:self.get_overlap() dict
           if j < len(o)
             call add(o[j], i)
             call add(lw[j], [l, w])
-            if len(o[j]) > 1
+            if len(o[j]) <= 1
+              continue
+            else
               let f = 1
               if len(o[j]) == 2
                 if lw[j][0][0] <= l && lw[j][0][0] + lw[j][0][1] >= l
