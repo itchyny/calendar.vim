@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/text.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/28 20:13:45.
+" Last Change: 2014/01/20 21:59:55.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -75,10 +75,12 @@ fu! s:self.concat(t) dict
   if !a:t.t
     let self.s = l . a:t.s . r
   en
+  if x
   for i in p
     let t[i][2] += x
     let t[i][3] += x
   endfo
+  en
   for i in q
     if s[i][2] >= y | let s[i][2] += m | en
     if s[i][3] >= y | let s[i][3] += m | en
