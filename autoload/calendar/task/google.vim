@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/task/google.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/21 09:17:40.
+" Last Change: 2014/01/21 17:45:04.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -27,7 +27,7 @@ function! s:self.insert(listid, previous, title) dict
 endfunction
 
 function! s:self.update(listid, taskid, title) dict
-  call calendar#google#task#update(a:listid, a:previous, a:title)
+  call calendar#google#task#update(a:listid, a:taskid, a:title)
 endfunction
 
 function! s:self.complete(listid, taskid) dict
