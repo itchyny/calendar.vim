@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/20 18:12:01.
+" Last Change: 2014/01/21 20:00:42.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -391,7 +391,21 @@ function! s:self.action(action) dict
       if getcmdtype() ==# ':'
         let cmd = calendar#util#getcmdline()
         let digits = []
-        if cmd =~# '^\s*\d\+\s*$'
+        if cmd =~# '^\s*marks\s*$'
+          call b:calendar.mark.showmarks()
+          return calendar#util#update_keys()
+        elseif cmd =~# '^\s*\(ma\%[rk]\s\+\|k\s*\)[a-z]\s*$'
+          let mark = matchstr(cmd, '[a-z]\(\s*$\)\@=')
+          call b:calendar.mark.set(mark)
+          return calendar#util#update_keys()
+        elseif cmd =~# '^\s*delm\%[arks]!\s*$'
+          call b:calendar.mark.delmarks()
+          return calendar#util#update_keys()
+        elseif cmd =~# '^\s*delm\%[arks]\s\+[a-z]\s*$'
+          let mark = matchstr(cmd, '[a-z]\(\s*$\)\@=')
+          call b:calendar.mark.delmarks(mark)
+          return calendar#util#update_keys()
+        elseif cmd =~# '^\s*\d\+\s*$'
           return calendar#util#update_keys()
         elseif cmd =~# '^\s*\d\+\s*/\s*\d\+\s*\(/\s*\d\+\s*\)\?$'
           let digits = map(split(cmd, '/'), 'matchstr(v:val, "\\d\\+") * 1')
