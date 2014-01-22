@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/20 22:43:07.
+" Last Change: 2014/01/22 20:22:08.
 " =============================================================================
 
 " Web interface.
@@ -248,7 +248,7 @@ function! calendar#webapi#callback(id, cb)
     endif
     if len(data)
       let i = 0
-      while data[i] =~ '^HTTP/1.\d 3' || data[i] =~ '^HTTP/1\.\d 200 Connection established' || data[i] =~ '^HTTP/1\.\d 100 Continue'
+      while i < len(data) && (data[i] =~ '^HTTP/1.\d 3' || data[i] =~ '^HTTP/1\.\d 200 Connection established' || data[i] =~ '^HTTP/1\.\d 100 Continue')
         while i < len(data) && data[i] !~# '^\r\?$'
           let i += 1
         endwhile
