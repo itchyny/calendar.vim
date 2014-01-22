@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/20 17:39:31.
+" Last Change: 2014/01/22 20:45:47.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -420,7 +420,7 @@ function! calendar#google#calendar#insert(calendarId, title, start, end, year, m
   endif
   call s:set_timezone(a:calendarId, start)
   call s:set_timezone(a:calendarId, end)
-  call calendar#google#client#post_async(s:newid(['insert', 0, a:year, a:month, a:calendarId, a:start, a:end, a:title, opt]),
+  call calendar#google#client#post_async(s:newid(['insert', 0, a:year, a:month, a:calendarId, start, end, a:title, opt]),
         \ 'calendar#google#calendar#insert_response',
         \ calendar#google#calendar#get_url('calendars/' . a:calendarId . '/events'),
         \ { 'calendarId': a:calendarId },
@@ -438,7 +438,7 @@ function! calendar#google#calendar#insert_response(id, response)
             \ 'calendar#google#calendar#insert_response',
             \ calendar#google#calendar#get_url('calendars/' . calendarId . '/events'),
             \ { 'calendarId': calendarId },
-            \ extend({ 'summary': title, 'start': start, 'end': end }, opt))
+            \ extend({ 'summary': title, 'start': start, 'end': end, 'transparency': 'transparent'  }, opt))
     endif
   else
     call calendar#webapi#echo_error(a:response)
