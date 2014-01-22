@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_textbox.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/19 12:50:27.
+" Last Change: 2014/01/22 19:59:47.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -25,7 +25,7 @@ let s:instance._texts = []
 let s:instance.select = 0
 let s:instance.noindex = []
 let s:instance._select_title = 0
-let s:instance.completed = []
+let s:instance.syntax = []
 let s:instance.length = 0
 let s:instance._current_contents = {}
 let s:instance._prev_contents = {}
@@ -45,6 +45,7 @@ function! s:instance.contents() dict
   let s = []
   let frame = calendar#setting#frame()
   let width = calendar#string#strdisplaywidth(frame.vertical)
+  let flen = len(frame.vertical)
   let top = frame.topleft . repeat(frame.horizontal, (self.sizex() - 2) / width - 2) . frame.topright
   let bottom = frame.bottomleft . repeat(frame.horizontal, (self.sizex() - 2) / width - 2) . frame.bottomright
   let w = self.sizex() - 4 - width * 2
@@ -67,22 +68,24 @@ function! s:instance.contents() dict
   let texts = map(range(len(s)), 'calendar#text#new(" " . frame.vertical . " " . s[v:val] . " " . frame.vertical . " ", 0, v:val + 1, "")')
   call insert(texts, calendar#text#new(' ' . top . ' ', 0, 0, ''), 0)
   call add(texts, calendar#text#new(' ' . bottom . ' ', 0, len(s), ''))
-  for i in self.completed
+  let selsyn = ''
+  for [i, syn] in self.syntax
     if self.min_index <= i && i < self.min_index + sizey
-      let len = len(calendar#string#truncate(get(self.cnt, i, ''), w)) + 2
-      call add(texts, calendar#text#new(len, 1 + len(frame.vertical), 1 + i - self.min_index, 'Comment'))
+      let len = len(s[i]) + 2
+      call add(texts, calendar#text#new(len, 1 + flen, 1 + i - self.min_index, syn))
+      if i == self.select
+        let selsyn = syn
+      endif
     endif
   endfor
   if self.is_selected()
     if self.select < len(self.cnt)
       if self._select_line
-        let len = len(calendar#string#truncate(get(self.cnt, self.select, ''), w)) + 2
-        let [x, y] = [1 + len(frame.vertical), 1 + self.select - self.min_index]
-        let syn = index(self.completed, self.select) < 0 ? 'Select' : 'SelectComment'
-        call add(texts, calendar#text#new(len, x, y, syn))
+        let len = len(s[self.select]) + 2
+        call add(texts, calendar#text#new(len, 1 + flen, 1 + self.select - self.min_index, selsyn .  'Select'))
       endif
     endif
-    call add(texts, calendar#text#new(0, 1 + len(frame.vertical), 1 + self.select - self.min_index, 'Cursor'))
+    call add(texts, calendar#text#new(0, 1 + flen, 1 + self.select - self.min_index, 'Cursor'))
   endif
   let self._texts = deepcopy(texts)
   let self._key = [self.is_selected(), self.select, self.sizex(), self.sizey(), get(self, 'min_index'), get(self, 'max_index')] + self.get_key()
@@ -98,7 +101,7 @@ function! s:instance.get_contents() dict
     return self.cnt
   endif
   let self.noindex = []
-  let self.completed = []
+  let self.syntax = []
   let cnt = []
   let frame = calendar#setting#frame()
   let width = calendar#string#strdisplaywidth(frame.vertical)
@@ -142,7 +145,9 @@ function! s:instance.get_contents() dict
           let self._current_group_id = get(t, 'id', '')
         endif
         if get(tt, 'status', '') ==# 'completed'
-          call add(self.completed, len(cnt))
+          call add(self.syntax, [len(cnt), 'Comment'])
+        elseif has_key(tt, 'syntax')
+          call add(self.syntax, [len(cnt), tt.syntax])
         endif
         call add(cnt, get(tt, 'title', get(tt, 'summary', '')))
       endfor

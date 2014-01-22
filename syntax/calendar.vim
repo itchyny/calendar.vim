@@ -3,7 +3,7 @@
 " Version: 0.0
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/12 21:53:04.
+" Last Change: 2014/01/22 19:41:58.
 " =============================================================================
 
 if version < 700
@@ -83,7 +83,7 @@ call calendar#color#syntax('SaturdayTitle', s:saturday_title_fg_color, s:saturda
 call calendar#color#syntax('OtherMonth', s:othermonth_fg_color, '', '')
 call calendar#color#syntax('OtherMonthSelect', s:othermonth_fg_color, s:select_color, '')
 call calendar#color#syntax('NormalSpace', s:bg_color, s:fg_color, '')
-call calendar#color#syntax('SelectComment', s:comment_fg_color, s:select_color, '')
+call calendar#color#syntax('CommentSelect', s:comment_fg_color, s:select_color, '')
 
 highlight link CalendarComment Comment
 

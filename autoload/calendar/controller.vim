@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/controller.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/21 20:01:08.
+" Last Change: 2014/01/22 19:41:54.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -32,7 +32,7 @@ let s:self.action_name = ''
 let s:self.syntaxnames = ['Select', 'Sunday', 'Saturday',
       \ 'TodaySunday', 'TodaySaturday', 'Today',
       \ 'OtherMonth', 'OtherMonthSelect', 'DayTitle', 'SundayTitle', 'SaturdayTitle',
-      \ 'NormalSpace', 'Comment', 'SelectComment']
+      \ 'NormalSpace', 'Comment', 'CommentSelect']
 
 function! s:self.time() dict
   return self.model.time()
