@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/22 20:22:08.
+" Last Change: 2014/01/25 20:28:41.
 " =============================================================================
 
 " Web interface.
@@ -69,12 +69,16 @@ function! calendar#webapi#encodeURI(items, ...)
   let ret = ''
   if type(a:items) == 4
     for key in sort(keys(a:items))
-      if strlen(ret) | let ret .= "&" | endif
+      if ret !=# ''
+        let ret .= "&"
+      endif
       let ret .= key . "=" . calendar#webapi#encodeURI(a:items[key])
     endfor
   elseif type(a:items) == 3
     for item in sort(a:items)
-      if strlen(ret) | let ret .= "&" | endif
+      if ret !=# ''
+        let ret .= "&"
+      endif
       let ret .= item
     endfor
   else
@@ -177,7 +181,7 @@ function! s:request(json, async, url, ...)
   let paramstr = calendar#webapi#encodeURI(param)
   let withbody = method !=# 'GET' && method !=# 'DELETE'
   let headdata = {}
-  if strlen(paramstr)
+  if paramstr !=# ''
     let url .= "?" . paramstr
   endif
   let quote = s:_quote()
@@ -276,7 +280,7 @@ function! calendar#webapi#callback(id, cb)
             \ "header" : header,
             \ "content" : content
             \ }
-      if len(a:cb)
+      if a:cb !=# ''
         exec 'call ' . a:cb . '(a:id, response)'
       endif
     else
@@ -366,7 +370,7 @@ function! calendar#webapi#echo_error(response)
       let message = get(get(cnt, 'error', {}), 'message', '')
     endif
   endif
-  if len(message)
+  if message !=# ''
     call calendar#echo#error(message)
   endif
 endfunction
@@ -401,14 +405,14 @@ function! s:encodeURI(items)
   let ret = ''
   if type(a:items) == type({})
     for key in sort(keys(a:items))
-      if strlen(ret)
+      if ret !=# ''
         let ret .= "&"
       endif
       let ret .= key . "=" . s:encodeURI(a:items[key])
     endfor
   elseif type(a:items) == type([])
     for item in sort(a:items)
-      if strlen(ret)
+      if ret !=# ''
         let ret .= "&"
       endif
       let ret .= item

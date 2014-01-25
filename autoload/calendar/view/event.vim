@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/20 14:28:02.
+" Last Change: 2014/01/25 20:18:58.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -41,7 +41,7 @@ function! s:self.get_raw_contents() dict
       let startdate = calendar#day#join_date(e.ymd)
       let enddate = calendar#day#join_date(e.endymd)
     endif
-    if len(starttime) || len(endtime)
+    if starttime !=# '' || endtime !=# ''
       let e.title = (samedate ? '' : startdate . ' ') . starttime . ' - ' . (samedate ? '' : enddate . ' ') . endtime . ' ' . e.summary
     else
       if !samedate
@@ -75,7 +75,7 @@ function! s:self.action(action) dict
   let [year, month, day] = b:calendar.day().get_ymd()
   let eventid = get(event, 'id', '')
   if index(['delete', 'delete_line'], a:action) >= 0
-    if len(calendarId)
+    if calendarId !=# ''
       call b:calendar.event.delete(calendarId, eventid, year, month)
     endif
   elseif index(['start_insert', 'start_insert_append', 'start_insert_head', 'start_insert_last', 'change', 'change_line'], a:action) >= 0

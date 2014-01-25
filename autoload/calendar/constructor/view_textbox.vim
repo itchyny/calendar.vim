@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_textbox.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/22 20:11:39.
+" Last Change: 2014/01/25 20:25:23.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -259,19 +259,15 @@ function! s:instance._action(action) dict
     let self.max_index += diff
   elseif a:action ==# 'status'
     let message = get(self.current_contents(), 'title', get(self.current_contents(), 'summary', ''))
-    if len(message)
-      call calendar#echo#message(message)
-    endif
+    call calendar#echo#message(message)
     return 1
   elseif index(['yank', 'yank_line'], a:action) >= 0
     let message = get(self.current_contents(), 'title', get(self.current_contents(), 'summary', ''))
-    if len(message)
-      call calendar#util#yank(message)
-    endif
+    call calendar#util#yank(message)
     return 1
   elseif a:action ==# 'enter'
     let url = get(self.current_contents(), 'htmlLink', '')
-    if len(url)
+    if url !=# ''
       call calendar#webapi#open_url(url)
     endif
   elseif a:action ==# 'command_enter' && mode() ==# 'c' && getcmdtype() ==# ':'

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/event/local.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/19 18:28:38.
+" Last Change: 2014/01/25 20:23:23.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -35,7 +35,7 @@ function! s:self.get_events_one_month(year, month, ...) dict
           let ymd = map(split(date, '-'), 'v:val + 0')
           let enddate = has_key(itm.end, 'date') ? itm.end.date : has_key(itm.end, 'dateTime') ? matchstr(itm.end.dateTime, '\d\+-\d\+-\d\+') : ''
           let endymd = map(split(enddate, '-'), 'v:val + 0')
-          if len(date) && len(ymd) == 3 && len(endymd) == 3
+          if date !=# '' && len(ymd) == 3 && len(endymd) == 3
             let date = printf('%4d-%02d-%02d', ymd[0], ymd[1], ymd[2])
             if has_key(itm.end, 'date')
               let endymd = calendar#day#new(endymd[0], endymd[1], endymd[2]).add(-1).get_ymd()

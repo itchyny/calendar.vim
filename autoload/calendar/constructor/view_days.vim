@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_days.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/14 22:30:16.
+" Last Change: 2014/01/25 20:25:51.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -342,16 +342,16 @@ function! s:instance.set_contents() dict
       let self.has_today = 1
     endif
     let syn = is_today ? st : d.is_sunday() || get(evts, 'hasHoliday') ? su : d.is_saturday() ? sa : ''
-    if len(syn)
+    if syn !=# ''
       let l = is_today ? len(calendar#string#truncate_reverse(s[y], v.inner_width)) : 2
       let syn2 = !is_today ? '' : d.is_sunday() || get(evts, 'hasHoliday') ? tsu : d.is_saturday() ? tsa : ''
       let x = len(calendar#string#truncate(s[y], w * i + f.width))
-      if len(syn2)
+      if syn2 !=# ''
         let x += 2
         let l -= 2
       endif
       call add(syntax, calendar#text#new(l, x, y, syn))
-      if len(syn2)
+      if syn2 !=# ''
         let l = 2
         let x = len(calendar#string#truncate(s[y], w * i + f.width))
         if len(syntax) && syntax[-1].y == y

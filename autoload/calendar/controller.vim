@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/controller.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/22 19:41:54.
+" Last Change: 2014/01/25 20:16:44.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -199,7 +199,7 @@ function! s:self.redraw(...) dict
   let b = 'syntax match Calendar%s /\%%%dl\%%%dc.*\%%%dc/'
   for t in u
     for s in t.syn
-      if len(s[0]) && s[1] >= 0 && s[2] >= 0
+      if s[0] !=# '' && s[1] >= 0 && s[2] >= 0
         if s[0] ==# c
           let self.pos = [s[2], s[1]]
         elseif s[4]
