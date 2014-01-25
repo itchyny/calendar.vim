@@ -39,6 +39,15 @@ Press E key to view the event list, and T key to view the task list.
 
 You can switch between views with &lt; and &gt; keys.
 
+
+
+![calendar.vim](https://raw.github.com/wiki/itchyny/calendar.vim/image/frame.png)
+
+If you have a trouble like the above screenshot, add the following configuration to your vimrc.
+```vim
+let g:calendar_frame = 'default'
+```
+
 ## Concept
 This is a calendar which is ...
 
