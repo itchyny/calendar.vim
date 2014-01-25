@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/25 20:28:41.
+" Last Change: 2014/01/25 20:38:37.
 " =============================================================================
 
 " Web interface.
@@ -28,21 +28,6 @@ function! s:response()
   return { 'status': 500, 'message': '', 'header': [], 'content': [] }
 endfunction
 
-function! s:urlencode_char(c, ...)
-  let is_binary = get(a:000, 1)
-  if !is_binary
-    let c = iconv(a:c, &encoding, "utf-8")
-    if c == ""
-      let c = a:c
-    endif
-  endif
-  let s = ""
-  for i in range(strlen(c))
-    let s .= printf("%%%02X", char2nr(c[i]))
-  endfor
-  return s
-endfunction
-
 function! s:nr2byte(nr)
   if a:nr < 0x80
     return nr2char(a:nr)
@@ -62,29 +47,6 @@ function! s:nr2enc_char(charcode)
     let char = strtrans(iconv(char, 'utf-8', &encoding))
   endif
   return char
-endfunction
-
-function! calendar#webapi#encodeURI(items, ...)
-  let is_binary = get(a:000, 1)
-  let ret = ''
-  if type(a:items) == 4
-    for key in sort(keys(a:items))
-      if ret !=# ''
-        let ret .= "&"
-      endif
-      let ret .= key . "=" . calendar#webapi#encodeURI(a:items[key])
-    endfor
-  elseif type(a:items) == 3
-    for item in sort(a:items)
-      if ret !=# ''
-        let ret .= "&"
-      endif
-      let ret .= item
-    endfor
-  else
-    let ret = substitute(a:items, '[^a-zA-Z0-9_.~-]', '\=s:urlencode_char(submatch(0), is_binary)', 'g')
-  endif
-  return ret
 endfunction
 
 function! s:execute(command)
@@ -401,14 +363,14 @@ function! s:escape(str)
   return substitute(a:str, '[^a-zA-Z0-9_.-]', '\=printf("%%%02X", char2nr(submatch(0)))', 'g')
 endfunction
 
-function! s:encodeURI(items)
+function! calendar#webapi#encodeURI(items)
   let ret = ''
   if type(a:items) == type({})
     for key in sort(keys(a:items))
       if ret !=# ''
         let ret .= "&"
       endif
-      let ret .= key . "=" . s:encodeURI(a:items[key])
+      let ret .= key . "=" . calendar#webapi#encodeURI(a:items[key])
     endfor
   elseif type(a:items) == type([])
     for item in sort(a:items)
@@ -425,7 +387,7 @@ endfunction
 
 function! s:postdata(data)
   if type(a:data) == type({})
-    return [s:encodeURI(a:data)]
+    return [calendar#webapi#encodeURI(a:data)]
   elseif type(a:data) == type([])
     return a:data
   else
