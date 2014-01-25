@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/cache.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/28 01:09:37.
+" Last Change: 2014/01/25 20:15:19.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -98,7 +98,7 @@ function! s:self.get(key) dict
   if filereadable(path)
     let result = readfile(path)
     try
-      if len(result) > 0
+      if len(result)
         sandbox return eval(join(result, ''))
       else
         return 1
