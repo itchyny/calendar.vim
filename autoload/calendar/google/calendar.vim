@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/22 20:45:47.
+" Last Change: 2014/01/25 20:13:10.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -117,6 +117,7 @@ function! calendar#google#calendar#getEvents(year, month, ...)
     call calendar#google#calendar#getEventsInitial(a:year, a:month)
   endif
   if has_key(calendarList, 'items') && type(calendarList.items) == type([]) && len(calendarList.items)
+    let dark = &bg ==# 'dark'
     for item in calendarList.items
       if !get(item, 'selected')
         continue
@@ -170,7 +171,6 @@ function! calendar#google#calendar#getEvents(year, month, ...)
                     let events[date].hasMoon = 1
                     let events[date].moonIndex = len(events[date].events) - 1
                     let summary = events[date].events[-1].summary
-                    let dark = &bg ==# 'dark'
                     let moon = summary =~# '^New moon'      ? (dark ? "\u25cb" : "\u25cf")
                           \  : summary =~# '^First quarter' ? (dark ? "\u25d1" : "\u25d0")
                           \  : summary =~# '^Full moon'     ? (dark ? "\u25cf" : "\u25cb")
@@ -178,7 +178,7 @@ function! calendar#google#calendar#getEvents(year, month, ...)
                           \  : ''
                     let moon = calendar#string#truncate(moon, 2)
                     let events[date].events[-1].moon = moon
-                    if len(moon)
+                    if moon !=# ''
                       let events[date].events[-1].summary = moon . ' ' . events[date].events[-1].summary
                     endif
                   endif
