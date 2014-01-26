@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/month.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/25 20:19:52.
+" Last Change: 2014/01/26 21:52:51.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -169,7 +169,9 @@ function! s:self.set_contents() dict
       let right = evts.events[evts.moonIndex].moon . right
     endif
     if w > len(right) + 3 + f.width && len(right)
-      let cut = calendar#string#truncate_reverse(s[y], calendar#string#strdisplaywidth(right) + 1)
+      let le = calendar#string#strdisplaywidth(right) + 1
+      let s[y] = calendar#string#truncate(s[y], calendar#string#strdisplaywidth(s[y]) - le) . repeat(' ', le)
+      let cut = calendar#string#strwidthpart_reverse(s[y], le)
       let s[y] = s[y][:-len(cut)-1] . ' ' . right
     endif
     let is_today = today.eq(d)
