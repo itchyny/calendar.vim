@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/19 22:48:07.
+" Last Change: 2014/01/26 21:15:57.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -284,7 +284,7 @@ endfunction
 
 let s:id_data = {}
 function! s:newid(data)
-  let id = join([ 'google', 'task', a:data[0] ], '_') . calendar#util#id()
+  let id = join([ 'google', 'task', a:data[0] ], '_') . '_' . calendar#util#id()
   let s:id_data[id] = a:data
   return id
 endfunction

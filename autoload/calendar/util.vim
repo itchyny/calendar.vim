@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/util.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/20 21:30:33.
+" Last Change: 2014/01/26 21:18:00.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -74,11 +74,12 @@ function! calendar#util#yank(text)
 endfunction
 
 " Id generator
+let s:id = 0
 function! calendar#util#id()
   let ymd = calendar#day#today().get_ymd()
   let hms = calendar#time#now().get_hms()
-  let rnd = [calendar#random#number(1000000, 9000000) + 1000000]
-  return join(ymd + hms + rnd, '_')
+  let s:id = (s:id + 1) % 10000
+  return printf('%04d%02d%02d%02d%02d%02d%04d', ymd[0], ymd[1], ymd[2], hms[0], hms[1], hms[2], s:id)
 endfunction
 
 " Execute shell command.
