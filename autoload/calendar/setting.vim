@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/setting.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/20 22:33:24.
+" Last Change: 2014/01/26 19:43:41.
 " =============================================================================
 
 scriptencoding utf-8
@@ -59,11 +59,8 @@ function! s:clock_12hour()
   return 0
 endfunction
 
+let s:c = expand('~/.cache/calendar.vim/')
 function! s:cache_directory()
-  if has_key(s:, 'c')
-    return s:c
-  endif
-  let s:c = expand('~/.cache/calendar.vim/')
   return s:c
 endfunction
 
