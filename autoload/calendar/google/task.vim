@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/26 21:15:57.
+" Last Change: 2014/01/27 09:03:17.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -53,7 +53,7 @@ let s:initial_download = 0
 function! calendar#google#task#getTasks()
   if !s:initial_download
     let s:initial_download = 1
-    if calendar#timestamp#update('google#task.vim', 1, 60 * 60)
+    if calendar#timestamp#update('google_task', 1, 3 * 60 * 60)
       call calendar#async#new('calendar#google#task#downloadTasks(1)')
     endif
   endif

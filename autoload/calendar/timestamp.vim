@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/timestamp.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/05 12:51:29.
+" Last Change: 2014/01/27 09:10:23.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -21,7 +21,7 @@ function! calendar#timestamp#update(name, day, sec)
         \ && has_key(cache, 'time') && type(cache.time) == type([]) && len(cache.time) == 3
     let daydiff = calendar#day#today().sub(call('calendar#day#new', cache.day))
     let timediff = calendar#time#now().sub(call('calendar#time#new', cache.time))
-    let refresh = daydiff >= a:day || timediff >= a:sec
+    let refresh = daydiff >= a:day && timediff + 86400 >= a:sec || timediff >= a:sec
   else
     let refresh = 1
   endif
