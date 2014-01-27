@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/mapping.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/21 22:37:48.
+" Last Change: 2014/01/27 09:16:53.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -216,6 +216,10 @@ function! calendar#mapping#new()
 
   " command line
   cmap <buffer> <CR> <Plug>(calendar_command_enter)
+
+  " mouse wheel
+  map <buffer> <ScrollWheelUp> <Plug>(calendar_prev)
+  map <buffer> <ScrollWheelDown> <Plug>(calendar_next)
 
 endfunction
 
