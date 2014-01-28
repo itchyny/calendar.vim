@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/color.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/13 11:03:27.
+" Last Change: 2014/01/28 01:38:04.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -25,7 +25,7 @@ function! calendar#color#new_syntax(id, fg, bg)
   else
     let syntaxnames = []
   endif
-  let name = substitute(a:id, '[^a-zA-Z0-9]', '', 'g')
+  let name = s:shorten(substitute(a:id, '[^a-zA-Z0-9]', '', 'g'))
   if len(name) && len(a:fg) && len(a:bg)
     let flg = 0
     if &bg ==# 'dark' && a:fg ==# '#000000' || &bg ==# 'light' && a:fg ==# '#ffffff'
@@ -387,6 +387,16 @@ function! s:select_color()
     let select_color = s:is_dark ? 8 : 7
   endif
   return select_color
+endfunction
+
+let s:num = 0
+let s:nums = {}
+function! s:shorten(name)
+  let name = matchstr(a:name, '...')
+  let name = name ==# '' ? a:name : name
+  let s:num = (s:num + 1) % 26
+  let s:nums[a:name] = get(s:nums, a:name, s:num)
+  return name . 'abcdefghijklmnopqrstuvwxyz'[s:nums[a:name]]
 endfunction
 
 let &cpo = s:save_cpo
