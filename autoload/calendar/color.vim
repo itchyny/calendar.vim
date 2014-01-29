@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/color.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/28 01:38:04.
+" Last Change: 2014/01/29 00:33:26.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -36,12 +36,19 @@ function! calendar#color#new_syntax(id, fg, bg)
     endif
     let cuifg = calendar#color#convert(fg)
     let cuibg = calendar#color#convert(bg)
+    if flg
+      let _bg = bg
+      let _cuibg = cuibg
+    else
+      let _bg = calendar#color#whiten(bg)
+      let _cuibg = calendar#color#convert(_bg)
+    endif
     if cuifg >= 0
       if index(syntaxnames, name) < 0
         call add(syntaxnames, name)
       endif
-      if cuibg >= 0
-        exec 'highlight Calendar' . name . ' ctermfg=' . cuifg . ' ctermbg=' . cuibg . ' guifg=' . fg . ' guibg=' . bg
+      if _cuibg >= 0
+        exec 'highlight Calendar' . name . ' ctermfg=' . cuifg . ' ctermbg=' . _cuibg . ' guifg=' . fg . ' guibg=' . _bg
       else
         exec 'highlight Calendar' . name . ' ctermfg=' . cuifg . ' guifg=' . fg
       endif
@@ -89,6 +96,14 @@ function! calendar#color#convert(rgb)
   else
     return 16 + ((s:nr(rgb[0]) * 6) + s:nr(rgb[1])) * 6 + s:nr(rgb[2])
   endif
+endfunction
+
+function! calendar#color#whiten(rgb)
+  let rgb = map(matchlist(a:rgb, '#\(..\)\(..\)\(..\)')[1:3], '0 + ("0x".v:val)')
+  if len(rgb) == 0
+    return -1
+  endif
+  return printf('#%02x%02x%02x', min([rgb[0] + 0x36, 0xff]), min([rgb[1] + 0x36, 0xff]), min([rgb[2] + 0x36, 0xff]))
 endfunction
 
 function! s:black(x)
