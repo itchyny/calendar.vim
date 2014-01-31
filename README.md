@@ -4,6 +4,7 @@
 ![calendar.vim](https://raw.github.com/wiki/itchyny/calendar.vim/image/image.png)
 
 Press E key to view the event list, and T key to view the task list.
+Also, press ? key to view a quick help.
 
 ![calendar.vim](https://raw.github.com/wiki/itchyny/calendar.vim/image/views.png)
 
