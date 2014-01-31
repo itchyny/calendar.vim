@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/month.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/26 21:52:51.
+" Last Change: 2014/01/31 00:53:14.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -266,7 +266,7 @@ function! s:self.contents() dict
     call self.on_resize()
   endif
   if self._month != b:calendar.month().get_ym() || self._today != calendar#day#today().get_ymd() || get(g:, 'calendar_google_event_download') > 0 || b:calendar.event._updated
-    if has_key(g:, 'calendar_google_event_download') && get(g:, 'calendar_google_event_download') > 0
+    if get(g:, 'calendar_google_event_download') > 0
       let g:calendar_google_event_download -= 1
     endif
     call self.set_contents()

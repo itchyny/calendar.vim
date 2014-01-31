@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/19 18:25:08.
+" Last Change: 2014/01/25 20:18:58.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -59,7 +59,7 @@ endfunction
 
 function! s:self.get_events(year, month) dict
   let key = a:year . '-' . a:month
-  if self._updated > 1
+  if self._updated > 0
     let self._updated -= 1
   endif
   if has_key(self.__events, key) && (!calendar#setting#get('google_calendar') || get(g:, 'calendar_google_event_download', 1) <= 0) && !self._updated
