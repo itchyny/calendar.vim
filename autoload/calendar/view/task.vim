@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/08 15:38:51.
+" Last Change: 2014/02/01 07:45:34.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -30,6 +30,7 @@ function! s:self.action(action) dict
   let prevtask = self.prev_contents()
   let prevtaskid = get(prevtask, 'id', '')
   if index(['delete', 'delete_line'], a:action) >= 0
+    call self.yank()
     call b:calendar.task.complete(self.current_group_id(), taskid)
   elseif index(['undo_line'], a:action) >= 0
     call b:calendar.task.uncomplete(self.current_group_id(), taskid)

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/25 20:18:58.
+" Last Change: 2014/02/01 07:45:28.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -75,6 +75,7 @@ function! s:self.action(action) dict
   let [year, month, day] = b:calendar.day().get_ymd()
   let eventid = get(event, 'id', '')
   if index(['delete', 'delete_line'], a:action) >= 0
+    call self.yank()
     if calendarId !=# ''
       call b:calendar.event.delete(calendarId, eventid, year, month)
     endif
