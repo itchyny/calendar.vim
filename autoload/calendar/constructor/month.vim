@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/month.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/28 13:06:54.
+" Last Change: 2014/02/02 17:40:25.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -90,10 +90,12 @@ endfunction
 
 function! s:instance.head_day() dict
   if has_key(self, '_head_day') | return self._head_day | endif
-  let y = self._ym[0]
-  let m = self._ym[1]
   let self._head_day = self.day_constructor.new(self._ym[0], self._ym[1], 1)
-  if !self._head_day.is_valid()
+  if self._head_day.is_valid()
+    return self._head_day
+  else
+    let y = self._ym[0]
+    let m = self._ym[1]
     let yy = self._ym[0]
     let mm = self._ym[1] - 1
     if mm < 1
