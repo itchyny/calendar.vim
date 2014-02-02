@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/day_hybrid.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/10/25 23:26:45.
+" Last Change: 2014/02/02 17:36:28.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -64,7 +64,7 @@ function! s:instance.is_gregorian() dict
 endfunction
 
 function! s:instance.get_calendar() dict
-  return ['julian', 'gregorian'][self.is_gregorian()]
+  return self.is_gregorian() ? 'gregorian' : 'julian'
 endfunction
 
 let s:super_constructor = calendar#constructor#day#new(s:instance)
