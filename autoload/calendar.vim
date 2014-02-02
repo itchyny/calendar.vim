@@ -2,7 +2,7 @@
 " Filename: autoload/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/28 12:57:26.
+" Last Change: 2014/02/02 11:34:19.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -35,8 +35,35 @@ function! calendar#new(args)
   " Set day and update the buffer.
   call b:calendar.go(calendar#argument#day(args, calendar#day#today().get_ymd()))
 
+  " Save b:calendar and b:_calendar.
+  call calendar#save()
+
 endfunction
 
+let s:calendar = {}
+let s:_calendar = {}
+
+" Save b:calendar and b:_calendar.
+function! calendar#save()
+  let nr = bufnr('')
+  if has_key(b:, 'calendar')
+    let s:calendar[nr] = b:calendar
+  endif
+  if has_key(b:, '_calendar')
+    let s:_calendar[nr] = b:_calendar
+  endif
+endfunction
+
+" Revive b:calendar and b:_calendar.
+function! calendar#revive()
+  let nr = bufnr('')
+  if !has_key(b:, 'calendar') && has_key(s:calendar, nr)
+    let b:calendar = get(s:calendar, nr, {})
+  endif
+  if !has_key(b:, '_calendar') && has_key(s:_calendar, nr)
+    let b:_calendar = get(s:_calendar, nr, {})
+  endif
+endfunction
 
 " Respect mattn's calendar.vim {{{
 let s:thisfile = expand('<sfile>')

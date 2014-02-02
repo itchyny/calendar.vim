@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/controller.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/25 20:16:44.
+" Last Change: 2014/02/02 11:19:32.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -191,7 +191,7 @@ function! s:self.redraw(...) dict
     redraw
   endif
   call setline(1, map(range(calendar#util#winheight()), 'u[v:val].s'))
-  for name in self.syntaxnames + get(b:, 'calendar_syntaxnames', [])
+  for name in self.syntaxnames + get(b:calendar, 'syntaxnames', [])
     exec 'silent! syntax clear Calendar' . name
   endfor
   let c = 'Cursor'

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/color.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/29 00:33:26.
+" Last Change: 2014/02/02 10:54:10.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -18,10 +18,10 @@ let s:is_dark = &background ==# 'dark'
 
 function! calendar#color#new_syntax(id, fg, bg)
   if has_key(b:, 'calendar')
-    if !has_key(b:, 'calendar_syntaxnames')
-      let b:calendar_syntaxnames = []
+    if !has_key(b:calendar, 'syntaxnames')
+      let b:calendar.syntaxnames = []
     endif
-    let syntaxnames = b:calendar_syntaxnames
+    let syntaxnames = b:calendar.syntaxnames
   else
     let syntaxnames = []
   endif
