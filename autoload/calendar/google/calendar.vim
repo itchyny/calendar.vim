@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/31 09:52:22.
+" Last Change: 2014/02/01 21:32:27.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -343,9 +343,15 @@ function! calendar#google#calendar#response(id, response)
           unlet! cnt
           let cnt = s:event_cache.new(item.id).new(year).new(month).get('information')
           if type(cnt) != type({}) || !has_key(cnt, 'summary')
-            call calendar#google#client#get_async(s:newid(['download', 0, j, 0, timemin, timemax, year, month, item.id]),
-                  \ 'calendar#google#calendar#response',
-                  \ calendar#google#calendar#get_url('calendars/' . item.id . '/events'), opt)
+            if get(item, 'accessRole', '') ==# 'owner'
+              call calendar#google#client#get_async(s:newid(['download', 0, j, 0, timemin, timemax, year, month, item.id]),
+                    \ 'calendar#google#calendar#response',
+                    \ calendar#google#calendar#get_url('calendars/' . item.id . '/events'), opt)
+            else
+              call calendar#google#client#get_async_use_api_key(s:newid(['download', 0, j, 0, timemin, timemax, year, month, item.id]),
+                    \ 'calendar#google#calendar#response',
+                    \ calendar#google#calendar#get_url('calendars/' . s:event_cache.escape(item.id) . '/events'), opt)
+            endif
             break
           endif
           let j += 1
@@ -358,7 +364,7 @@ function! calendar#google#calendar#response(id, response)
       endif
     endif
   elseif a:response.status == 401 || a:response.status == 404
-    if i == 0 && err == 0
+    if i == 0 && err == 0 && get(calendarList.items[j], 'accessRole', '') ==# 'owner'
       call calendar#google#client#refresh_token()
       call calendar#google#client#get_async(s:newid(['download', err + 1, j, i, timemin, timemax, year, month, id]),
             \ 'calendar#google#calendar#response',
