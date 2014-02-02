@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/01/21 12:57:54.
+Last Change: 2014/02/02 17:32:38.
 
 CONTENTS					*calendar-contents*
 
@@ -461,6 +461,7 @@ Utility
 <Plug>(calendar_clear)				*<Plug>(calendar_clear)*
 <Plug>(calendar_help)				*<Plug>(calendar_help)*
 <Plug>(calendar_escape)				*<Plug>(calendar_escape)*
+<Plug>(calendar_hide)				*<Plug>(calendar_hide)*
 <Plug>(calendar_exit)				*<Plug>(calendar_exit)*
 
 Insert mode
@@ -580,7 +581,7 @@ E		|<Plug>(calendar_event)|
 <C-r>		|<Plug>(calendar_redraw)|
 L		|<Plug>(calendar_clear)|
 ?		|<Plug>(calendar_help)|
-q		|<Plug>(calendar_exit)|
+q		|<Plug>(calendar_hide)|
 Q		|<Plug>(calendar_exit)|
 i		|<Plug>(calendar_start_insert)|
 a		|<Plug>(calendar_start_insert_append)|

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/mapping.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/27 09:16:53.
+" Last Change: 2014/02/02 17:29:55.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -37,7 +37,7 @@ function! calendar#mapping#new()
         \ 'add', 'subtract', 'status', 'plus', 'minus', 'task', 'event', 'close_task', 'close_event',
         \ 'delete', 'delete_line', 'yank', 'yank_line', 'change', 'change_line',
         \ 'undo', 'undo_line', 'tab', 'shift_tab',
-        \ 'today', 'enter', 'view_left',  'view_right', 'redraw', 'clear', 'help', 'exit',
+        \ 'today', 'enter', 'view_left',  'view_right', 'redraw', 'clear', 'help', 'hide', 'exit',
         \ 'visual', 'visual_line', 'visual_block', 'exit_visual',
         \ 'start_insert', 'start_insert_append', 'start_insert_head', 'start_insert_last',
         \ 'start_insert_prev_line', 'start_insert_next_line',
@@ -185,7 +185,7 @@ function! calendar#mapping#new()
   nmap <buffer> <C-r> <Plug>(calendar_redraw)
   nmap <buffer> L <Plug>(calendar_clear)
   nmap <buffer> ? <Plug>(calendar_help)
-  nmap <buffer> q <Plug>(calendar_exit)
+  nmap <buffer> q <Plug>(calendar_hide)
   nmap <buffer> Q <Plug>(calendar_exit)
 
   " nop
