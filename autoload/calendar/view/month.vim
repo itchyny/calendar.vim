@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/month.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/31 00:53:14.
+" Last Change: 2014/02/01 22:55:46.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -40,6 +40,11 @@ function! s:self.on_resize() dict
   let self.view.height = h < 3 ? h : max([(self.sizey() - 3) / max([self.view.week_count, 5]), 1])
   if !(self.view.width > 3 && self.view.height > 1)
     let self.frame = calendar#setting#get('frame_space')
+  endif
+  let self.view.heightincr = 0
+  if self.view.week_count == 6 && self.view.height > 2 && max([(self.sizey() - 3) / 5, 1]) - self.view.height >= 2 && (self.view.height + 1) * self.view.week_count + 3 - 1 <= self.sizey()
+    let self.view.height += 1
+    let self.view.heightincr = 1
   endif
   let self.frame.width = calendar#string#strdisplaywidth(self.frame.vertical)
   let self.frame.strlen = len(self.frame.vertical)
@@ -130,7 +135,6 @@ function! s:self.set_contents() dict
   call self.set_day_name()
   let [f, v, e] = [self.frame, self.view, self.element]
   let [h, w, ww] = [v.height, v.width, v.realwidth]
-  let hh = 1 <= h - 2 ? range(1, h - 2) : []
   let s = repeat([''], self.sizey())
   let today = calendar#day#today()
   let month = b:calendar.month()
@@ -193,6 +197,7 @@ function! s:self.set_contents() dict
     endif
     let z = 0
     let longevtIndex = 0
+    let hh = 1 <= h - 2 ? range(1, h - 2 - (v.heightincr && j == 5)) : []
     for x in hh
       if longevtIndex < len(longevt) && longevt[longevtIndex].viewoffset == x
         let lastday = d.get_day() == longevt[longevtIndex].endymd[2]
@@ -238,7 +243,7 @@ function! s:self.set_contents() dict
     call sort(filter(longevt, 'calendar#day#new(v:val.endymd[0], v:val.endymd[1], v:val.endymd[2]).sub(d) > 0 && has_key(v:val, "viewoffset")'), 'calendar#view#month#sorter')
     if h > 1
       let frame = i ? (j + 1 == v.week_count ? f.bottom : f.junction) : j + 1 == v.week_count ? f.bottomleft : f.left
-      let s[y + h - 1] .= frame . self.element.splitter
+      let s[y + h - 1 - (v.heightincr && j == 5)] .= frame . self.element.splitter
     endif
     if i == 6
       let [i, j] = [0, j + 1]
@@ -247,10 +252,10 @@ function! s:self.set_contents() dict
     endif
   endfor
   for i in range(v.week_count)
-    for j in range(h - 1)
+    for j in range(h - 1 - (v.heightincr && i == 5))
       let s[v.offset + h * i + j] .= f.vertical
     endfor
-    let s[v.offset + h * i + h - 1] .= (i + 1 == v.week_count ? f.bottomright : f.right)
+    let s[v.offset + h * i + h - 1 - (v.heightincr && i == 5)] .= (i + 1 == v.week_count ? f.bottomright : f.right)
   endfor
   let self._month = month.get_ym()
   let self._today = today.get_ymd()
@@ -280,7 +285,7 @@ function! s:self.contents() dict
       let key = i . ',' . j
       let l = v.width * i + f.width
       let r = v.width * (i + 1)
-      let hh = range(max([v.height - 1, 1]))
+      let hh = range(max([v.height - 1 - (v.heightincr && j == 5), 1]))
       let y = v.offset + v.height * j
       for h in hh
         let x = len(calendar#string#strwidthpart(self.days[y].s, l))
