@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/color.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/04 17:40:19.
+" Last Change: 2014/02/05 00:06:22.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -411,13 +411,19 @@ function! calendar#color#syntax(name, fg, bg, attr)
   exec 'highlight Calendar' . a:name . term . fg . bg
 endfunction
 
+let s:_select_color = {}
 function! s:select_color()
+  let key = get(g:, 'colors_name', '') . &bg
+  if has_key(s:_select_color, key)
+    return s:_select_color[key]
+  endif
   let fg_color = calendar#color#normal_fg_color()
   let bg_color = calendar#color#normal_bg_color()
   let select_color = calendar#color#gen_color(fg_color, bg_color, 1, 4)
   if s:is_win32cui
     let select_color = s:is_dark ? 8 : 7
   endif
+  let s:_select_color[key] = select_color
   return select_color
 endfunction
 
