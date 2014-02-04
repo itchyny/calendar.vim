@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/month.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/01 22:55:46.
+" Last Change: 2014/02/05 00:16:13.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -306,7 +306,7 @@ function! s:self.contents() dict
 endfunction
 
 function! s:self.select_index() dict
-  let head = b:calendar.get_days()[0]
+  let head = b:calendar.month().head_day()
   let wn = calendar#week#week_number(head)
   let lastij = b:calendar.day().sub(head) + wn
   let [lasti, lastj] = [lastij % 7, lastij / 7]
@@ -394,7 +394,6 @@ endfunction
 function! s:self.action(action) dict
   let d = b:calendar.day()
   let month = b:calendar.month()
-  let days = b:calendar.get_days()
   let hday = month.head_day()
   let lday = month.last_day()
   let wnum = calendar#week#week_number(d)
