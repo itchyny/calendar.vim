@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/setlocal.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/23 22:42:28.
+" Last Change: 2014/02/04 16:20:18.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -11,12 +11,13 @@ set cpo&vim
 " All the setlocal commands are executed using the functions in this file.
 
 " Set all the local settings for the current calendar buffer.
+let s:undolevels = v:version > 704 || v:version == 704 && has('patch073')
 function! calendar#setlocal#new()
   setlocal nomodifiable buftype=nofile noswapfile readonly
         \ bufhidden=hide wrap nowrap nobuflisted nofoldenable foldcolumn=0
         \ nolist completefunc= omnifunc=
         \ nocursorcolumn nocursorline nonumber nomodeline
-  if v:version > 704 || v:version == 704 && has('patch073')
+  if s:undolevels
     setlocal undolevels=-1
   endif
   call calendar#setlocal#filetype()
