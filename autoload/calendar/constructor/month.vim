@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/month.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/02 17:40:25.
+" Last Change: 2014/02/04 16:24:51.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -131,7 +131,8 @@ function! s:instance.get_days() dict
   endif
   let days = []
   call add(days, self.head_day())
-  while !self.last_day().eq(days[-1])
+  let l = self.last_day()
+  while !l.eq(days[-1])
     call add(days, days[-1].add(1))
   endwhile
   let self.__days = days
