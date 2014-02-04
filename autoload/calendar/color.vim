@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/color.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/02 10:54:10.
+" Last Change: 2014/02/04 17:40:19.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -22,11 +22,18 @@ function! calendar#color#new_syntax(id, fg, bg)
       let b:calendar.syntaxnames = []
     endif
     let syntaxnames = b:calendar.syntaxnames
+    if !has_key(b:calendar, 'syntax')
+      let b:calendar.syntax = {}
+    endif
+    let b:calendar.syntax[a:id] = [a:id, a:fg, a:bg]
   else
     let syntaxnames = []
   endif
   let name = s:shorten(substitute(a:id, '[^a-zA-Z0-9]', '', 'g'))
   if len(name) && len(a:fg) && len(a:bg)
+    if index(syntaxnames, name) >= 0
+      return name
+    endif
     let flg = 0
     if &bg ==# 'dark' && a:fg ==# '#000000' || &bg ==# 'light' && a:fg ==# '#ffffff'
       let flg = 1
@@ -68,6 +75,16 @@ function! calendar#color#new_syntax(id, fg, bg)
     return name
   endif
   return ''
+endfunction
+
+function! calendar#color#refresh_syntax()
+  if !has_key(b:, 'calendar') || !has_key(b:calendar, 'syntaxnames') || !has_key(b:calendar, 'syntax')
+    return
+  endif
+  let b:calendar.syntaxnames = []
+  for [id, fg, bg] in values(b:calendar.syntax)
+    call calendar#color#new_syntax(id, fg, bg)
+  endfor
 endfunction
 
 function! calendar#color#convert(rgb)

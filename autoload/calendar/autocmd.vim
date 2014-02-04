@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/autocmd.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/02 11:20:53.
+" Last Change: 2014/02/04 17:36:45.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -28,7 +28,8 @@ function! calendar#autocmd#new()
     " When colorscheme is changed, all the calendar syntax groups will be gone.
     " So set the filetype forcibly and load the syntax file again.
     autocmd ColorScheme <buffer>
-          \ silent! call calendar#setlocal#filetype_force()
+          \ silent! call calendar#setlocal#filetype_force() |
+          \ silent! call calendar#color#refresh_syntax()
 
     " On entering the buffer, update the calendar.
     autocmd BufEnter,WinEnter,ColorScheme <buffer>
