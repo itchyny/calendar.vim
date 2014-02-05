@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/autocmd.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/04 17:36:45.
+" Last Change: 2014/02/05 15:06:16.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -19,8 +19,10 @@ function! calendar#autocmd#new()
   augroup CalendarAutoUpdate
     autocmd!
     " Update a visible calendar buffer.
-    autocmd BufEnter,BufWritePost,VimResized,ColorScheme *
-          \ silent! call s:update_visible(expand('<abuf>'))
+    autocmd BufEnter,BufWritePost,VimResized *
+          \ silent! call s:update_visible(expand('<abuf>'), 0)
+    autocmd ColorScheme *
+          \ silent! call s:update_visible(expand('<abuf>'), 1)
   augroup END
 
   augroup CalendarBuffer
@@ -58,7 +60,7 @@ function! calendar#autocmd#new()
 endfunction
 
 " Seach the calendar buffer and updates.
-function! s:update_visible(bufnr)
+function! s:update_visible(bufnr, is_colorscheme)
   try
     let nr = -1
     let newnr = str2nr(a:bufnr)
@@ -76,7 +78,10 @@ function! s:update_visible(bufnr)
     let newbuf = bufwinnr(str2nr(a:bufnr))
     let currentbuf = bufwinnr(bufnr('%'))
     noautocmd execute winnr 'wincmd w'
-    silent! call calendar#setlocal#filetype_force()
+    if a:is_colorscheme
+      silent! call calendar#setlocal#filetype_force()
+      silent! call calendar#color#refresh_syntax()
+    endif
     silent! call b:calendar.update_force()
     if winnr != newbuf && newbuf != -1
       call cursor(1, 1)
