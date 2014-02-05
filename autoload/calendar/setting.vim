@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/setting.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/26 19:43:41.
+" Last Change: 2014/02/05 17:06:42.
 " =============================================================================
 
 scriptencoding utf-8
@@ -130,8 +130,12 @@ function! s:view_source()
 endfunction
 
 function! calendar#setting#frame()
-  return calendar#setting#get('frame_' . calendar#setting#get('frame'))
+  let n = calendar#setting#get('frame')
+  if has_key(s:f, n) | return s:f[n] | endif
+  let s:f[n] = calendar#setting#get('frame_' . n)
+  return s:f[n]
 endfunction
+let s:f = {}
 
 function! s:frame()
   return &enc ==# 'utf-8' && &fenc ==# 'utf-8' ? 'unicode' : 'default'
