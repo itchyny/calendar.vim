@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/cache.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/05 09:18:15.
+" Last Change: 2014/02/07 21:46:15.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -57,8 +57,11 @@ function! s:self.rmdir_on_exit() dict
   call add(s:clearpath, self.dir())
 endfunction
 
-function! s:self.check_dir() dict
+function! s:self.check_dir(...) dict
   let dir = self.dir()
+  if !get(a:000, 0)
+    return !isdirectory(dir)
+  endif
   if !isdirectory(dir)
     try
       if exists('*mkdir')
@@ -76,7 +79,7 @@ function! s:self.check_dir() dict
 endfunction
 
 function! s:self.save(key, val) dict
-  if self.check_dir()
+  if self.check_dir(1)
     return 1
   endif
   let path = self.path(a:key)

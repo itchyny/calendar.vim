@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/25 20:38:37.
+" Last Change: 2014/02/06 18:20:01.
 " =============================================================================
 
 " Web interface.
@@ -20,6 +20,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 let s:cache = calendar#cache#new('download')
+call s:cache.check_dir(1)
 if !calendar#setting#get('debug')
   call s:cache.rmdir_on_exit()
 endif
