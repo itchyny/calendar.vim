@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/06 18:20:01.
+" Last Change: 2014/02/08 15:43:28.
 " =============================================================================
 
 " Web interface.
@@ -24,10 +24,6 @@ call s:cache.check_dir(1)
 if !calendar#setting#get('debug')
   call s:cache.rmdir_on_exit()
 endif
-
-function! s:response()
-  return { 'status': 500, 'message': '', 'header': [], 'content': [] }
-endfunction
 
 function! s:nr2byte(nr)
   if a:nr < 0x80
