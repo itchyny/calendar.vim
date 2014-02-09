@@ -12,6 +12,8 @@ elseif exists('b:current_syntax')
   finish
 endif
 
+set colorcolumn=0
+
 let s:fg_color = calendar#color#normal_fg_color()
 let s:bg_color = calendar#color#normal_bg_color()
 let s:comment_fg_color = calendar#color#comment_fg_color()
