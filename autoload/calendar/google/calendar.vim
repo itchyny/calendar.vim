@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/01 21:32:27.
+" Last Change: 2014/02/11 14:43:11.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -69,10 +69,11 @@ function! calendar#google#calendar#getEventSummary(year, month)
   let calendarList = calendar#google#calendar#getCalendarList()
   let events = []
   if has_key(calendarList, 'items') && type(calendarList.items) == type([]) && len(calendarList.items)
+    let [y, m] = [printf('%04d', a:year), printf('%02d', a:month)]
     for item in calendarList.items
       unlet! cnt
       if get(item, 'selected')
-        let cnt = s:event_cache.new(item.id).new(printf('%04d', a:year)).new(printf('%02d', a:month)).get('information')
+        let cnt = s:event_cache.new(item.id).new(y).new(m).get('information')
         if type(cnt) == type({}) && has_key(cnt, 'summary')
           call add(events, cnt)
         else
@@ -117,6 +118,7 @@ function! calendar#google#calendar#getEvents(year, month, ...)
     call calendar#google#calendar#getEventsInitial(a:year, a:month)
   endif
   if has_key(calendarList, 'items') && type(calendarList.items) == type([]) && len(calendarList.items)
+    let [y, m] = [printf('%04d', a:year), printf('%02d', a:month)]
     let dark = &bg ==# 'dark'
     for item in calendarList.items
       if !get(item, 'selected')
@@ -128,14 +130,14 @@ function! calendar#google#calendar#getEvents(year, month, ...)
       let isWeekNum = item.summary ==# 'Week Numbers'
       let syn = calendar#color#new_syntax(get(item, 'id', ''), get(item, 'foregroundColor', ''), get(item, 'backgroundColor'))
       unlet! cnt
-      let cnt = s:event_cache.new(item.id).new(printf('%04d', a:year)).new(printf('%02d', a:month)).get('information')
+      let cnt = s:event_cache.new(item.id).new(y).new(m).get('information')
       if type(cnt) == type({}) && has_key(cnt, 'summary')
         unlet! c
         let c = {}
         let index = 0
         while type(c) == type({})
           unlet! c
-          let c = s:event_cache.new(item.id).new(printf('%04d', a:year)).new(printf('%02d', a:month)).get(index)
+          let c = s:event_cache.new(item.id).new(y).new(m).get(index)
           if type(c) == type({}) && has_key(c, 'items') && type(c.items) == type([])
             for itm in c.items
               if has_key(itm, 'start') && (has_key(itm.start, 'date') || has_key(itm.start, 'dateTime'))
@@ -145,7 +147,7 @@ function! calendar#google#calendar#getEvents(year, month, ...)
                 let enddate = has_key(itm.end, 'date') ? itm.end.date : has_key(itm.end, 'dateTime') ? matchstr(itm.end.dateTime, '\d\+-\d\+-\d\+') : ''
                 let endymd = map(split(enddate, '-'), 'v:val + 0')
                 if date !=# '' && len(ymd) == 3 && len(endymd) == 3 && [a:year, a:month] == [ymd[0], ymd[1]]
-                  let date = printf('%4d-%02d-%02d', ymd[0], ymd[1], ymd[2])
+                  let date = join(ymd, '-')
                   if has_key(itm.end, 'date')
                     let endymd = calendar#day#new(endymd[0], endymd[1], endymd[2]).add(-1).get_ymd()
                   endif
@@ -215,20 +217,21 @@ function! calendar#google#calendar#getHolidays(year, month)
   let calendarList = type(_calendarList) == type({}) ? _calendarList : {}
   let events = {}
   if has_key(calendarList, 'items') && type(calendarList.items) == type([]) && len(calendarList.items)
+    let [y, m] = [printf('%04d', a:year), printf('%02d', a:month)]
     for item in calendarList.items
       if !get(item, 'selected')
         continue
       endif
       if item.id =~# 'holiday@group.v.calendar.google.com'
         unlet! cnt
-        let cnt = s:event_cache.new(item.id).new(printf('%04d', a:year)).new(printf('%02d', a:month)).get('information')
+        let cnt = s:event_cache.new(item.id).new(y).new(m).get('information')
         if type(cnt) == type({}) && has_key(cnt, 'summary')
           unlet! c
           let c = {}
           let index = 0
           while type(c) == type({})
             unlet! c
-            let c = s:event_cache.new(item.id).new(printf('%04d', a:year)).new(printf('%02d', a:month)).get(index)
+            let c = s:event_cache.new(item.id).new(y).new(m).get(index)
             if type(c) == type({}) && has_key(c, 'items') && type(c.items) == type([])
               for itm in c.items
                 if has_key(itm, 'start') && (has_key(itm.start, 'date') || has_key(itm.start, 'dateTime'))
@@ -238,7 +241,7 @@ function! calendar#google#calendar#getHolidays(year, month)
                   let enddate = has_key(itm.end, 'date') ? itm.end.date : has_key(itm.end, 'dateTime') ? matchstr(itm.end.dateTime, '\d\+-\d\+-\d\+') : ''
                   let endymd = map(split(enddate, '-'), 'v:val + 0')
                   if date !=# '' && len(ymd) == 3 && len(endymd) == 3
-                    let date = printf('%4d-%02d-%02d', ymd[0], ymd[1], ymd[2])
+                    let date = join(ymd, '-')
                     if has_key(itm.end, 'date')
                       let endymd = calendar#day#new(endymd[0], endymd[1], endymd[2]).add(-1).get_ymd()
                     endif
@@ -289,6 +292,7 @@ function! calendar#google#calendar#downloadEvents(year, month, ...)
     let g:calendar_google_event_downloading[timemin] = 1
   endif
   if has_key(calendarList, 'items') && type(calendarList.items) == type([]) && len(calendarList.items)
+    let [y, m] = [printf('%04d', a:year), printf('%02d', a:month)]
     let j = 0
     while j < len(calendarList.items)
       let item = calendarList.items[j]
@@ -297,10 +301,10 @@ function! calendar#google#calendar#downloadEvents(year, month, ...)
         continue
       endif
       unlet! cnt
-      let cnt = s:event_cache.new(item.id).new(printf('%04d', a:year)).new(printf('%02d', a:month)).get('information')
+      let cnt = s:event_cache.new(item.id).new(y).new(m).get('information')
       if type(cnt) != type({}) || !has_key(cnt, 'summary') || a:0
         let opt = { 'timeMin': timemin, 'timeMax': timemax, 'singleEvents': 'true' }
-        call calendar#google#client#get_async(s:newid(['download', 0, 0, 0, timemin, timemax, printf('%04d', a:year), printf('%02d', a:month), item.id]),
+        call calendar#google#client#get_async(s:newid(['download', 0, 0, 0, timemin, timemax, y, m, item.id]),
               \ 'calendar#google#calendar#response',
               \ calendar#google#calendar#get_url('calendars/' . item.id . '/events'), opt)
         break

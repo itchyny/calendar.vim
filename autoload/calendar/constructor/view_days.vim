@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_days.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/25 20:25:51.
+" Last Change: 2014/02/11 14:44:06.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -325,7 +325,7 @@ function! s:instance.set_contents() dict
   let self.timeevent_syntax = []
   for p in range
     let d = p < wn ? prev_days[-wn + p] : p < ld ? days[p - wn] : next_days[p - ld]
-    let evts = get(events, printf('%d-%02d-%02d', d.get_year(), d.get_month(), d.get_day()), { 'events': [] } )
+    let evts = get(events, join(d.get_ymd(), '-'), { 'events': [] } )
     let y = v.offset + h * j
     if get(evts, 'hasHoliday')
       let s[y] .= f.vertical . calendar#string#truncate(printf('%2d ', d.get_day()) . evts.events[evts.holidayIndex].summary, v.inner_width)

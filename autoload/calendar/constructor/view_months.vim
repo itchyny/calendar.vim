@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_months.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/25 20:46:19.
+" Last Change: 2014/02/11 14:45:06.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -194,7 +194,7 @@ function! s:instance.set_contents() dict
           for k in range(mh) " Do not use .height()
             call add(self.top_syntax, calendar#text#new(2, x, y + k, 'Today'))
           endfor
-        elseif has_key(holidays, printf('%d-%02d-%02d', d.get_year(), d.get_month(), d.get_day()))
+        elseif has_key(holidays, join(d.get_ymd(), '-'))
           for k in range(mh) " Do not use .height()
             call add(self.top_syntax, calendar#text#new(2, x, y + k, 'Sunday'))
           endfor
