@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/30 17:39:20.
+" Last Change: 2014/02/11 10:13:09.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -166,24 +166,24 @@ function! calendar#google#task#response(id, response)
 endfunction
 
 function! calendar#google#task#insert(id, previous, title)
-  call calendar#google#client#post_async(s:newid(['insert', 0, a:id, a:title]),
+  let opt = extend({ 'tasklist': a:id }, a:previous !=# '' ? { 'previous': a:previous } : {})
+  call calendar#google#client#post_async(s:newid(['insert', 0, a:id, a:title, opt]),
         \ 'calendar#google#task#insert_response',
         \ calendar#google#task#get_url('lists/' . a:id . '/tasks'),
-        \ extend({ 'tasklist': a:id }, a:previous !=# '' ? { 'previous': a:previous } : {}),
-        \ { 'title': a:title })
+        \ opt, { 'title': a:title })
 endfunction
 
 function! calendar#google#task#insert_response(id, response)
-  let [_insert, err, id, title; rest] = s:getdata(a:id)
+  let [_insert, err, id, title, opt; rest] = s:getdata(a:id)
   if a:response.status =~# '^2'
     call calendar#google#task#downloadTasks(1)
   elseif a:response.status == 401
     if err == 0
       call calendar#google#client#refresh_token()
-      call calendar#google#client#post_async(s:newid(['insert', 1, id, title]),
+      call calendar#google#client#post_async(s:newid(['insert', 1, id, title, opt]),
             \ 'calendar#google#task#insert_response',
             \ calendar#google#task#get_url('lists/' . id . '/tasks'),
-            \ { 'tasklist': id }, { 'title': title })
+            \ opt, { 'title': title })
     endif
   endif
 endfunction
