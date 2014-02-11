@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/month.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/11 14:46:07.
+" Last Change: 2014/02/11 15:18:49.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -161,16 +161,16 @@ function! s:self.set_contents() dict
     let evts = get(events, join(d.get_ymd(), '-'), { 'events': [] } )
     let y = v.offset + h * j
     if get(evts, 'hasHoliday')
-      let s[y] .= f.vertical . calendar#string#truncate(printf('%2d ', d.get_day()) . evts.events[evts.holidayIndex].summary, v.inner_width)
+      let s[y] .= f.vertical . calendar#string#truncate(printf('%2d ', d.get_day()) . evts.holiday, v.inner_width)
     else
       let s[y] .= f.vertical . printf(e.format, d.get_day())
     endif
-    let right = get(evts, 'hasDayNum') ? evts.events[evts.daynumIndex].daynum : ''
+    let right = get(evts, 'hasDayNum') ? evts.daynum : ''
     if get(evts, 'hasWeekNum') && w > len(right) + 6 + f.width
-      let right = evts.events[evts.weeknumIndex].weeknum . (len(right) ? ' ' : '') . right
+      let right = evts.weeknum . (len(right) ? ' ' : '') . right
     endif
     if get(evts, 'hasMoon') && w > len(right) + 5 + f.width
-      let right = evts.events[evts.moonIndex].moon . right
+      let right = evts.moon . right
     endif
     if w > len(right) + 3 + f.width && len(right)
       let le = calendar#string#strdisplaywidth(right) + 1

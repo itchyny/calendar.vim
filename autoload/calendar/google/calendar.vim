@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/11 14:43:11.
+" Last Change: 2014/02/11 16:39:32.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -110,6 +110,7 @@ endfunction
 
 " The optional argument: Forcing initial download. s:initial_download is used to check.
 function! calendar#google#calendar#getEvents(year, month, ...)
+  let s:is_dark = &background ==# 'dark'
   let calendarList = calendar#google#calendar#getCalendarList()
   let myCalendarList = calendar#google#calendar#getMyCalendarList()
   let events = {}
@@ -119,7 +120,6 @@ function! calendar#google#calendar#getEvents(year, month, ...)
   endif
   if has_key(calendarList, 'items') && type(calendarList.items) == type([]) && len(calendarList.items)
     let [y, m] = [printf('%04d', a:year), printf('%02d', a:month)]
-    let dark = &bg ==# 'dark'
     for item in calendarList.items
       if !get(item, 'selected')
         continue
@@ -149,7 +149,7 @@ function! calendar#google#calendar#getEvents(year, month, ...)
                 if date !=# '' && len(ymd) == 3 && len(endymd) == 3 && [a:year, a:month] == [ymd[0], ymd[1]]
                   let date = join(ymd, '-')
                   if has_key(itm.end, 'date')
-                    let endymd = calendar#day#new(endymd[0], endymd[1], endymd[2]).add(-1).get_ymd()
+                    let endymd = ymd == [endymd[0], endymd[1], endymd[2] - 1] ? ymd : calendar#day#new(endymd[0], endymd[1], endymd[2]).add(-1).get_ymd()
                   endif
                   if !has_key(events, date)
                     let events[date] = { 'events': [], 'hasHoliday': 0, 'hasMoon': 0, 'hasDayNum': 0, 'hasWeekNum': 0 }
@@ -165,37 +165,10 @@ function! calendar#google#calendar#getEvents(year, month, ...)
                         \ , 'isWeekNum': isWeekNum
                         \ , 'ymd': ymd
                         \ , 'endymd': endymd }))
-                  if isHoliday
-                    let events[date].hasHoliday = 1
-                    let events[date].holidayIndex = len(events[date].events) - 1
-                  endif
-                  if isMoon
-                    let events[date].hasMoon = 1
-                    let events[date].moonIndex = len(events[date].events) - 1
-                    let summary = events[date].events[-1].summary
-                    let moon = summary =~# '^New moon'      ? (dark ? "\u25cb" : "\u25cf")
-                          \  : summary =~# '^First quarter' ? (dark ? "\u25d1" : "\u25d0")
-                          \  : summary =~# '^Full moon'     ? (dark ? "\u25cf" : "\u25cb")
-                          \  : summary =~# '^Last quarter'  ? (dark ? "\u25d0" : "\u25d1")
-                          \  : ''
-                    let moon = calendar#string#truncate(moon, 2)
-                    let events[date].events[-1].moon = moon
-                    if moon !=# ''
-                      let events[date].events[-1].summary = moon . ' ' . events[date].events[-1].summary
-                    endif
-                  endif
-                  if isDayNum
-                    let events[date].hasDayNum = 1
-                    let events[date].daynumIndex = len(events[date].events) - 1
-                    let summary = events[date].events[-1].summary
-                    let events[date].events[-1].daynum = matchstr(summary, '\d\+')
-                  endif
-                  if isWeekNum
-                    let events[date].hasWeekNum = 1
-                    let events[date].weeknumIndex = len(events[date].events) - 1
-                    let summary = events[date].events[-1].summary
-                    let events[date].events[-1].weeknum = matchstr(summary, '\d\+')
-                  endif
+                  if isHoliday | call s:holiday_event(events[date]) | endif
+                  if isMoon | call s:moon_event(events[date]) | endif
+                  if isDayNum | call s:daynum_event(events[date]) | endif
+                  if isWeekNum | call s:weeknum_event(events[date]) | endif
                 endif
               endif
             endfor
@@ -210,6 +183,35 @@ function! calendar#google#calendar#getEvents(year, month, ...)
     endfor
   endif
   return events
+endfunction
+
+function! s:moon_event(events)
+  let s = a:events.events[-1].summary
+  let m = s =~# '^New moon'      ? (s:is_dark ? "\u25cb" : "\u25cf")
+      \ : s =~# '^First quarter' ? (s:is_dark ? "\u25d1" : "\u25d0")
+      \ : s =~# '^Full moon'     ? (s:is_dark ? "\u25cf" : "\u25cb")
+      \ : s =~# '^Last quarter'  ? (s:is_dark ? "\u25d0" : "\u25d1")
+      \ : ''
+  let a:events.hasMoon = 1
+  let a:events.moon = calendar#string#truncate(m, 2)
+  if m !=# ''
+    let a:events.events[-1].summary = a:events.moon . ' ' . a:events.events[-1].summary
+  endif
+endfunction
+
+function! s:daynum_event(events)
+  let a:events.hasDayNum = 1
+  let a:events.daynum = matchstr(a:events.events[-1].summary, '\d\+')
+endfunction
+
+function! s:weeknum_event(events)
+  let a:events.hasWeekNum = 1
+  let a:events.weeknum = matchstr(a:events.events[-1].summary, '\d\+')
+endfunction
+
+function! s:holiday_event(events)
+  let a:events.hasHoliday = 1
+  let a:events.holiday = a:events.events[-1].summary
 endfunction
 
 function! calendar#google#calendar#getHolidays(year, month)
@@ -252,6 +254,7 @@ function! calendar#google#calendar#getHolidays(year, month)
                           \ extend(deepcopy(itm),
                           \ { 'calendarId': item.id
                           \ , 'calendarSummary': item.summary
+                          \ , 'holiday': get(itm, 'summary', '')
                           \ , 'isHoliday': 1
                           \ , 'isMoon': 0
                           \ , 'isDayNum': 0

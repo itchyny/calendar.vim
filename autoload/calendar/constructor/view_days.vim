@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_days.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/11 14:44:06.
+" Last Change: 2014/02/11 15:23:36.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -328,14 +328,22 @@ function! s:instance.set_contents() dict
     let evts = get(events, join(d.get_ymd(), '-'), { 'events': [] } )
     let y = v.offset + h * j
     if get(evts, 'hasHoliday')
-      let s[y] .= f.vertical . calendar#string#truncate(printf('%2d ', d.get_day()) . evts.events[evts.holidayIndex].summary, v.inner_width)
+      let s[y] .= f.vertical . calendar#string#truncate(printf('%2d ', d.get_day()) . evts.holiday, v.inner_width)
     else
       let s[y] .= f.vertical . printf(e.format, d.get_day())
     endif
-    if get(evts, 'hasMoon') && w > 7
-      let cut = calendar#string#truncate_reverse(s[y], 3)
-      let pad = 2 - calendar#string#strdisplaywidth(evts.events[evts.moonIndex].moon)
-      let s[y] = s[y][:-len(cut)-1] . ' ' . evts.events[evts.moonIndex].moon . repeat(' ', pad)
+    let right = get(evts, 'hasDayNum') ? evts.daynum : ''
+    if get(evts, 'hasWeekNum') && w > len(right) + 6 + f.width
+      let right = evts.weeknum . (len(right) ? ' ' : '') . right
+    endif
+    if get(evts, 'hasMoon') && w > len(right) + 5 + f.width
+      let right = evts.moon . right
+    endif
+    if w > len(right) + 3 + f.width && len(right)
+      let le = calendar#string#strdisplaywidth(right) + 1
+      let s[y] = calendar#string#truncate(s[y], calendar#string#strdisplaywidth(s[y]) - le) . repeat(' ', le)
+      let cut = calendar#string#strwidthpart_reverse(s[y], le)
+      let s[y] = s[y][:-len(cut)-1] . ' ' . right
     endif
     let is_today = today.eq(d)
     if is_today
@@ -379,7 +387,7 @@ function! s:instance.set_contents() dict
         endif
         let longevtIndex += 1
       else
-        while z < len(evts.events) && (!has_key(evts.events[z], 'summary') || evts.events[z].isHoliday || evts.events[z].isMoon)
+        while z < len(evts.events) && (!has_key(evts.events[z], 'summary') || evts.events[z].isHoliday || evts.events[z].isMoon || evts.events[z].isDayNum || evts.events[z].isWeekNum)
           let z += 1
         endwhile
         if z < len(evts.events)

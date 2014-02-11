@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/25 20:18:58.
+" Last Change: 2014/02/11 15:18:36.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -44,8 +44,8 @@ function! s:self.get_events_one_month(year, month, ...) dict
           let events[day] = { 'events': [], 'hasHoliday': 0, 'hasMoon': 0, 'hasDayNum': 0, 'hasWeekNum': 0 }
         endif
         let events[day].hasHoliday = 1
-        let events[day].holidayIndex = len(events[day].events)
         call extend(events[day].events, holiday[day].events)
+        let events[day].holiday = holiday[day].events[-1].summary
       endif
     endfor
   endif
