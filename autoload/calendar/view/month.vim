@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/month.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/11 15:18:49.
+" Last Change: 2014/02/11 20:07:03.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -154,16 +154,20 @@ function! s:self.set_contents() dict
   let events = b:calendar.event.get_events(day.get_year(), day.get_month())
   let longevt = []
   let self.syntax_name = {}
+  let self.length = {}
   for p in range(v.week_count * 7)
     let d = p < wn ? prev_days[-wn + p] : p < ld ? days[p - wn] : next_days[p - ld]
     let key = i . ',' . j
     let othermonth = p < wn || ld <= p
     let evts = get(events, join(d.get_ymd(), '-'), { 'events': [] } )
     let y = v.offset + h * j
+    let s[y] .= f.vertical
+    let self.length[key] = {}
+    let self.length[key][0] = [ len(s[y]) ]
     if get(evts, 'hasHoliday')
-      let s[y] .= f.vertical . calendar#string#truncate(printf('%2d ', d.get_day()) . evts.holiday, v.inner_width)
+      let s[y] .= calendar#string#truncate(printf('%2d ', d.get_day()) . evts.holiday, v.inner_width)
     else
-      let s[y] .= f.vertical . printf(e.format, d.get_day())
+      let s[y] .= printf(e.format, d.get_day())
     endif
     let right = get(evts, 'hasDayNum') ? evts.daynum : ''
     if get(evts, 'hasWeekNum') && w > len(right) + 6 + f.width
@@ -178,12 +182,13 @@ function! s:self.set_contents() dict
       let cut = calendar#string#strwidthpart_reverse(s[y], le)
       let s[y] = s[y][:-len(cut)-1] . ' ' . right
     endif
+    call add(self.length[key][0], len(s[y]))
     let is_today = today.eq(d)
     let syn = othermonth ? so : is_today ? st : d.is_sunday() || get(evts, 'hasHoliday') ? su : d.is_saturday() ? sa : ''
     if syn !=# ''
-      let l = is_today || othermonth ? len(calendar#string#truncate_reverse(s[y], v.inner_width)) : 2
+      let l = is_today || othermonth ? self.length[key][0][1] - self.length[key][0][0] : 2
       let syn2 = !is_today ? '' : d.is_sunday() || get(evts, 'hasHoliday') ? tsu : d.is_saturday() ? tsa : ''
-      let x = len(calendar#string#truncate(s[y], w * i + f.width))
+      let x = self.length[key][0][0]
       if syn2 !=# ''
         let x += 2
         let l -= 2
@@ -191,7 +196,7 @@ function! s:self.set_contents() dict
       call self.add_syntax(x, y, l, syn, syn ==# so ? key : '')
       if syn2 !=# ''
         let l = 2
-        let x = len(calendar#string#truncate(s[y], w * i + f.width))
+        let x = self.length[key][0][0]
         call self.add_syntax(x, y, l, syn2)
       endif
     endif
@@ -203,9 +208,12 @@ function! s:self.set_contents() dict
         let lastday = d.get_day() == longevt[longevtIndex].endymd[2]
         let eventtext = repeat('=', v.inner_width - lastday) . (lastday ? ']' : '')
         let splitter = i ? repeat('=', f.width) : f.vertical
-        let s[y + x] .= splitter . eventtext
-        let l = len(eventtext) + (i ? f.width : 0)
-        let xx = len(s[y + x]) - l
+        let s[y + x] .= splitter
+        let self.length[key][x] = [ len(s[y + x]) ]
+        let s[y + x] .= eventtext
+        call add(self.length[key][x], len(s[y + x]))
+        let xx = self.length[key][x][0] - (i ? f.width : 0)
+        let l = self.length[key][x][1] - xx
         let yy = y + x
         if othermonth
           call self.add_syntax(xx, yy, l, so, key)
@@ -225,9 +233,12 @@ function! s:self.set_contents() dict
             let trailing = ''
           endif
           let eventtext = calendar#string#truncate(evts.events[z].summary . trailing, v.inner_width)
-          let s[y + x] .= f.vertical . eventtext
-          let l = len(eventtext)
-          let xx = len(s[y + x]) - l
+          let s[y + x] .= f.vertical
+          let self.length[key][x] = [ len(s[y + x]) ]
+          let s[y + x] .= eventtext
+          call add(self.length[key][x], len(s[y + x]))
+          let xx = self.length[key][x][0]
+          let l = self.length[key][x][1] - xx
           let yy = y + x
           if othermonth
             call self.add_syntax(xx, yy, l, so, key)
@@ -236,7 +247,10 @@ function! s:self.set_contents() dict
           endif
           let z += 1
         else
-          let s[y + x] .= e.vwhite
+          let s[y + x] .= f.vertical
+          let self.length[key][x] = [ len(s[y + x]) ]
+          let s[y + x] .= e.white
+          call add(self.length[key][x], len(s[y + x]))
         endif
       endif
     endfor
@@ -288,8 +302,7 @@ function! s:self.contents() dict
       let hh = range(max([v.height - 1 - (v.heightincr && j == 5), 1]))
       let y = v.offset + v.height * j
       for h in hh
-        let x = len(calendar#string#strwidthpart(self.days[y].s, l))
-        let z = len(calendar#string#strwidthpart(self.days[y].s, r))
+        let [x, z] = self.length[key][h]
         if !h
           let cursor = [calendar#text#new(0, x + 2, y, 'Cursor')]
         endif
@@ -322,14 +335,14 @@ function! s:self.select_index() dict
   if b:calendar.is_visual()
     for ij in range(min([startij, lastij]), max([startij, lastij]))
       let [i, j] = [ij % 7, ij / 7]
-      if [i, j] != [lasti, lastj] && j >= 0 && j < self.view.week_count
+      if [i, j] != [lasti, lastj] && i >= 0 && j >= 0 && j < self.view.week_count
         call add(ijs, [i, j])
       endif
     endfor
   elseif b:calendar.is_line_visual()
     for j in range(min([startj, lastj]), max([startj, lastj]))
       for i in range(7)
-        if [i, j] != [lasti, lastj] && j >= 0 && j < self.view.week_count
+        if [i, j] != [lasti, lastj] && i >= 0 && j >= 0 && j < self.view.week_count
           call add(ijs, [i, j])
         endif
       endfor
@@ -337,7 +350,7 @@ function! s:self.select_index() dict
   elseif b:calendar.is_block_visual()
     for j in range(min([startj, lastj]), max([startj, lastj]))
       for i in range(min([starti, lasti]), max([starti, lasti]))
-        if [i, j] != [lasti, lastj] && j >= 0 && j < self.view.week_count
+        if [i, j] != [lasti, lastj] && i >= 0 && j >= 0 && j < self.view.week_count
           call add(ijs, [i, j])
         endif
       endfor
