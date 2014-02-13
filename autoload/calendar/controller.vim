@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/controller.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/05 10:18:34.
+" Last Change: 2014/02/12 23:40:27.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -177,6 +177,12 @@ function! s:self.update_if_resized() dict
   endif
 endfunction
 
+function! s:self.clear() dict
+  for name in self.defaultsyntaxnames + get(b:calendar, 'syntaxnames', [])
+    exec 'silent! syntax clear Calendar' . name
+  endfor
+endfunction
+
 function! s:self.redraw(...) dict
   if histget(':', -1) ==# 'silent call b:calendar.update()'
     silent! call histdel(':', -1)
@@ -191,9 +197,7 @@ function! s:self.redraw(...) dict
     redraw
   endif
   call setline(1, map(range(calendar#util#winheight()), 'u[v:val].s'))
-  for name in self.defaultsyntaxnames + get(b:calendar, 'syntaxnames', [])
-    exec 'silent! syntax clear Calendar' . name
-  endfor
+  call self.clear()
   let c = 'Cursor'
   let a = 'syntax match Calendar%s /\%%>%dl\%%<%dl\%%%dc.*\%%%dc/'
   let b = 'syntax match Calendar%s /\%%%dl\%%%dc.*\%%%dc/'

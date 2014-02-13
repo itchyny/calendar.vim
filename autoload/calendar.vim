@@ -2,7 +2,7 @@
 " Filename: autoload/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/02 11:34:19.
+" Last Change: 2014/02/12 23:42:42.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -24,6 +24,9 @@ function! calendar#new(args)
 
   " Open a new buffer.
   try | silent execute command | catch | return | endtry
+
+  " Clear the previous syntaxes.
+  silent! call b:calendar.clear()
 
   " Store the options which are given as the argument.
   let b:_calendar = variables
