@@ -2,7 +2,7 @@
 " Filename: plugin/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/25 00:23:40.
+" Last Change: 2014/02/20 18:41:09.
 " =============================================================================
 
 if exists('g:loaded_calendar') && g:loaded_calendar
@@ -15,6 +15,10 @@ set cpo&vim
 " :Calendar command
 command! -nargs=* -complete=customlist,calendar#argument#complete
        \ Calendar call calendar#new(<q-args>)
+
+" <Plug>(calendar)
+nnoremap <silent> <Plug>(calendar) :<C-u>Calendar<CR>
+vnoremap <silent> <Plug>(calendar) :<C-u>Calendar<CR>
 
 " Respect mattn's calendar.vim {{{
 let s:thisfile = expand('<sfile>')

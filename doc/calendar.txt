@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/02/02 17:32:38.
+Last Change: 2014/02/16 21:21:13.
 
 CONTENTS					*calendar-contents*
 
@@ -397,6 +397,12 @@ This application has some different views. You can switch views with |>| and
 ------------------------------------------------------------------------------
 KEY MAPPINGS					*calendar-key-mappings*
 
+This application provides a global mapping.
+<Plug>(calendar)				*<Plug>(calendar)*
+	Open a calendar buffer. This mapping calls the |:Calendar| command
+	with no argument.
+
+In the calendar buffer, a lot of mappings are provided.
 This application has many views. Thus pressing j triggers various actions
 based on the active window. For example, go to 7 day after in the month view,
 go to the below month in the year view, 1 hour after in the days views, the
