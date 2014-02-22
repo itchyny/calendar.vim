@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/11 16:39:32.
+" Last Change: 2014/02/22 23:10:28.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -152,7 +152,7 @@ function! calendar#google#calendar#getEvents(year, month, ...)
                     let endymd = ymd == [endymd[0], endymd[1], endymd[2] - 1] ? ymd : calendar#day#new(endymd[0], endymd[1], endymd[2]).add(-1).get_ymd()
                   endif
                   if !has_key(events, date)
-                    let events[date] = { 'events': [], 'hasHoliday': 0, 'hasMoon': 0, 'hasDayNum': 0, 'hasWeekNum': 0 }
+                    let events[date] = { 'events': [] }
                   endif
                   call add(events[date].events,
                         \ extend(deepcopy(itm),
@@ -221,7 +221,7 @@ function! calendar#google#calendar#getHolidays(year, month)
   if has_key(calendarList, 'items') && type(calendarList.items) == type([]) && len(calendarList.items)
     let [y, m] = [printf('%04d', a:year), printf('%02d', a:month)]
     for item in calendarList.items
-      if !get(item, 'selected')
+      if !get(item, 'selected') || item.id !~# 'holiday@group.v.calendar.google.com'
         continue
       endif
       if item.id =~# 'holiday@group.v.calendar.google.com'
@@ -248,7 +248,7 @@ function! calendar#google#calendar#getHolidays(year, month)
                       let endymd = calendar#day#new(endymd[0], endymd[1], endymd[2]).add(-1).get_ymd()
                     endif
                     if !has_key(events, date)
-                      let events[date] = { 'events': [], 'hasHoliday': 1, 'hasMoon': 0, 'hasDayNum': 0, 'hasWeekNum': 0 }
+                      let events[date] = { 'events': [], 'hasHoliday': 1 }
                     endif
                     call add(events[date].events,
                           \ extend(deepcopy(itm),
