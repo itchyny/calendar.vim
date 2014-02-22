@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/echo.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/15 21:55:09.
+" Last Change: 2014/02/22 23:37:17.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -20,6 +20,7 @@ endfunction
 
 function! calendar#echo#message_raw(msg)
   redraw
+  echo ''
   for msg in split(a:msg, '\n')
     echo msg
   endfor
@@ -31,6 +32,7 @@ endfunction
 
 function! calendar#echo#error_raw(msg)
   redraw
+  echo ''
   echohl ErrorMsg
   for msg in split(a:msg, '\n')
     echo msg
