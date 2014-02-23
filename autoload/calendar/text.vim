@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/text.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/20 21:59:55.
+" Last Change: 2014/02/23 10:45:36.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -88,7 +88,7 @@ fu! s:self.concat(t) dict
   retu x
 endfu
 
-fu! s:over(t, j, v, u)
+fu! s:over(j, v, u)
   let [s, d] = [[], []]
   let v = a:v
   let u = a:u
@@ -129,7 +129,7 @@ fu! s:self.over(t) dict
       elsei s[j][2] >= t[i][3]
         con
       elsei t[i][0] != 'Cursor' && s[j][0] != 'Cursor'
-        let [b, c] = s:over(a:t.t, j, t[i], s[j])
+        let [b, c] = s:over(j, t[i], s[j])
         cal extend(s, b)
         cal extend(d, c)
       en
