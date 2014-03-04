@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/22 23:10:28.
+" Last Change: 2014/03/03 16:52:03.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -392,6 +392,8 @@ function! calendar#google#calendar#update(calendarId, eventId, title, year, mont
   if has_key(opt, 'end')
     call s:set_timezone(a:calendarId, opt.end)
   endif
+  let location = matchstr(a:title, '\%( at \)\@<=.\+$')
+  let opt = extend(opt, len(location) ? { 'location': location } : {})
   call calendar#google#client#patch_async(s:newid(['update', 0, a:year, a:month, a:calendarId, a:eventId, a:title, opt]),
         \ 'calendar#google#calendar#update_response',
         \ calendar#google#calendar#get_url('calendars/' . a:calendarId . '/events/' . a:eventId),
