@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/03/06 22:36:07.
+" Last Change: 2014/03/06 23:18:32.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -103,7 +103,7 @@ function! calendar#google#task#downloadTasks(...)
       let cnt = s:task_cache.new(item.id).get('information')
       if type(cnt) != type({}) || cnt == {} || get(a:000, 0)
         let opt = { 'tasklist': item.id }
-        call calendar#google#client#get_async(s:newid(['download', 0, j, 0, item.id]),
+        call calendar#google#client#get_async(s:newid(['download', 0, j, 0, item.id, get(a:000, 0)]),
               \ 'calendar#google#task#response',
               \ calendar#google#task#get_url('lists/' . item.id . '/tasks'), opt)
         break
@@ -119,7 +119,7 @@ endfunction
 
 function! calendar#google#task#response(id, response)
   let taskList = calendar#google#task#getTaskList()
-  let [_download, err, j, i, id; rest] = s:getdata(a:id)
+  let [_download, err, j, i, id, force; rest] = s:getdata(a:id)
   let opt = { 'tasklist': id }
   if a:response.status =~# '^2'
     let cnt = calendar#webapi#decode(a:response.content)
@@ -132,7 +132,7 @@ function! calendar#google#task#response(id, response)
       endif
       if has_key(content, 'nextPageToken')
         let opt = extend(opt, { 'pageToken': content.nextPageToken })
-        call calendar#google#client#get_async(s:newid(['download', err, j, i + 1, id]),
+        call calendar#google#client#get_async(s:newid(['download', err, j, i + 1, id, force]),
               \ 'calendar#google#task#response',
               \ calendar#google#task#get_url('lists/' . id . '/tasks'), opt)
       else
@@ -141,8 +141,9 @@ function! calendar#google#task#response(id, response)
           let item = taskList.items[j]
           unlet! cnt
           let cnt = s:task_cache.new(item.id).get('information')
-          if type(cnt) != type({}) || cnt == {}
-            call calendar#google#client#get_async(s:newid(['download', 0, j, 0, item.id]),
+          let opt = { 'tasklist': item.id }
+          if type(cnt) != type({}) || cnt == {} || force
+            call calendar#google#client#get_async(s:newid(['download', 0, j, 0, item.id, force]),
                   \ 'calendar#google#task#response',
                   \ calendar#google#task#get_url('lists/' . item.id . '/tasks'), opt)
             break
@@ -157,8 +158,9 @@ function! calendar#google#task#response(id, response)
     endif
   elseif a:response.status == 401
     if i == 0 && err == 0
+      let opt = { 'tasklist': id }
       call calendar#google#client#refresh_token()
-      call calendar#google#client#get_async(s:newid(['download', err + 1, j, i, id]),
+      call calendar#google#client#get_async(s:newid(['download', err + 1, j, i, id, force]),
             \ 'calendar#google#task#response',
             \ calendar#google#task#get_url('lists/' . id . '/tasks'), opt)
     endif
