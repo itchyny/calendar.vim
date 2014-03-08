@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/03/06 23:18:32.
+" Last Change: 2014/03/07 00:35:49.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -67,9 +67,10 @@ function! calendar#google#task#getTasks()
       unlet! cnt
       let cnt = s:task_cache.new(item.id).get('information')
       if type(cnt) == type({}) && cnt != {}
-        if flg && get(get(s:task, len(task) - 1, {}), 'etag', '') ==# get(cnt, 'etag', ',')
-          break
-        endif
+        " if flg && get(get(s:task, len(task) - 1, {}), 'etag', '') ==# get(cnt, 'etag', ',')
+        "   echo [get(get(s:task, len(task) - 1, {}), 'etag', '') , get(cnt, 'etag', ',')]
+        "   break
+        " endif
         let flg = 0
         let i = 0
         let task[-1].etag = cnt.etag
@@ -101,9 +102,9 @@ function! calendar#google#task#downloadTasks(...)
       let item = taskList.items[j]
       unlet! cnt
       let cnt = s:task_cache.new(item.id).get('information')
-      if type(cnt) != type({}) || cnt == {} || get(a:000, 0)
+      if type(cnt) != type({}) || cnt == {} || get(a:000, 0) && (a:0 <= 1 || item.id ==# get(a:000, 1, ''))
         let opt = { 'tasklist': item.id }
-        call calendar#google#client#get_async(s:newid(['download', 0, j, 0, item.id, get(a:000, 0)]),
+        call calendar#google#client#get_async(s:newid(['download', 0, j, 0, item.id, a:000]),
               \ 'calendar#google#task#response',
               \ calendar#google#task#get_url('lists/' . item.id . '/tasks'), opt)
         break
@@ -142,7 +143,7 @@ function! calendar#google#task#response(id, response)
           unlet! cnt
           let cnt = s:task_cache.new(item.id).get('information')
           let opt = { 'tasklist': item.id }
-          if type(cnt) != type({}) || cnt == {} || force
+          if type(cnt) != type({}) || cnt == {} || get(force, 0) && (len(force) <= 1 || item.id ==# get(force, 1, ''))
             call calendar#google#client#get_async(s:newid(['download', 0, j, 0, item.id, force]),
                   \ 'calendar#google#task#response',
                   \ calendar#google#task#get_url('lists/' . item.id . '/tasks'), opt)
@@ -178,7 +179,7 @@ endfunction
 function! calendar#google#task#insert_response(id, response)
   let [_insert, err, id, title, opt; rest] = s:getdata(a:id)
   if a:response.status =~# '^2'
-    call calendar#google#task#downloadTasks(1)
+    call calendar#google#task#downloadTasks(1, id)
   elseif a:response.status == 401
     if err == 0
       call calendar#google#client#refresh_token()
@@ -200,7 +201,7 @@ endfunction
 function! calendar#google#task#clear_completed_response(id, response)
   let [_clear_completed, err, id; rest] = s:getdata(a:id)
   if a:response.status =~# '^2'
-    call calendar#google#task#downloadTasks(1)
+    call calendar#google#task#downloadTasks(1, id)
   elseif a:response.status == 401
     if err == 0
       call calendar#google#client#refresh_token()
@@ -223,7 +224,7 @@ endfunction
 function! calendar#google#task#update_response(id, response)
   let [_update, err, id, taskid, title; rest] = s:getdata(a:id)
   if a:response.status =~# '^2'
-    call calendar#google#task#downloadTasks(1)
+    call calendar#google#task#downloadTasks(1, id)
   elseif a:response.status == 401
     if err == 0
       call calendar#google#client#refresh_token()
@@ -247,7 +248,7 @@ endfunction
 function! calendar#google#task#complete_response(id, response)
   let [_complete, err, id, taskid; rest] = s:getdata(a:id)
   if a:response.status =~# '^2'
-    call calendar#google#task#downloadTasks(1)
+    call calendar#google#task#downloadTasks(1, id)
   elseif a:response.status == 401
     if err == 0
       call calendar#google#client#refresh_token()
@@ -271,7 +272,7 @@ endfunction
 function! calendar#google#task#uncomplete_response(id, response)
   let [_uncomplete, err, id, taskid; rest] = s:getdata(a:id)
   if a:response.status =~# '^2'
-    call calendar#google#task#downloadTasks(1)
+    call calendar#google#task#downloadTasks(1, id)
   elseif a:response.status == 401
     if err == 0
       call calendar#google#client#refresh_token()
