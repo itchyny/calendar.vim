@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/08 15:43:28.
+" Last Change: 2014/04/16 15:21:16.
 " =============================================================================
 
 " Web interface.
@@ -180,6 +180,7 @@ function! s:request(json, async, url, ...)
   if withbody
     call writefile(split(postdatastr, "\n"), file, "b")
   endif
+  call s:cache.check_dir(1)
   if a:async != {}
     if !calendar#setting#get('debug')
       call s:cache.delete(a:async.id)
