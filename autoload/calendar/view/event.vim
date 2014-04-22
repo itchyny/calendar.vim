@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/11 14:47:00.
+" Last Change: 2014/04/21 14:19:54.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -203,6 +203,13 @@ function! s:parse_title(title, ...)
     let recurrence = {}
     let key = matchstr(rec, '\(week\|day\)')
     let recurrence[key] = matchstr(rec, '\d\+') + 0
+    if title =~# '^\s*\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+:\d\+\%(:\d\+\)\?' && startdate !~# 'T'
+      let time = matchstr(title, '^\s*\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+:\d\+\%(:\d\+\)\?')
+      let starttime = matchstr(time, '^\s*\d\+:\d\+\%(:\d\+\)\?')
+      let endtime = matchstr(time[len(starttime):], '\d\+:\d\+\%(:\d\+\)\?')
+      let title = substitute(title[len(time):], '^\s*', '', '')
+      let [startdate, enddate] = [s:format_time(startdate . 'T' . starttime), s:format_time(startdate . 'T' . endtime)]
+    endif
   endif
   return [title, startdate, enddate, recurrence]
 endfunction
