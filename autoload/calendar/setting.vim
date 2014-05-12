@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/setting.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/05 17:06:42.
+" Last Change: 2014/05/11 14:11:14.
 " =============================================================================
 
 scriptencoding utf-8
@@ -204,6 +204,10 @@ function! s:google_client()
         \ 'api_key': 'FN fX~GKkSs}QJgNYquJ=^sJJU:u<[9_dmT:MF=',
         \ 'client_secret': 'FZShKZt{{9|G2U ku[WYLOut'}, 100)
   return s:g
+endfunction
+
+function! s:message_prefix()
+  return '[calendar] '
 endfunction
 
 function! s:debug()

@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/02/16 21:21:13.
+Last Change: 2014/05/11 14:17:33.
 
 CONTENTS					*calendar-contents*
 
@@ -263,6 +263,13 @@ The following options change the appearance of the calendar.
 		The default value is:
 			"unicode": If |'enc'| is 'utf-8' and |'fenc'| is 'utf-8'
 			"default": In other cases
+
+						*calendar-options-message_prefix*
+						*g:calendar_message_prefix*
+		-message_prefix="{string}"
+		let g:calendar_message_prefix = "{string}"
+		The prefix of the messages.
+		The default value is: "[calendar] ".
 
 This application has some different views. You can switch views with |<| and
 |>| keys. You can change the initial view.
