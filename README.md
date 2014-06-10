@@ -1,48 +1,48 @@
 # A calendar application for Vim
 ### Vim meets a next generation application
 
-![calendar.vim](https://raw.github.com/wiki/itchyny/calendar.vim/image/image.png)
+![calendar.vim](https://raw.githubusercontent.com/wiki/itchyny/calendar.vim/image/image.png)
 
 Press E key to view the event list, and T key to view the task list.
 Also, press ? key to view a quick help.
 
-![calendar.vim](https://raw.github.com/wiki/itchyny/calendar.vim/image/views.png)
+![calendar.vim](https://raw.githubusercontent.com/wiki/itchyny/calendar.vim/image/views.png)
 
 ## Basic Usage
 
     :Calendar
 
-![calendar.vim](https://raw.github.com/wiki/itchyny/calendar.vim/image/image0.png)
+![calendar.vim](https://raw.githubusercontent.com/wiki/itchyny/calendar.vim/image/image0.png)
 
     :Calendar 2000 1 1
 
-![calendar.vim](https://raw.github.com/wiki/itchyny/calendar.vim/image/image1.png)
+![calendar.vim](https://raw.githubusercontent.com/wiki/itchyny/calendar.vim/image/image1.png)
 
     :Calendar -view=year
 
-![calendar.vim](https://raw.github.com/wiki/itchyny/calendar.vim/image/image2.png)
+![calendar.vim](https://raw.githubusercontent.com/wiki/itchyny/calendar.vim/image/image2.png)
 
     :Calendar -view=year -split=vertical -width=27
 
-![calendar.vim](https://raw.github.com/wiki/itchyny/calendar.vim/image/image3.png)
+![calendar.vim](https://raw.githubusercontent.com/wiki/itchyny/calendar.vim/image/image3.png)
 
     :Calendar -view=year -split=horizontal -position=below -height=12
 
-![calendar.vim](https://raw.github.com/wiki/itchyny/calendar.vim/image/image4.png)
+![calendar.vim](https://raw.githubusercontent.com/wiki/itchyny/calendar.vim/image/image4.png)
 
     :Calendar -first_day=monday
 
-![calendar.vim](https://raw.github.com/wiki/itchyny/calendar.vim/image/image5.png)
+![calendar.vim](https://raw.githubusercontent.com/wiki/itchyny/calendar.vim/image/image5.png)
 
     :Calendar -view=clock
 
-![calendar.vim](https://raw.github.com/wiki/itchyny/calendar.vim/image/image6.png)
+![calendar.vim](https://raw.githubusercontent.com/wiki/itchyny/calendar.vim/image/image6.png)
 
 You can switch between views with &lt; and &gt; keys.
 
 
 
-![calendar.vim](https://raw.github.com/wiki/itchyny/calendar.vim/image/frame.png)
+![calendar.vim](https://raw.githubusercontent.com/wiki/itchyny/calendar.vim/image/frame.png)
 
 If you have a trouble like the above screenshot, add the following configuration to your vimrc.
 ```vim
