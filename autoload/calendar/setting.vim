@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/setting.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/05/11 14:11:14.
+" Last Change: 2014/06/12 14:58:23.
 " =============================================================================
 
 scriptencoding utf-8
@@ -199,10 +199,10 @@ function! s:google_client()
   endif
   let s:g = calendar#cipher#decipher({
         \ 'redirect_uri': 'zws?njyk?|l?tfzym?735?ttg',
-        \ 'client_id': '::88>5<99<8:3fuux3lttlqjzxjwhtsyjsy3htr',
+        \ 'client_id': '::88>5<99<8:2{rlm<qmzs{xgwwzfz9hf>qkuuytu9mox3fuux3lttlqjzxjwhtsyjsy3htr',
         \ 'scope': 'myyux?44|||3lttlqjfunx3htr4fzym4hfqjsifw%myyux?44|||3lttlqjfunx3htr4fzym4yfxpx',
-        \ 'api_key': 'FN fX~GKkSs}QJgNYquJ=^sJJU:u<[9_dmT:MF=',
-        \ 'client_secret': 'FZShKZt{{9|G2U ku[WYLOut'}, 100)
+        \ 'api_key': 'FN fX~FQ[fQJfrUnPtdu;H;u <=t8fStIQ]}lWN',
+        \ 'client_secret': 'R_s=vS}6Jlg{dR<rt~OrYXR5'}, 100)
   return s:g
 endfunction
 
