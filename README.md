@@ -82,12 +82,12 @@ This software is released under the MIT License, see LICENSE.
 
         git clone https://github.com/itchyny/calendar.vim ~/.vim/bundle/calendar.vim
 
-### Vundle (https://github.com/gmarik/vundle)
+### Vundle (https://github.com/gmarik/Vundle.vim)
 1. Add the following configuration to your vimrc.
 
-        Bundle 'itchyny/calendar.vim'
+        Plugin 'itchyny/calendar.vim'
 
-2. Install with `:BundleInstall`.
+2. Install with `:PluginInstall`.
 
 ### NeoBundle (https://github.com/Shougo/neobundle.vim)
 1. Add the following configuration to your vimrc.

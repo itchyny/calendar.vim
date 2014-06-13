@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/05/11 14:17:33.
+Last Change: 2014/06/14 01:29:19.
 
 CONTENTS					*calendar-contents*
 
@@ -684,9 +684,9 @@ Problem 1:					*calendar-problem-1*
 
 			1. Add the following configuration to your vimrc.
 >
-			Bundle 'itchyny/calendar.vim'
+			Plugin 'itchyny/calendar.vim'
 <
-			2. Install with |:BundleInstall|.
+			2. Install with |:PluginInstall|.
 
 		If you are to install this application using |NeoBundle|:
 
@@ -711,7 +711,7 @@ Problem 2:					*calendar-problem-2*
 
 		If you have installed this application using Vundle:
 
-			1. Execute |:BundleInstall!|. Or try git pull in the
+			1. Execute |:PluginInstall!|. Or try git pull in the
 			directory of this application.
 
 		If you have installed this application using NeoBundle:
@@ -729,9 +729,9 @@ Problem 3:					*calendar-problem-3*
 
 		If you have installed this application using Vundle:
 
-			1. Remove the :Bundle 'itchyny/calendar.vim'
+			1. Remove the :Plugin 'itchyny/calendar.vim'
 			configuration from your vimrc.
-			2. Update with |:BundleClean|.
+			2. Update with |:PluginClean|.
 
 		If you have installed this application using NeoBundle:
 
