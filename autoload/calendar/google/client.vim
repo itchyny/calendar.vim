@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/client.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/31 00:56:58.
+" Last Change: 2014/06/12 22:36:02.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -150,7 +150,7 @@ endfunction
 function! calendar#google#client#refresh_token()
   let client = s:client()
   let cache = s:cache.get('refresh_token')
-  if has_key(cache, 'refresh_token') && type(cache.refresh_token) == type('')
+  if type(cache) == type({}) && has_key(cache, 'refresh_token') && type(cache.refresh_token) == type('')
     let response = calendar#webapi#post_nojson(s:token_url, {}, {
           \ 'client_id': client.client_id,
           \ 'client_secret': client.client_secret,
