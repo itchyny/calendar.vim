@@ -3,7 +3,7 @@
 " Version: 0.0
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/22 19:41:58.
+" Last Change: 2014/06/28 23:34:47.
 " =============================================================================
 
 if version < 700
@@ -86,5 +86,10 @@ call calendar#color#syntax('NormalSpace', s:bg_color, s:fg_color, '')
 call calendar#color#syntax('CommentSelect', s:comment_fg_color, s:select_color, '')
 
 highlight link CalendarComment Comment
+
+unlet! s:fg_color s:bg_color s:comment_fg_color s:select_color s:is_win32cui s:is_dark
+      \ s:today_color s:today_fg_color s:othermonth_fg_color s:weekday_color s:weekday_fg_color
+      \ s:sunday_bg_color s:sunday_fg_color s:sunday_title_fg_color
+      \ s:saturday_bg_color s:saturday_fg_color s:saturday_title_fg_color
 
 let b:current_syntax = 'calendar'
