@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/12 20:15:24.
+" Last Change: 2014/07/06 07:18:44.
 " =============================================================================
 
 let s:save_cpo = &cpo
