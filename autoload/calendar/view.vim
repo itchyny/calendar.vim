@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/07/06 06:17:48.
+" Last Change: 2014/02/02 17:31:20.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -242,9 +242,6 @@ function! s:split_over(t, texts, v, llen, i, height)
 endfunction
 
 function! s:self.action(action) dict
-  if !has_key(self.current_view(), 'action')
-    return
-  endif
   let ret = self.current_view().action(a:action)
   if type(ret) == 0 && ret == 0
     if a:action ==# 'redraw'
