@@ -80,6 +80,9 @@ function! s:self.timerange() dict
 endfunction
 
 function! s:self.action(action) dict
+  if !has_key(self, 'view') || !has_key(self.view, 'action')
+    return
+  endif
   if a:action =~# '^start_insert'
     let event_view = b:calendar.view.event_view()
     if type(event_view) == type({})
