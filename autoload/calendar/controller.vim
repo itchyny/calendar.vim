@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/controller.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/07/05 10:27:26.
+" Last Change: 2014/02/12 23:40:27.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -248,9 +248,6 @@ function! s:self.cursor_moved() dict
 endfunction
 
 function! s:self.action(action) dict
-  if !has_key(self, 'view') || !has_key(self.view, 'action')
-    return
-  endif
   let action = a:action
   if index([ 'delete', 'yank', 'change' ], action) >= 0
     if self.mode ==# action
