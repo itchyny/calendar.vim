@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/event/local.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/22 22:59:23.
+" Last Change: 2014/07/24 15:05:54.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -84,6 +84,13 @@ endfunction
 function! s:self.insert(calendarId, title, start, end, year, month, ...) dict
   let calendarList = self.calendarList()
   let [y, m] = [printf('%04d', a:year), printf('%02d', a:month)]
+  if a:start =~# '^\d\+[-/]\d\+[-/]\d\+'
+    let ymd = map(split(matchstr(a:start, '^\d\+[-/]\d\+[-/]\d\+'), '[-/]'), 'v:val + 0')
+    let [y, m] = [printf('%04d', ymd[0]), printf('%02d', ymd[1])]
+  elseif a:start =~# '^\d\+[-/]\d\+'
+    let md = map(split(matchstr(a:start, '^\d\+[-/]\d\+'), '[-/]'), 'v:val + 0')
+    let m = printf('%04d', ymd[0])
+  endif
   for calendar in calendarList
     if calendar.id ==# a:calendarId
       let c = s:event_cache.new(calendar.id).new(y).new(m).get('0')
