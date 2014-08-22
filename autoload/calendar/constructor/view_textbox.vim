@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_textbox.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/01 07:45:22.
+" Last Change: 2014/08/23 01:52:46.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -29,6 +29,8 @@ let s:instance.syntax = []
 let s:instance.length = 0
 let s:instance._current_contents = {}
 let s:instance._prev_contents = {}
+let s:instance._prevprev_contents = {}
+let s:instance._next_contents = {}
 let s:instance._current_group_id = ''
 let s:instance._nocontents = 1
 
@@ -111,6 +113,8 @@ function! s:instance.get_contents() dict
   if len(cnts)
     let self._current_contents = {}
     let self._prev_contents = {}
+    let self._prevprev_contents = {}
+    let self._next_contents = {}
     for j in range(len(cnts))
       let t = cnts[j]
       if len(cnt)
@@ -137,10 +141,14 @@ function! s:instance.get_contents() dict
         let self.select = min([self.select, len(cnt) + len(t.items) - 1])
       endif
       for tt in t.items
-        if len(cnt) == self.select - 1
+        let lencnt = len(cnt)
+        if lencnt == self.select - 1
           let self._prev_contents = deepcopy(tt)
-        endif
-        if len(cnt) == self.select
+        elseif lencnt == self.select - 2
+          let self._prevprev_contents = deepcopy(tt)
+        elseif lencnt == self.select + 1
+          let self._next_contents = deepcopy(tt)
+        elseif lencnt == self.select
           let self._current_contents = deepcopy(tt)
           let self._current_group_id = get(t, 'id', '')
         endif
@@ -162,6 +170,8 @@ function! s:instance.get_contents() dict
     let self._nocontents = 1
     let self.select = 0
     let self._prev_contents = {}
+    let self._prevprev_contents = {}
+    let self._next_contents = {}
     let self._current_contents = {}
     let self._current_group_id = ''
   endif
@@ -211,6 +221,14 @@ endfunction
 
 function! s:instance.prev_contents() dict
   return self._prev_contents
+endfunction
+
+function! s:instance.prevprev_contents() dict
+  return self._prevprev_contents
+endfunction
+
+function! s:instance.next_contents() dict
+  return self._next_contents
 endfunction
 
 function! s:instance.current_group_id() dict

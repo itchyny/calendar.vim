@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/03/07 00:35:49.
+" Last Change: 2014/08/23 00:49:32.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -187,6 +187,29 @@ function! calendar#google#task#insert_response(id, response)
             \ 'calendar#google#task#insert_response',
             \ calendar#google#task#get_url('lists/' . id . '/tasks'),
             \ opt, { 'title': title })
+    endif
+  endif
+endfunction
+
+function! calendar#google#task#move(id, taskid, previous)
+  let opt = extend({ 'tasklist': a:id }, a:previous !=# '' ? { 'previous': a:previous } : {})
+  call calendar#google#client#post_async(s:newid(['move', 0, a:id, a:taskid, opt]),
+        \ 'calendar#google#task#move_response',
+        \ calendar#google#task#get_url('lists/' . a:id . '/tasks/' . a:taskid . '/move'),
+        \ opt, {})
+endfunction
+
+function! calendar#google#task#move_response(id, response)
+  let [_move, err, id, taskid, opt; rest] = s:getdata(a:id)
+  if a:response.status =~# '^2'
+    call calendar#google#task#downloadTasks(1, id)
+  elseif a:response.status == 401
+    if err == 0
+      call calendar#google#client#refresh_token()
+      call calendar#google#client#post_async(s:newid(['move', 1, id, taskid, opt]),
+            \ 'calendar#google#task#move_response',
+            \ calendar#google#task#get_url('lists/' . id . '/tasks/' . taskid . '/move'),
+            \ opt, {})
     endif
   endif
 endfunction

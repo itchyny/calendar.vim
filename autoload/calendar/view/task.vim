@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/01 07:45:34.
+" Last Change: 2014/08/23 01:40:56.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -34,6 +34,14 @@ function! s:self.action(action) dict
     call b:calendar.task.complete(self.current_group_id(), taskid)
   elseif index(['undo_line'], a:action) >= 0
     call b:calendar.task.uncomplete(self.current_group_id(), taskid)
+  elseif index(['move_down', 'move_up'], a:action) >= 0
+    let prevprevtaskid = get(self.prevprev_contents(), 'id', '')
+    let nexttaskid = get(self.next_contents(), 'id', '')
+    let newprevioustaskid = a:action ==# 'move_down' ? nexttaskid : prevprevtaskid
+    if newprevioustaskid !=# '' || a:action ==# 'move_up'
+      call b:calendar.task.move(self.current_group_id(), taskid, newprevioustaskid)
+      let self.select += a:action ==# 'move_up' ? -1 : 1
+    endif
   elseif index(['start_insert', 'start_insert_append', 'start_insert_head', 'start_insert_last', 'change', 'change_line'], a:action) >= 0
     if taskid !=# ''
       let head = index(['start_insert', 'start_insert_head'], a:action) >= 0
