@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/08/23 12:39:54.
+" Last Change: 2014/08/23 12:43:30.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -280,7 +280,7 @@ function! calendar#google#task#update(id, taskid, title, ...)
     let note = ''
     let title = a:title
   endif
-  call calendar#google#client#put_async(s:newid(['update', 0, a:id, a:taskid, a:title, note, due]),
+  call calendar#google#client#put_async(s:newid(['update', 0, a:id, a:taskid, title, note, due]),
         \ 'calendar#google#task#update_response',
         \ calendar#google#task#get_url('lists/' . a:id . '/tasks/' . a:taskid),
         \ { 'tasklist': a:id, 'task': a:taskid },
@@ -294,7 +294,7 @@ function! calendar#google#task#update_response(id, response)
   elseif a:response.status == 401
     if err == 0
       call calendar#google#client#refresh_token()
-      call calendar#google#client#put_async(s:newid(['update', 1, id, taskid, title, due]),
+      call calendar#google#client#put_async(s:newid(['update', 1, id, taskid, title, note, due]),
             \ 'calendar#google#task#update_response',
             \ calendar#google#task#get_url('lists/' . id . '/tasks/' . taskid),
             \ { 'tasklist': id, 'task': taskid },
