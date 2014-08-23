@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/08/23 01:40:56.
+" Last Change: 2014/08/23 09:22:04.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -49,7 +49,12 @@ function! s:self.action(action) dict
       let msg = calendar#message#get('input_task') . (change ? get(task, 'title', '') . ' -> ' : '')
       let title = input(msg, change ? '' : get(task, 'title', '') . (head ? "\<Home>" : ''))
       if title !=# ''
-        call b:calendar.task.update(self.current_group_id(), taskid, title)
+        if get(task, 'title') =~# '^\d\+[-/]\d\+' && title !~# '^\s*\d\+[-/]\d\+'
+          let duedate = '-1'
+        else
+          let [title, duedate] = s:parse_title(title)
+        endif
+        call b:calendar.task.update(self.current_group_id(), taskid, title, duedate ==# '' ? {} : { 'due': duedate })
       endif
     else
       return self.action('start_insert_next_line')
@@ -61,7 +66,8 @@ function! s:self.action(action) dict
       if next
         let self.select += 1
       endif
-      call b:calendar.task.insert(self.current_group_id(), next ? taskid : prevtaskid, title)
+      let [title, duedate] = s:parse_title(title)
+      call b:calendar.task.insert(self.current_group_id(), next ? taskid : prevtaskid, title, duedate ==# '' ? {} : { 'due': duedate })
     endif
   elseif a:action ==# 'clear'
     let title = input(calendar#message#get('clear_completed_task'))
@@ -71,6 +77,24 @@ function! s:self.action(action) dict
   else
     return self._action(a:action)
   endif
+endfunction
+
+function! s:parse_title(title)
+  let title = a:title
+  let duedate = ''
+  if title =~# '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+'
+    let time = matchstr(title, '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+')
+    let title = substitute(title[len(time):], '^\s*', '', '')
+    if time =~# '\d\+[-/]\d\+[-/]\d\+'
+      let [y, m, d] = split(substitute(time, '\s', '', 'g'), '[-/]')
+      let duedate = join([y, m, d], '-')
+    elseif time =~# '\d\+[-/]\d\+'
+      let [m, d] = split(substitute(time, '\s', '', 'g'), '[-/]')
+      let y = b:calendar.day().get_year()
+      let duedate = join([y, m, d], '-')
+    endif
+  endif
+  return [duedate ==# '' ? a:title : title, duedate . 'T00:00:00.000Z']
 endfunction
 
 let s:constructor = calendar#constructor#view_textbox#new(s:self)
