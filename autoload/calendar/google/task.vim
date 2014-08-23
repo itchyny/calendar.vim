@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/08/23 12:36:14.
+" Last Change: 2014/08/23 12:39:54.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -195,7 +195,7 @@ function! calendar#google#task#insert(id, previous, title, ...)
     let note = substitute(note, ' note:\s*', '', '')
   else
     let note = ''
-    let title = ''
+    let title = a:title
   endif
   call calendar#google#client#post_async(s:newid(['insert', 0, a:id, title, note, due, opt]),
         \ 'calendar#google#task#insert_response',
@@ -278,7 +278,7 @@ function! calendar#google#task#update(id, taskid, title, ...)
     let note = substitute(note, ' note:\s*', '', '')
   else
     let note = ''
-    let title = ''
+    let title = a:title
   endif
   call calendar#google#client#put_async(s:newid(['update', 0, a:id, a:taskid, a:title, note, due]),
         \ 'calendar#google#task#update_response',
