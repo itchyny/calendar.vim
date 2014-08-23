@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/08/23 09:34:01.
+" Last Change: 2014/08/23 12:21:58.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -185,23 +185,23 @@ function! calendar#google#task#insert(id, previous, title, ...)
       let due = due . (due =~# 'Z$' ? '' : 'Z')
     endif
   endif
-  call calendar#google#client#post_async(s:newid(['insert', 0, a:id, a:title, opt]),
+  call calendar#google#client#post_async(s:newid(['insert', 0, a:id, a:title, due, opt]),
         \ 'calendar#google#task#insert_response',
         \ calendar#google#task#get_url('lists/' . a:id . '/tasks'),
         \ opt, extend({ 'title': a:title }, due ==# '' ? {} : { 'due': due ==# '-1Z' ? function('calendar#webapi#null') : due }))
 endfunction
 
 function! calendar#google#task#insert_response(id, response)
-  let [_insert, err, id, title, opt; rest] = s:getdata(a:id)
+  let [_insert, err, id, title, due, opt; rest] = s:getdata(a:id)
   if a:response.status =~# '^2'
     call calendar#google#task#downloadTasks(1, id)
   elseif a:response.status == 401
     if err == 0
       call calendar#google#client#refresh_token()
-      call calendar#google#client#post_async(s:newid(['insert', 1, id, title, opt]),
+      call calendar#google#client#post_async(s:newid(['insert', 1, id, title, due, opt]),
             \ 'calendar#google#task#insert_response',
             \ calendar#google#task#get_url('lists/' . id . '/tasks'),
-            \ opt, { 'title': title })
+            \ opt, extend({ 'title': title }, due ==# '' ? {} : { 'due': due ==# '-1Z' ? function('calendar#webapi#null') : due }))
     endif
   endif
 endfunction
@@ -259,7 +259,7 @@ function! calendar#google#task#update(id, taskid, title, ...)
       let due = due . (due =~# 'Z$' ? '' : 'Z')
     endif
   endif
-  call calendar#google#client#put_async(s:newid(['update', 0, a:id, a:taskid, a:title]),
+  call calendar#google#client#put_async(s:newid(['update', 0, a:id, a:taskid, a:title, due]),
         \ 'calendar#google#task#update_response',
         \ calendar#google#task#get_url('lists/' . a:id . '/tasks/' . a:taskid),
         \ { 'tasklist': a:id, 'task': a:taskid },
@@ -267,17 +267,17 @@ function! calendar#google#task#update(id, taskid, title, ...)
 endfunction
 
 function! calendar#google#task#update_response(id, response)
-  let [_update, err, id, taskid, title; rest] = s:getdata(a:id)
+  let [_update, err, id, taskid, title, due; rest] = s:getdata(a:id)
   if a:response.status =~# '^2'
     call calendar#google#task#downloadTasks(1, id)
   elseif a:response.status == 401
     if err == 0
       call calendar#google#client#refresh_token()
-      call calendar#google#client#put_async(s:newid(['update', 1, id, taskid, title]),
+      call calendar#google#client#put_async(s:newid(['update', 1, id, taskid, title, due]),
             \ 'calendar#google#task#update_response',
             \ calendar#google#task#get_url('lists/' . id . '/tasks/' . taskid),
             \ { 'tasklist': id, 'task': taskid },
-            \ { 'id': taskid, 'title': title })
+            \ extend({ 'id': taskid, 'title': title }, due ==# '' ? {} : { 'due': due ==# '-1Z' ? function('calendar#webapi#null') : due }))
     endif
   endif
 endfunction
