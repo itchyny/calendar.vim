@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/08/23 09:22:04.
+" Last Change: 2014/08/23 12:37:41.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -94,7 +94,7 @@ function! s:parse_title(title)
       let duedate = join([y, m, d], '-')
     endif
   endif
-  return [duedate ==# '' ? a:title : title, duedate . 'T00:00:00.000Z']
+  return [duedate ==# '' ? a:title : title, duedate . (duedate !=# '' ? 'T00:00:00.000Z' : '')]
 endfunction
 
 let s:constructor = calendar#constructor#view_textbox#new(s:self)
