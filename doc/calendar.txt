@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/08/23 01:56:31.
+Last Change: 2014/08/31 09:37:32.
 
 CONTENTS					*calendar-contents*
 
@@ -647,7 +647,7 @@ Problem 5:				|calendar-problem-5|
 	The frame collapses (on Ubuntu).
 
 Problem 6:				|calendar-problem-6|
-	The clock is invisible.
+	The clock is invisible / The calendar is not colorful.
 
 Problem 7:				|calendar-problem-7|
 	How to change the cache directory.
@@ -762,10 +762,14 @@ Problem 5:					*calendar-problem-5*
 		let g:calendar_frame = 'default'
 
 Problem 6:					*calendar-problem-6*
-	The clock is invisible.
+	The clock is invisible / The calendar is not colorful.
 
-		Add the following configuration to your *shrc (e.g. zshrc). >
+		Add the following configuration to your *shrc (e.g. zshrc) >
 			export TERM=xterm-256color
+<		and Add the following configuration to your vimrc. >
+			if !has('gui_running')
+			  set t_Co=256
+			endif
 <
 Problem 7:					*calendar-problem-7*
 	How to change the cache directory.
