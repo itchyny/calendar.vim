@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/08/31 09:37:32.
+Last Change: 2014/08/31 09:41:27.
 
 CONTENTS					*calendar-contents*
 
@@ -766,7 +766,7 @@ Problem 6:					*calendar-problem-6*
 
 		Add the following configuration to your *shrc (e.g. zshrc) >
 			export TERM=xterm-256color
-<		and Add the following configuration to your vimrc. >
+<		and add the following configuration to your vimrc. >
 			if !has('gui_running')
 			  set t_Co=256
 			endif
@@ -781,7 +781,7 @@ Problem 7:					*calendar-problem-7*
 Problem 8:					*calendar-problem-8*
 	The clock stops to update after the cursor gets out of the window.
 
-		It is feature. Updating a specific buffer from other windows
+		It is feature. Updating a specific buffer from other window
 		causes many problems.
 
 Problem 9:					*calendar-problem-9*
