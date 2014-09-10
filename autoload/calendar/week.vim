@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/week.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/05 00:18:25.
+" Last Change: 2014/09/11 06:47:53.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -43,6 +43,10 @@ endfunction
 
 function! calendar#week#week_count(month)
   return (a:month.last_day().sub(a:month.head_day()) + 1 + calendar#week#week_number(a:month.head_day()) + 6) / 7
+endfunction
+
+function! calendar#week#week_number_year(day)
+  return (a:day.sub(a:day.year().head_day()) + 1 + calendar#week#week_number(a:day.year().head_day()) + 6) / 7
 endfunction
 
 let s:self = {}
