@@ -637,6 +637,28 @@ g'{a-z}  g`{a-z}	Jump to the mark {a-z}.
 :delm[arks]!		Delete all the marks.
 
 ------------------------------------------------------------------------------
+SYNTAX						*calendar-syntax*
+
+Calendar:
+	day event:
+		EVENT: event title
+	few hour event:
+		EVENT: 12:00-14:00 event title
+	few days event:
+		???
+	event with notes:
+		???
+
+Task:
+	simple task:
+		TASK: task title
+	task with due date:
+		TASK: 2014-10-30 task title
+	task with note:
+		TASK: task title note: my extra note
+	task with due date and note:
+		TASK: 2014-10-30 task title note: my extra note
+------------------------------------------------------------------------------
 TROUBLESHOOTING					*calendar-troubleshooting*
 
 Problem 1:				|calendar-problem-1|
