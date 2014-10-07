@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/09/11 06:50:29.
+Last Change: 2014/10/07 10:31:29.
 
 CONTENTS					*calendar-contents*
 
@@ -637,29 +637,45 @@ g'{a-z}  g`{a-z}	Jump to the mark {a-z}.
 :delm[arks]!		Delete all the marks.
 
 ------------------------------------------------------------------------------
-INPUT FORMAT					*calendar-input-formt*
+INPUT FORMAT					*calendar-input-format*
+This application has some special format for user's input of events and tasks.
 
 Calendar:
-	day event:
-		EVENT: event title
-	few hours event:
-		EVENT: 12:00-14:00 event title
-	few days event:
-		EVENT: 10/10-10/12 event title
-		EVENT: 2014/10/10-2014/10/12 event title
-		EVENT: 2014-10-10-2014-10-12 event title
-		EVENT: 10/10 19:00-10/11 21:00 event title
-		EVENT: 10/10/2014 19:00-10/11/2014 21:00 event title
+	Day event:
+		EVENT: [event-title]
+
+	Few hours event:
+		EVENT: HH:MM-HH:MM [event-title]
+
+		Example:
+		EVENT: 12:00-14:00 [event-title]
+
+	Few days event:
+		EVENT: mm/dd-mm/dd [event-title]
+		EVENT: yyyy/mm/dd-yyyy/mm/dd [event-title]
+
+		Example:
+		EVENT: 10/10-10/12 [event-title]
+		EVENT: 2014/10/10-2014/10/12 [event-title]
+
+	Days and hours event:
+		EVENT: mm/dd HH:MM-mm/dd HH:MM [event-title]
+		EVENT: yyyy/mm/dd HH:MM-yyyy/mm/dd HH:MM [event-title]
+
+		Example:
+		EVENT: 10/10 19:00-10/11 21:00 [event-title]
+		EVENT: 2014/10/10/2014 19:00-2014/10/11 21:00 [event-title]
 
 Task:
-	simple task:
-		TASK: task title
-	task with due date:
-		TASK: 2014-10-30 task title
-	task with note:
-		TASK: task title note: my extra note
-	task with due date and note:
-		TASK: 2014-10-30 task title note: my extra note
+	Simple task:
+		TASK: [task-title]
+	Task with due date:
+		TASK: 2014-10-30 [task-title]
+	Task with note:
+		TASK: [task-title] note: [task-note]
+	Task with due date and note:
+		TASK: 2014-10-30 [task-title] note: [task-note]
+
 ------------------------------------------------------------------------------
 TROUBLESHOOTING					*calendar-troubleshooting*
 
