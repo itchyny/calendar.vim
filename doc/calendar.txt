@@ -16,7 +16,7 @@ Options					|calendar-options|
 View					|calendar-view|
 Key Mappings				|calendar-key-mappings|
 Marks					|calendar-marks|
-Syntax					|calendar-syntax|
+Input Format				|calendar-input-format|
 Troubleshooting				|calendar-troubleshooting|
 Changelog				|calendar-changelog|
 
@@ -636,6 +636,30 @@ g'{a-z}  g`{a-z}	Jump to the mark {a-z}.
 :delm[arks] {mark}	Delete the specified mark.
 :delm[arks]!		Delete all the marks.
 
+------------------------------------------------------------------------------
+INPUT FORMAT					*calendar-input-formt*
+
+Calendar:
+	day event:
+		EVENT: event title
+	few hours event:
+		EVENT: 12:00-14:00 event title
+	few days event:
+		EVENT: 10/10-10/12 event title
+		EVENT: 2014/10/10-2014/10/12 event title
+		EVENT: 2014-10-10-2014-10-12 event title
+		EVENT: 10/10 19:00-10/11 21:00 event title
+		EVENT: 10/10/2014 19:00-10/11/2014 21:00 event title
+
+Task:
+	simple task:
+		TASK: task title
+	task with due date:
+		TASK: 2014-10-30 task title
+	task with note:
+		TASK: task title note: my extra note
+	task with due date and note:
+		TASK: 2014-10-30 task title note: my extra note
 ------------------------------------------------------------------------------
 TROUBLESHOOTING					*calendar-troubleshooting*
 
