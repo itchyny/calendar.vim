@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/10/07 10:31:29.
+Last Change: 2014/10/07 10:34:38.
 
 CONTENTS					*calendar-contents*
 
@@ -646,9 +646,11 @@ Calendar:
 
 	Few hours event:
 		EVENT: HH:MM-HH:MM [event-title]
+		EVENT: HH:MM:ss-HH:MM:ss [event-title]
 
 		Example:
 		EVENT: 12:00-14:00 [event-title]
+		EVENT: 12:00:30-14:00:20 [event-title]
 
 	Few days event:
 		EVENT: mm/dd-mm/dd [event-title]
