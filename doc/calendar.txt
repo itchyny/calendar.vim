@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/10/07 10:42:52.
+Last Change: 2014/10/07 10:44:38.
 
 CONTENTS					*calendar-contents*
 
@@ -682,18 +682,18 @@ Task:
 		TASK: yyyy-mm-dd [task-title]
 
 		Example:
-		TASK: 10/30 task-title
-		TASK: 10-30 task-title
-		TASK: 2014/10/30 task-title
-		TASK: 2014-10-30 task-title
+		TASK: 10/30 [task-title]
+		TASK: 10-30 [task-title]
+		TASK: 2014/10/30 [task-title]
+		TASK: 2014-10-30 [task-title]
 
 	Task with due date and note:
 		TASK: yyyy/mm/dd [task-title] note: [task-note]
 		TASK: yyyy-mm-dd [task-title] note: [task-note]
 
 		Example:
-		TASK: 2014/10/30 task-title note: task-note
-		TASK: 2014-10-30 task-title note: task-note
+		TASK: 2014/10/30 [task-title] note: [task-note]
+		TASK: 2014-10-30 [task-title] note: [task-note]
 
 ------------------------------------------------------------------------------
 TROUBLESHOOTING					*calendar-troubleshooting*
