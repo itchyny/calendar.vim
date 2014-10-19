@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/07/09 11:26:56.
+" Last Change: 2014/10/18 19:45:59.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -177,14 +177,39 @@ function! s:parse_title(title, ...)
     let time = matchstr(title, '^\s*\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+:\d\+\%(:\d\+\)\?')
     let starttime = matchstr(time, '^\s*\d\+:\d\+\%(:\d\+\)\?')
     let endtime = matchstr(time[len(starttime):], '\d\+:\d\+\%(:\d\+\)\?')
+    if starttime =~# '^\s*2[4-9]:'
+      let hour = substitute(matchstr(starttime, '^\s*2[4-9]'), '\s*', '', '')
+      let starttime = (hour - 24) . starttime[len(hour):]
+      let startday = ndate
+    else
+      let startday = date
+    endif
+    if endtime =~# '^2[4-9]:'
+      let hour = matchstr(endtime, '^2[4-9]')
+      let endtime = (hour - 24) . endtime[len(hour):]
+      let endday = ndate
+    else
+      let endday = date
+    endif
     let title = substitute(title[len(time):], '^\s*', '', '')
-    let [startdate, enddate] = [s:format_time(date . 'T' . starttime), s:format_time(date . 'T' . endtime)]
+    let [startdate, enddate] = [s:format_time(startday . 'T' . starttime), s:format_time(endday . 'T' . endtime)]
   elseif title =~# '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s*-\s*\d\+[-/]\d\+\%([-/]\d\+\)\?'
     let time = matchstr(title, '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s*-\s*\d\+[-/]\d\+\%([-/]\d\+\)\?')
     let starttime = matchstr(time, len(split(time, '-')) == 2 ? '^\s*\d\+/\d\+\%(/\d\+\)\?\s*' : '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s*')
     let endtime = matchstr(time[len(starttime):], '\d\+[-/]\d\+\%([-/]\d\+\)\?')
     let title = substitute(title[len(time):], '^\s*', '', '')
     let [startdate, enddate] = [s:format_time(starttime), s:format_time_end(endtime)]
+    if startdate =~# '^\d\+-\d\+-\d\+$' && enddate =~# '^\d\+-\d\+-\d\+$'
+      let [sy, sm, sd] = map(split(startdate, '-'), 'v:val + 0')
+      let [ey, em, ed] = map(split(enddate, '-'), 'v:val + 0')
+      if sy == ey && sm > em
+        if [year, month] == [ey, em]
+          let startdate = join([sy - 1, sm, sd], '-')
+        else
+          let enddate = join([ey + 1, em, ed], '-')
+        endif
+      endif
+    endif
   elseif title =~# '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?'
     let time = matchstr(title, '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?')
     let starttime = matchstr(time, '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?\s*')
@@ -216,23 +241,42 @@ endfunction
 
 function! s:format_time(time)
   let time = substitute(a:time, '^\s\+\|\s\+$', '', 'g')
+  let endian = calendar#setting#get('date_endian')
   if time =~# '^\d\+-\d\+-\d\+T\s*$'
     return substitute(time, 'T\s*$', '', '')
   elseif time =~# '^\d\+[-/]\d\+[-/]\d\+\s*$'
     let [y, m, d] = split(time, '[-/]')
+    if d > 1000
+      let [y, m, d] = endian ==# 'little' ? [d, m, y] : [d, y, m]
+      if m > 12
+        let [d, m] = [m, d]
+      endif
+    endif
     return join([y, m, d], '-')
   elseif time =~# '^\d\+[-/]\d\+\s*$'
     let [m, d] = split(time, '[-/]')
+    if m > 12
+      let [d, m] = [m, d]
+    endif
     let y = b:calendar.day().get_year()
     return join([y, m, d], '-')
   elseif time =~# '^\d\+[-/]\d\+\s\+\d\+:'
     let [date, t] = split(time, '\s\+')
     let [m, d] = split(date, '[-/]')
+    if m > 12
+      let [d, m] = [m, d]
+    endif
     let y = b:calendar.day().get_year()
     return join([y, m, d], '-') . 'T' . s:format_time(t)
   elseif time =~# '^\d\+[-/]\d\+[-/]\d\+\s\+\d\+:'
     let [date, t] = split(time, '\s\+')
     let [y, m, d] = split(date, '[-/]')
+    if d > 1000
+      let [y, m, d] = endian ==# 'little' ? [d, m, y] : [d, y, m]
+      if m > 12
+        let [d, m] = [m, d]
+      endif
+    endif
     return join([y, m, d], '-') . 'T' . s:format_time(t)
   elseif time =~# '^\d\+-\d\+-\d\+T\d\+$'
     return time . ':00:00'

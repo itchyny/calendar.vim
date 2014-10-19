@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/10/07 10:44:38.
+Last Change: 2014/10/12 12:20:34.
 
 CONTENTS					*calendar-contents*
 
@@ -645,28 +645,37 @@ Calendar:
 		EVENT: [event-title]
 
 	Few hours event:
-		EVENT: HH:MM-HH:MM [event-title]
-		EVENT: HH:MM:ss-HH:MM:ss [event-title]
+		EVENT: HH:MM - HH:MM [event-title]
+		EVENT: HH:MM:ss - HH:MM:ss [event-title]
 
 		Example:
-		EVENT: 12:00-14:00 [event-title]
-		EVENT: 12:00:30-14:00:20 [event-title]
+		EVENT: 12:00 - 14:00 [event-title]
+		EVENT: 12:00:30 - 14:00:20 [event-title]
 
 	Few days event:
-		EVENT: mm/dd-mm/dd [event-title]
-		EVENT: yyyy/mm/dd-yyyy/mm/dd [event-title]
+		EVENT: mm/dd - mm/dd [event-title]
+		EVENT: yyyy/mm/dd - yyyy/mm/dd [event-title] (big endian)
+		EVENT: mm/dd/yyyy - mm/dd/yyyy [event-title] (middle endian)
+		EVENT: dd/mm/yyyy - dd/mm/yyyy [event-title] (little endian)
+		EVENT: yyyy-mm-dd - yyyy-mm-dd [event-title] (big endian, "-" separator)
 
 		Example:
-		EVENT: 10/10-10/12 [event-title]
-		EVENT: 2014/10/10-2014/10/12 [event-title]
+		EVENT: 10/10 - 10/12 [event-title]
+		EVENT: 2014/10/10 - 2014/10/12 [event-title] (big endian)
+		EVENT: 10/10/2014 - 10/12/2014 [event-title] (middle endian)
+		EVENT: 10/10/2014 - 12/10/2014 [event-title] (little endian)
+		EVENT: 2014-10-10 - 2014-10-12 [event-title] (big endian, "-" separator)
 
 	Days and hours event:
-		EVENT: mm/dd HH:MM-mm/dd HH:MM [event-title]
-		EVENT: yyyy/mm/dd HH:MM-yyyy/mm/dd HH:MM [event-title]
+		EVENT: mm/dd HH:MM - mm/dd HH:MM [event-title]
+		EVENT: yyyy/mm/dd HH:MM - yyyy/mm/dd HH:MM [event-title]
+		EVENT: dd/mm/yyyy HH:MM - dd/mm/yyyy HH:MM [event-title] (little endian)
+		EVENT: dd-mm-yyyy HH:MM - dd-mm-yyyy HH:MM [event-title] (little endian, "-" separator)
 
 		Example:
-		EVENT: 10/10 19:00-10/11 21:00 [event-title]
-		EVENT: 2014/10/10/2014 19:00-2014/10/11 21:00 [event-title]
+		EVENT: 10/10 19:00 - 10/11 21:00 [event-title]
+		EVENT: 2014/10/10 19:00 - 2014/10/11 21:00 [event-title]
+		EVENT: 10-10-2014 10:00 - 12-10-2014 21:00 [event-title] (little endian, "-" separator)
 
 Task:
 	Simple task:
@@ -727,9 +736,12 @@ Problem 9:				|calendar-problem-9|
 	How to disconnect my Google account.
 
 Problem 10:				|calendar-problem-10|
-	Which should we use, arguments or global variables.
+	Authorization to Google fails again and again.
 
 Problem 11:				|calendar-problem-11|
+	Which should we use, arguments or global variables.
+
+Problem 12:				|calendar-problem-12|
 	Found a bug of this application.
 	Got many errors while using this application.
 	Vim hangs up while using this application.
@@ -867,6 +879,13 @@ Problem 9:					*calendar-problem-9*
 <		See |g:calendar_cache_directory|.
 
 Problem 10:					*calendar-problem-10*
+	Authorization to Google fails again and again.
+
+		Remove the cache directory and reauthorize to Google. >
+		rm -rf ~/.cache/calendar.vim/google/
+<		See |g:calendar_cache_directory|.
+
+Problem 11:					*calendar-problem-11*
 	Which should we use, arguments or global variables.
 
 		Arguments have priority over global variables. For example, if
@@ -879,7 +898,7 @@ Problem 10:					*calendar-problem-10*
 		settings in your vimrc file and give the arguments in order to
 		overwrite the settings.
 
-Problem 11:					*calendar-problem-11*
+Problem 12:					*calendar-problem-12*
 	Found a bug of this application.
 	Got many errors while using this application.
 	Vim hangs up while using this application.

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/08/23 12:37:41.
+" Last Change: 2014/10/18 19:53:55.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -82,16 +82,26 @@ endfunction
 function! s:parse_title(title)
   let title = a:title
   let duedate = ''
+  let endian = calendar#setting#get('date_endian')
   if title =~# '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+'
     let time = matchstr(title, '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+')
     let title = substitute(title[len(time):], '^\s*', '', '')
     if time =~# '\d\+[-/]\d\+[-/]\d\+'
       let [y, m, d] = split(substitute(time, '\s', '', 'g'), '[-/]')
+      if d > 1000
+        let [y, m, d] = endian ==# 'little' ? [d, m, y] : [d, y, m]
+        if m > 12
+          let [d, m] = [m, d]
+        endif
+      endif
       let duedate = join([y, m, d], '-')
     elseif time =~# '\d\+[-/]\d\+'
       let [m, d] = split(substitute(time, '\s', '', 'g'), '[-/]')
-      let y = b:calendar.day().get_year()
-      let duedate = join([y, m, d], '-')
+      if m > 12
+        let [d, m] = [m, d]
+      endif
+      let [year, month, day] = b:calendar.day().get_ymd()
+      let duedate = join([m < month - 1 ? year + 1 : year, m, d], '-')
     endif
   endif
   return [duedate ==# '' ? a:title : title, duedate . (duedate !=# '' ? 'T00:00:00.000Z' : '')]

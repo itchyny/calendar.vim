@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/month.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/09/11 06:48:01.
+" Last Change: 2014/10/12 07:48:28.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -396,15 +396,15 @@ function! s:self.timerange() dict
   endif
   if x.sub(y) >= 0
     if x.get_year() == y.get_year()
-      return printf('%d/%d-%d/%d ', y.get_month(), y.get_day(), x.get_month(), x.get_day()) . recurrence
+      return printf('%d/%d - %d/%d ', y.get_month(), y.get_day(), x.get_month(), x.get_day()) . recurrence
     else
-      return printf('%d/%d/%d-%d/%d/%d ', y.get_year(), y.get_month(), y.get_day(), x.get_year(), x.get_month(), x.get_day()) . recurrence
+      return printf('%d/%d/%d - %d/%d/%d ', y.get_year(), y.get_month(), y.get_day(), x.get_year(), x.get_month(), x.get_day()) . recurrence
     endif
   else
     if x.get_year() == y.get_year()
-      return printf('%d/%d-%d/%d ', x.get_month(), x.get_day(), y.get_month(), y.get_day()) . recurrence
+      return printf('%d/%d - %d/%d ', x.get_month(), x.get_day(), y.get_month(), y.get_day()) . recurrence
     else
-      return printf('%d/%d/%d-%d/%d/%d ', x.get_year(), x.get_month(), x.get_day(), y.get_year(), y.get_month(), y.get_day()) . recurrence
+      return printf('%d/%d/%d - %d/%d/%d ', x.get_year(), x.get_month(), x.get_day(), y.get_year(), y.get_month(), y.get_day()) . recurrence
     endif
   endif
 endfunction
