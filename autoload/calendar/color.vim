@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/color.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/05 00:06:22.
+" Last Change: 2014/10/23 19:38:54.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -212,11 +212,13 @@ endfunction
 
 function! calendar#color#fg_color(syntax_name)
   let color = synIDattr(synIDtrans(hlID(a:syntax_name)), 'fg', s:term)
+  let color = len(color) == 0 ? -1 : color
   return s:is_gui ? color : calendar#color#to_256color(color + 0, 1)
 endfunction
 
 function! calendar#color#bg_color(syntax_name)
   let color = synIDattr(synIDtrans(hlID(a:syntax_name)), 'bg', s:term)
+  let color = len(color) == 0 ? -1 : color
   return s:is_gui ? color : calendar#color#to_256color(color + 0, 0)
 endfunction
 
