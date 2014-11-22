@@ -61,11 +61,11 @@ function! calendar#google#task#getTasks()
   let taskList = calendar#google#task#getTaskList()
   let flg = 1
   if has_key(taskList, 'items') && type(taskList.items) == type([])
-    for item in taskList.items
-      call add(task, deepcopy(item))
+    for tasklist in taskList.items
+      call add(task, deepcopy(tasklist))
       let task[-1].items = []
       unlet! cnt
-      let cnt = s:task_cache.new(item.id).get('information')
+      let cnt = s:task_cache.new(tasklist.id).get('information')
       if type(cnt) == type({}) && cnt != {}
         " if flg && get(get(s:task, len(task) - 1, {}), 'etag', '') ==# get(cnt, 'etag', ',')
         "   echo [get(get(s:task, len(task) - 1, {}), 'etag', '') , get(cnt, 'etag', ',')]
@@ -76,7 +76,7 @@ function! calendar#google#task#getTasks()
         let task[-1].etag = cnt.etag
         while type(cnt) == type({})
           unlet! cnt
-          let cnt = s:task_cache.new(item.id).get(i)
+          let cnt = s:task_cache.new(tasklist.id).get(i)
           if type(cnt) == type({}) && cnt != {} && has_key(cnt, 'items') && type(cnt.items) == type([])
             call extend(task[-1].items, deepcopy(cnt.items))
             for item in task[-1].items
