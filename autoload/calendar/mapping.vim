@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/mapping.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/08/23 01:16:12.
+" Last Change: 2014/11/29 20:31:24.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -95,6 +95,8 @@ function! calendar#mapping#new()
   nmap <buffer> <C-k> <Plug>(calendar_move_up)
   nmap <buffer> <C-S-Down> <Plug>(calendar_move_down)
   nmap <buffer> <C-S-Up> <Plug>(calendar_move_up)
+  nmap <buffer> <C-e> <Down>
+  nmap <buffer> <C-y> <Up>
   nmap <buffer> w <Plug>(calendar_next)
   nmap <buffer> W w
   nmap <buffer> e w
@@ -111,9 +113,7 @@ function! calendar#mapping#new()
   nmap <buffer> <C-n> <Plug>(calendar_down)
   nmap <buffer> <C-p> <Plug>(calendar_up)
   nmap <buffer> <C-d> <Plug>(calendar_down_big)
-  nmap <buffer> <C-e> <C-d>
   nmap <buffer> <C-u> <Plug>(calendar_up_big)
-  nmap <buffer> <C-y> <C-u>
   nmap <buffer> <C-f> <Plug>(calendar_down_large)
   nmap <buffer> <C-b> <Plug>(calendar_up_large)
   nmap <buffer> <PageDown> <C-f>
