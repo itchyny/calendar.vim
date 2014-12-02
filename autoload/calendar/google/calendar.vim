@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/07/28 16:52:39.
+" Last Change: 2014/12/01 15:04:26.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -309,7 +309,7 @@ function! calendar#google#calendar#downloadEvents(year, month, ...)
         let opt = { 'timeMin': timemin, 'timeMax': timemax, 'singleEvents': 'true' }
         call calendar#google#client#get_async(s:newid(['download', 0, 0, 0, timemin, timemax, y, m, item.id]),
               \ 'calendar#google#calendar#response',
-              \ calendar#google#calendar#get_url('calendars/' . item.id . '/events'), opt)
+              \ calendar#google#calendar#get_url('calendars/' . s:event_cache.escape(item.id) . '/events'), opt)
         break
       endif
       let j += 1
@@ -337,7 +337,7 @@ function! calendar#google#calendar#response(id, response)
         let opt = extend(opt, { 'pageToken': content.nextPageToken })
         call calendar#google#client#get_async(s:newid(['download', err, j, i + 1, timemin, timemax, year, month, id]),
               \ 'calendar#google#calendar#response',
-              \ calendar#google#calendar#get_url('calendars/' . id . '/events'), opt)
+              \ calendar#google#calendar#get_url('calendars/' . s:event_cache.escape(id) . '/events'), opt)
       else
         let g:calendar_google_event_download = 2
         let j += 1
@@ -350,15 +350,9 @@ function! calendar#google#calendar#response(id, response)
           unlet! cnt
           let cnt = s:event_cache.new(item.id).new(year).new(month).get('information')
           if type(cnt) != type({}) || !has_key(cnt, 'summary')
-            if get(item, 'accessRole', '') ==# 'owner'
-              call calendar#google#client#get_async(s:newid(['download', 0, j, 0, timemin, timemax, year, month, item.id]),
-                    \ 'calendar#google#calendar#response',
-                    \ calendar#google#calendar#get_url('calendars/' . item.id . '/events'), opt)
-            else
-              call calendar#google#client#get_async_use_api_key(s:newid(['download', 0, j, 0, timemin, timemax, year, month, item.id]),
-                    \ 'calendar#google#calendar#response',
-                    \ calendar#google#calendar#get_url('calendars/' . s:event_cache.escape(item.id) . '/events'), opt)
-            endif
+            call calendar#google#client#get_async(s:newid(['download', 0, j, 0, timemin, timemax, year, month, item.id]),
+                  \ 'calendar#google#calendar#response',
+                  \ calendar#google#calendar#get_url('calendars/' . s:event_cache.escape(item.id) . '/events'), opt)
             break
           endif
           let j += 1
@@ -371,11 +365,11 @@ function! calendar#google#calendar#response(id, response)
       endif
     endif
   elseif a:response.status == 401 || a:response.status == 404
-    if i == 0 && err == 0 && get(calendarList.items[j], 'accessRole', '') ==# 'owner'
+    if i == 0 && err == 0
       call calendar#google#client#refresh_token()
       call calendar#google#client#get_async(s:newid(['download', err + 1, j, i, timemin, timemax, year, month, id]),
             \ 'calendar#google#calendar#response',
-            \ calendar#google#calendar#get_url('calendars/' . id . '/events'), opt)
+            \ calendar#google#calendar#get_url('calendars/' . s:event_cache.escape(id) . '/events'), opt)
     else
       call calendar#google#client#get_async_use_api_key(s:newid(['download', err + 1, j, 0, timemin, timemax, year, month, id]),
             \ 'calendar#google#calendar#response',
@@ -396,7 +390,7 @@ function! calendar#google#calendar#update(calendarId, eventId, title, year, mont
   let opt = extend(opt, len(location) ? { 'location': location } : {})
   call calendar#google#client#patch_async(s:newid(['update', 0, a:year, a:month, a:calendarId, a:eventId, a:title, opt]),
         \ 'calendar#google#calendar#update_response',
-        \ calendar#google#calendar#get_url('calendars/' . a:calendarId . '/events/' . a:eventId),
+        \ calendar#google#calendar#get_url('calendars/' . s:event_cache.escape(a:calendarId) . '/events/' . a:eventId),
         \ { 'calendarId': a:calendarId, 'eventId': a:eventId },
         \ extend({ 'id': a:eventId, 'summary': a:title }, opt))
 endfunction
@@ -410,7 +404,7 @@ function! calendar#google#calendar#update_response(id, response)
       call calendar#google#client#refresh_token()
       call calendar#google#client#patch_async(s:newid(['update', 1, year, month, calendarId, eventId, title, opt]),
             \ 'calendar#google#calendar#update_response',
-            \ calendar#google#calendar#get_url('calendars/' . calendarId . '/events/' . eventId),
+            \ calendar#google#calendar#get_url('calendars/' . s:event_cache.escape(calendarId) . '/events/' . eventId),
             \ { 'calendarId': calendarId, 'eventId': eventId },
             \ extend({ 'id': eventId, 'summary': title }, opt))
     else
@@ -437,7 +431,7 @@ function! calendar#google#calendar#insert(calendarId, title, start, end, year, m
   call s:set_timezone(a:calendarId, end)
   call calendar#google#client#post_async(s:newid(['insert', 0, a:year, a:month, a:calendarId, start, end, a:title, opt]),
         \ 'calendar#google#calendar#insert_response',
-        \ calendar#google#calendar#get_url('calendars/' . a:calendarId . '/events'),
+        \ calendar#google#calendar#get_url('calendars/' . s:event_cache.escape(a:calendarId) . '/events'),
         \ { 'calendarId': a:calendarId },
         \ extend({ 'summary': a:title, 'start': start, 'end': end, 'transparency': 'transparent' }, opt))
 endfunction
@@ -451,7 +445,7 @@ function! calendar#google#calendar#insert_response(id, response)
       call calendar#google#client#refresh_token()
       call calendar#google#client#post_async(s:newid(['insert', 1, year, month, calendarId, start, end, title, opt]),
             \ 'calendar#google#calendar#insert_response',
-            \ calendar#google#calendar#get_url('calendars/' . calendarId . '/events'),
+            \ calendar#google#calendar#get_url('calendars/' . s:event_cache.escape(calendarId) . '/events'),
             \ { 'calendarId': calendarId },
             \ extend({ 'summary': title, 'start': start, 'end': end, 'transparency': 'transparent'  }, opt))
     endif
@@ -463,7 +457,7 @@ endfunction
 function! calendar#google#calendar#delete(calendarId, eventId, year, month)
   call calendar#google#client#delete_async(s:newid(['delete', 0, a:year, a:month, a:calendarId, a:eventId]),
         \ 'calendar#google#calendar#delete_response',
-        \ calendar#google#calendar#get_url('calendars/' . a:calendarId . '/events/' . a:eventId),
+        \ calendar#google#calendar#get_url('calendars/' . s:event_cache.escape(a:calendarId) . '/events/' . a:eventId),
         \ { 'calendarId': a:calendarId, 'eventId': a:eventId }, {})
 endfunction
 
@@ -476,7 +470,7 @@ function! calendar#google#calendar#delete_response(id, response)
       call calendar#google#client#refresh_token()
       call calendar#google#client#delete_async(s:newid(['delete', 1, year, month, calendarId, eventId]),
             \ 'calendar#google#calendar#delete_response',
-            \ calendar#google#calendar#get_url('calendars/' . calendarId . '/events/' . eventId),
+            \ calendar#google#calendar#get_url('calendars/' . s:event_cache.escape(calendarId) . '/events/' . eventId),
             \ { 'calendarId': calendarId, 'eventId': eventId })
     else
       call calendar#webapi#echo_error(a:response)
