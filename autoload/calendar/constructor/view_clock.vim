@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_clock.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/22 13:43:14.
+" Last Change: 2014/12/03 14:04:08.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -131,6 +131,7 @@ function! s:instance.set_contents() dict
   let syntax = []
   let diffs = []
   let syn = 'NormalSpace'
+  let offsetx_start = 0
   for j in range(len(cs))
     if j >= self.y_height
       break
