@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_months.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/11 14:45:06.
+" Last Change: 2014/12/14 15:24:50.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -61,7 +61,7 @@ function! s:instance.display_point() dict
   let h = self.maxheight()
   let lw = w - self.width()
   let lh = (h - self.height()) * 2
-  return (lw >= 0 && lh >= 0) * (lw + lh + abs(lw - lh) * 5)
+  return (lw >= 0 && lh >= 0) * (lw + lh + (lw - lh >= 0 ? lw - lh : - (lw - lh)) * 5)
 endfunction
 
 function! s:instance.on_resize() dict
