@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/argument.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/12/13 12:02:54.
+" Last Change: 2015/01/14 08:31:16.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -66,7 +66,9 @@ function! calendar#argument#complete(arglead, cmdline, cursorpos)
     for key in keys(s:value_options)
       if a:cmdline =~# key
         if a:cmdline =~# key . '=$'
-          return copy(s:value_options[key])
+          return &wildmode ==# 'full'
+                \ ? map(copy(s:value_options[key]), 'key . "=" . v:val')
+                \ : copy(s:value_options[key])
         elseif a:cmdline =~# key . '=\S\+$'
           let lead = '^' . substitute(a:cmdline, '.*=', '', '')
           let list = filter(copy(s:value_options[key]), 'v:val =~# lead')
@@ -79,6 +81,8 @@ function! calendar#argument#complete(arglead, cmdline, cursorpos)
         endif
       endif
     endfor
+    let s:options = copy(s:novalue_options)
+          \ + map(keys(deepcopy(s:value_options)), &wildmode ==# 'full' ? 'v:val' : 'v:val . "="')
     let options = copy(s:options)
     if a:arglead != ''
       let options = sort(filter(copy(s:options), 'stridx(v:val, a:arglead) != -1'))
