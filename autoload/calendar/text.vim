@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/text.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/03/02 10:05:06.
+" Last Change: 2014/12/14 15:19:09.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -55,6 +55,9 @@ fu! s:self.split() dict
   endfo
   retu map(syn, 'calendar#text#new(v:val[3] - v:val[2], v:val[2], v:val[1], v:val[0])')
 endfu
+
+" :h version7 | /7.2.061
+silent! call calendar#string#strdisplaywidth('')
 
 let s:W = function((exists('*strdisplaywidth') ? '' : 'calendar#string#') . 'strdisplaywidth')
 let s:T = function('calendar#string#truncate')
