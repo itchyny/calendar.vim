@@ -3,7 +3,7 @@
 " Version: 0.0
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/06/28 23:34:47.
+" Last Change: 2014/12/07 19:58:06.
 " =============================================================================
 
 if version < 700
@@ -11,6 +11,9 @@ if version < 700
 elseif exists('b:current_syntax')
   finish
 endif
+
+let s:save_cpo = &cpo
+set cpo&vim
 
 let s:fg_color = calendar#color#normal_fg_color()
 let s:bg_color = calendar#color#normal_bg_color()
@@ -93,3 +96,6 @@ unlet! s:fg_color s:bg_color s:comment_fg_color s:select_color s:is_win32cui s:i
       \ s:saturday_bg_color s:saturday_fg_color s:saturday_title_fg_color
 
 let b:current_syntax = 'calendar'
+
+let &cpo = s:save_cpo
+unlet s:save_cpo
