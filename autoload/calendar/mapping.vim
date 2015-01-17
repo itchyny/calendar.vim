@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/mapping.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/12/03 21:19:29.
+" Last Change: 2014/12/07 19:47:53.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -11,6 +11,9 @@ set cpo&vim
 " Setting mappings in the calendar buffer.
 
 function! calendar#mapping#new()
+
+  let save_cpo = &cpo
+  set cpo&vim
 
   if &l:filetype ==# 'calendar'
     if has_key(get(b:, 'calendar', {}), 'view')
@@ -29,6 +32,7 @@ function! calendar#mapping#new()
         endif
       endif
     endif
+    let &cpo = save_cpo
     return
   endif
 
@@ -227,6 +231,8 @@ function! calendar#mapping#new()
   " mouse wheel
   map <buffer> <ScrollWheelUp> <Plug>(calendar_prev)
   map <buffer> <ScrollWheelDown> <Plug>(calendar_next)
+
+  let &cpo = save_cpo
 
 endfunction
 
