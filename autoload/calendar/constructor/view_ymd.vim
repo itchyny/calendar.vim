@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_ymd.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/28 12:44:38.
+" Last Change: 2015/01/18 08:38:41.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -48,9 +48,9 @@ function! s:instance.contents() dict
   if use_month_name
     let month = calendar#message#get('month_name')[b:calendar.month().get_month() - 1]
   else
-    let month = printf("%2d", b:calendar.month().get_month())
+    let month = printf('%2d', b:calendar.month().get_month())
   endif
-  let day = printf("%2d", b:calendar.day().get_day())
+  let day = printf('%2d', b:calendar.day().get_day())
   let sepa = substitute(printf(' %s ', calendar#setting#get('date_separator')), '\s\+', ' ', 'g')
   let texts = map(copy(self.ymd), "get({ 'year': year, 'month': month, 'day': day }, v:val)")
   let t = ''
