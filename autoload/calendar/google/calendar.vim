@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/12/01 15:04:26.
+" Last Change: 2015/02/17 09:32:09.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -112,7 +112,6 @@ endfunction
 function! calendar#google#calendar#getEvents(year, month, ...)
   let s:is_dark = &background ==# 'dark'
   let calendarList = calendar#google#calendar#getCalendarList()
-  let myCalendarList = calendar#google#calendar#getMyCalendarList()
   let events = {}
   let key = join([a:year, a:month], '/')
   if a:0 && a:1
