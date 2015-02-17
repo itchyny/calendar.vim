@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_days.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/10/12 07:45:49.
+" Last Change: 2015/02/17 11:06:06.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -397,7 +397,10 @@ function! s:instance.set_contents() dict
           else
             let trailing = ''
           endif
-          let eventtext = calendar#string#truncate(evts.events[z].summary . trailing, v.inner_width)
+          let starttime = calendar#setting#get('event_start_time') && self.view.width >= calendar#setting#get('event_start_time_minwidth')
+                \ && has_key(evts.events[z], 'start') && has_key(evts.events[z].start, 'dateTime')
+                \ ? substitute(substitute(evts.events[z].start.dateTime, '^\d\+-\d\+-\d\+T\|[-+]\d\+:\d\+$\|Z$', '', 'g'), ':00$', '', '') . ' ' : ''
+          let eventtext = calendar#string#truncate(starttime . evts.events[z].summary . trailing, v.inner_width)
           if has_key(evts.events[z], 'syntax')
             let l = len(eventtext)
             let xx = len(s[y + x]) + len(f.vertical)

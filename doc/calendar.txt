@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2015/02/17 10:25:32.
+Last Change: 2015/02/17 11:12:41.
 
 CONTENTS					*calendar-contents*
 
@@ -261,6 +261,24 @@ The following options change the appearance of the calendar.
 		If on, it shows the week numbers. In order to disable
 		this option from the argument, add the trailing '!'.
 		The default value is 0.
+
+						*calendar-options-event_start_time*
+						*g:calendar_event_start_time*
+		-event_start_time[!]
+		let g:calendar_event_start_time={0/1}
+		If on, it shows the starting time of the events in the
+		month/days views. In order to disable this option from
+		the argument, add the trailing '!'.
+		The default value is 1.
+
+						*calendar-options-event_start_time_minwidth*
+						*g:calendar_event_start_time_minwidth*
+		-event_start_time_minwidth=[num]
+		let g:calendar_event_start_time_minwidth=[num]
+		The minimum width for showing the starting time of the events.
+		If the width of the each day is larger than or equals to this
+		value, it shows the starting time of the events.
+		The default value is 16.
 
 						*calendar-options-clock_12hour*
 						*g:calendar_clock_12hour*

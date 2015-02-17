@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/argument.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/17 10:09:42.
+" Last Change: 2015/02/17 11:08:22.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -22,6 +22,7 @@ let s:all_value_options = {
       \ '-first_day': [ 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday' ],
       \ '-date_endian': [ 'little', 'big', 'middle' ],
       \ '-date_separator': [ '/', '-', '.', '" "' ],
+      \ '-event_start_time_minwidth': [],
       \ '-cache_directory': [],
       \ '-updatetime': [],
       \ '-view': [ 'year', 'month', 'week', 'days', 'day', 'clock' ],
@@ -32,7 +33,7 @@ let s:all_value_options = {
       \ '-height': [],
       \ '-message_prefix': [],
       \ }
-let s:all_novalue_options = [ '-google_calendar', '-google_task', '-date_month_name', '-date_full_month_name', '-clock_12hour', '-week_number', '-debug' ]
+let s:all_novalue_options = [ '-google_calendar', '-google_task', '-date_month_name', '-date_full_month_name', '-event_start_time', '-clock_12hour', '-week_number', '-debug' ]
 let s:value_options = deepcopy(s:all_value_options)
 let s:novalue_options = deepcopy(s:all_novalue_options)
 if has_key(g:, 'calendar_hide_options') && type(g:calendar_hide_options) == type([]) && len(g:calendar_hide_options)

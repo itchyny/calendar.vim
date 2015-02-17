@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/month.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/10/12 07:48:28.
+" Last Change: 2015/02/17 11:03:03.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -232,7 +232,10 @@ function! s:self.set_contents() dict
           else
             let trailing = ''
           endif
-          let eventtext = calendar#string#truncate(evts.events[z].summary . trailing, v.inner_width)
+          let starttime = calendar#setting#get('event_start_time') && self.view.width >= calendar#setting#get('event_start_time_minwidth')
+                \ && has_key(evts.events[z], 'start') && has_key(evts.events[z].start, 'dateTime')
+                \ ? substitute(substitute(evts.events[z].start.dateTime, '^\d\+-\d\+-\d\+T\|[-+]\d\+:\d\+$\|Z$', '', 'g'), ':00$', '', '') . ' ' : ''
+          let eventtext = calendar#string#truncate(starttime . evts.events[z].summary . trailing, v.inner_width)
           let s[y + x] .= f.vertical
           let self.length[key][x] = [ len(s[y + x]) ]
           let s[y + x] .= eventtext
