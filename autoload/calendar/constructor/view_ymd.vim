@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_ymd.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/01/18 08:38:41.
+" Last Change: 2015/02/17 10:14:21.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -45,7 +45,10 @@ function! s:instance.contents() dict
   let y = b:calendar.month().get_year()
   let year = y > 0 ? string(y) : (1 - y) . ' BC'
   let use_month_name = calendar#setting#get('date_month_name')
-  if use_month_name
+  let use_full_month_name = calendar#setting#get('date_full_month_name')
+  if use_full_month_name
+    let month = calendar#message#get('month_name_long')[b:calendar.month().get_month() - 1]
+  elseif use_month_name
     let month = calendar#message#get('month_name')[b:calendar.month().get_month() - 1]
   else
     let month = printf('%2d', b:calendar.month().get_month())

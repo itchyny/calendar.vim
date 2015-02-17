@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2014/10/12 12:20:34.
+Last Change: 2015/02/17 10:25:32.
 
 CONTENTS					*calendar-contents*
 
@@ -244,6 +244,14 @@ The following options change the appearance of the calendar.
 		let g:calendar_date_month_name={0/1}
 		If on, a date string uses month names. In order to disable
 		this option from the argument, add the trailing '!'.
+		The default value is 0.
+
+						*calendar-options-date_full_month_name*
+						*g:calendar_date_full_month_name*
+		-date_full_month_name[!]
+		let g:calendar_date_full_month_name={0/1}
+		If on, a date string uses the full month names. In order to
+		disable this option from the argument, add the trailing '!'.
 		The default value is 0.
 
 						*calendar-options-week_number*
