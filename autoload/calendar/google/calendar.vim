@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/17 09:32:09.
+" Last Change: 2015/02/17 09:37:51.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -62,7 +62,7 @@ endfunction
 function! calendar#google#calendar#getMyCalendarList()
   let calendarList = calendar#google#calendar#getCalendarList()
   let validCalendar = filter(get(deepcopy(calendarList), 'items', []), 'type(v:val) == type({}) && has_key(v:val, "summary") && has_key(v:val, "id")')
-  return filter(validCalendar, 'get(v:val, "selected") && get(v:val, "accessRole", "") ==# "owner"')
+  return filter(validCalendar, 'get(v:val, "selected") && (get(v:val, "accessRole", "") ==# "owner" || (get(v:val, "summary", "") !=# "Phases of the Moon") && get(v:val, "id", "") !~# "holiday@")')
 endfunction
 
 function! calendar#google#calendar#getEventSummary(year, month)
