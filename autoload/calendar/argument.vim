@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/argument.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/17 11:08:22.
+" Last Change: 2015/02/20 07:13:28.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -33,7 +33,15 @@ let s:all_value_options = {
       \ '-height': [],
       \ '-message_prefix': [],
       \ }
-let s:all_novalue_options = [ '-google_calendar', '-google_task', '-date_month_name', '-date_full_month_name', '-event_start_time', '-clock_12hour', '-week_number', '-debug' ]
+let s:all_novalue_options = [
+      \ '-google_calendar',
+      \ '-google_task',
+      \ '-date_month_name',
+      \ '-date_full_month_name',
+      \ '-event_start_time',
+      \ '-clock_12hour',
+      \ '-week_number',
+      \ '-debug' ]
 let s:value_options = deepcopy(s:all_value_options)
 let s:novalue_options = deepcopy(s:all_novalue_options)
 if has_key(g:, 'calendar_hide_options') && type(g:calendar_hide_options) == type([]) && len(g:calendar_hide_options)
