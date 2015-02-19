@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/02 17:31:20.
+" Last Change: 2015/02/20 07:22:43.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -64,7 +64,12 @@ function! s:self.set_index(view) dict
 endfunction
 
 function! s:self.change_index(diff) dict
-  let self.index = min([max([self.index + a:diff, 0]), self.index_max])
+  if calendar#setting#get('cyclic_view')
+    let m = self.index_max + 1
+    let self.index = (((self.index + a:diff) % m) + m) % m
+  else
+    let self.index = min([max([self.index + a:diff, 0]), self.index_max])
+  endif
   let self.updated = 1
 endfunction
 

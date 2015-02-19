@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2015/02/17 11:12:41.
+Last Change: 2015/02/20 07:28:43.
 
 CONTENTS					*calendar-contents*
 
@@ -321,6 +321,15 @@ This application has some different views. You can switch views with |<| and
 		The default value is: >
 			['year', 'month', 'week', 'day_4', 'day', 'clock']
 <
+						*calendar-options-cyclic_view*
+						*g:calendar_cyclic_view*
+		-cyclic_view[!]
+		let g:calendar_cyclic_view = {0/1}
+		If this value is 1 or the argument is given, the keys |<| and
+		|>| does no stop at the leftmost/rightmost views, but changes
+		the view cyclically.
+		The default value is 0.
+
 In order to connect this application to Google, you should use the following
 options.
 						*calendar-options-google_calendar*

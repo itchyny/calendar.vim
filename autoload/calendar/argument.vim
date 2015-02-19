@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/argument.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/20 07:13:28.
+" Last Change: 2015/02/20 07:15:32.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -38,6 +38,7 @@ let s:all_novalue_options = [
       \ '-google_task',
       \ '-date_month_name',
       \ '-date_full_month_name',
+      \ '-cyclic_view',
       \ '-event_start_time',
       \ '-clock_12hour',
       \ '-week_number',
