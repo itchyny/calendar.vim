@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_textbox.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/08/23 01:52:46.
+" Last Change: 2015/02/20 13:18:14.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -295,6 +295,23 @@ function! s:instance._action(action) dict
       call self.move_select(get(idxes, c, get(idxes, -1, 0)) - hour)
       return calendar#util#update_keys()
     endif
+  elseif a:action ==# 'command_enter' && mode() ==# 'c' && (getcmdtype() ==# '/' || getcmdtype() ==# '?')
+    let cmd = getcmdline()
+    try
+      if getcmdtype() ==# '/'
+        let indexes = range(self.select, self.length - 1) + range(self.select)
+      else
+        let indexes = range(self.select, 0, -1) + range(self.length - 1, self.select, -1)
+      endif
+      for i in indexes
+        if self.cnt[i] =~ cmd " do not use =~# (use 'ignorecase')
+          call self.move_select(i - self.select)
+          return "\<C-c>:\<C-u>silent call b:calendar.update()\<CR>:echo '/' . " . string(cmd) . "\<CR>"
+        endif
+      endfor
+    catch
+    endtry
+    return "\<C-c>"
   endif
   if self.__updated && [select, max_index] == [self.select, self.max_index] && (min_index == self.min_index || !min_index)
     return ''
