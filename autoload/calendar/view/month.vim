@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/month.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/17 11:03:03.
+" Last Change: 2015/02/20 20:28:12.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -206,14 +206,34 @@ function! s:self.set_contents() dict
     for x in hh
       if longevtIndex < len(longevt) && longevt[longevtIndex].viewoffset == x
         let lastday = d.get_day() == longevt[longevtIndex].endymd[2]
-        let eventtext = repeat('=', v.inner_width - lastday) . (lastday ? ']' : '')
-        let splitter = i ? repeat('=', f.width) : f.vertical
+        let nextweek = i == 6 && d.get_day() < longevt[longevtIndex].endymd[2]
+        if len(longevt[longevtIndex].rest) || i == 0
+          let eventorigtext = i ? longevt[longevtIndex].rest : ('«=' . longevt[longevtIndex].summary)
+          let strpart = i ? calendar#string#strwidthpart(eventorigtext, f.width) : ''
+          let splitter = i ? calendar#string#truncate(strpart . repeat(longevt[longevtIndex].rest ==# '' ? '=' : ' ', f.width), f.width) : f.vertical
+          let eventorigtext = eventorigtext[len(strpart):]
+          let strpart = calendar#string#strwidthpart(eventorigtext, v.inner_width - (lastday || nextweek) * 2)
+          let longevt[longevtIndex].rest = eventorigtext[len(strpart):]
+          let trailing = repeat(longevt[longevtIndex].rest ==# '' ? '=' : ' ', v.inner_width - (lastday || nextweek) * 2)
+          let eventtext = calendar#string#truncate(strpart . ' ' . trailing, v.inner_width - (lastday || nextweek) * 2) . (lastday ? '=]' : nextweek ? '=»' : '')
+          if !lastday && !nextweek && strpart !=# eventtext && longevt[-1].rest !=# ''
+                \ && calendar#string#strdisplaywidth(matchstr(strpart, '.$')) == 2
+                \ && calendar#string#strdisplaywidth(matchstr(eventtext, '.$')) == 1
+                \ && calendar#string#strdisplaywidth(matchstr(longevt[-1].rest, '^.')) == 2
+                \ && f.width == 2 && strpart =~# ' '
+            let strpart = substitute(strpart, ' \ze[^\x32-\x7f]*$', '  ', '')
+            let eventtext = calendar#string#truncate(strpart . trailing, v.inner_width)
+          endif
+        else
+          let eventtext = repeat('=', v.inner_width - (lastday || nextweek) * 2) . (lastday ? '=]' : nextweek ? '=»' : '')
+          let splitter = i ? repeat('=', f.width) : f.vertical
+        endif
         let s[y + x] .= splitter
         let self.length[key][x] = [ len(s[y + x]) ]
         let s[y + x] .= eventtext
         call add(self.length[key][x], len(s[y + x]))
-        let xx = self.length[key][x][0] - (i ? f.width : 0)
-        let l = self.length[key][x][1] - xx
+        let xx = self.length[key][x][-2] - (i ? len(splitter) : 0)
+        let l = self.length[key][x][-1] - xx
         let yy = y + x
         if othermonth
           call self.add_syntax(xx, yy, l, so, key)
@@ -229,13 +249,28 @@ function! s:self.set_contents() dict
           if evts.events[z].ymd != evts.events[z].endymd
             let trailing = ' ' . repeat('=', v.inner_width)
             call add(longevt, extend(evts.events[z], { 'viewoffset': x }))
+            let nextweek = i == 6
           else
             let trailing = ''
+            let nextweek = 0
           endif
           let starttime = calendar#setting#get('event_start_time') && self.view.width >= calendar#setting#get('event_start_time_minwidth')
                 \ && has_key(evts.events[z], 'start') && has_key(evts.events[z].start, 'dateTime')
                 \ ? substitute(substitute(evts.events[z].start.dateTime, '^\d\+-\d\+-\d\+T\|[-+]\d\+:\d\+$\|Z$', '', 'g'), ':00$', '', '') . ' ' : ''
-          let eventtext = calendar#string#truncate(starttime . evts.events[z].summary . trailing, v.inner_width)
+          let eventorigtext = starttime . evts.events[z].summary
+          let strpart = calendar#string#strwidthpart(eventorigtext, v.inner_width - nextweek * 2)
+          let eventtext = calendar#string#truncate(strpart . trailing, v.inner_width - nextweek * 2) . (nextweek ? '=»' : '')
+          if evts.events[z].ymd != evts.events[z].endymd
+            let longevt[-1].rest = eventorigtext[len(strpart):]
+            if strpart !=# eventtext && longevt[-1].rest !=# ''
+                  \ && calendar#string#strdisplaywidth(matchstr(strpart, '.$')) == 2
+                  \ && calendar#string#strdisplaywidth(matchstr(eventtext, '.$')) == 1
+                  \ && calendar#string#strdisplaywidth(matchstr(longevt[-1].rest, '^.')) == 2
+                  \ && f.width == 2 && strpart =~# ' '
+              let strpart = substitute(strpart, ' \ze[^\x32-\x7f]*$', '  ', '')
+              let eventtext = calendar#string#truncate(strpart . trailing, v.inner_width - nextweek * 2) . (nextweek ? '=»' : '')
+            endif
+          endif
           let s[y + x] .= f.vertical
           let self.length[key][x] = [ len(s[y + x]) ]
           let s[y + x] .= eventtext
