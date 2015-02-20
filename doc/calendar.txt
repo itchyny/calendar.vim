@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2015/02/20 07:28:43.
+Last Change: 2015/02/20 14:23:52.
 
 CONTENTS					*calendar-contents*
 
@@ -326,7 +326,7 @@ This application has some different views. You can switch views with |<| and
 		-cyclic_view[!]
 		let g:calendar_cyclic_view = {0/1}
 		If this value is 1 or the argument is given, the keys |<| and
-		|>| does no stop at the leftmost/rightmost views, but changes
+		|>| do not stop at the leftmost/rightmost views, but change
 		the view cyclically.
 		The default value is 0.
 
