@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/17 09:37:51.
+" Last Change: 2015/02/21 10:05:18.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -164,10 +164,19 @@ function! calendar#google#calendar#getEvents(year, month, ...)
                         \ , 'isWeekNum': isWeekNum
                         \ , 'ymd': ymd
                         \ , 'endymd': endymd }))
-                  if isHoliday | call s:holiday_event(events[date]) | endif
-                  if isMoon | call s:moon_event(events[date]) | endif
-                  if isDayNum | call s:daynum_event(events[date]) | endif
-                  if isWeekNum | call s:weeknum_event(events[date]) | endif
+                  if isHoliday
+                    let events[date].holiday = events[date].events[-1].summary
+                    let events[date].hasHoliday = 1
+                  endif
+                  if isMoon
+                    call s:moon_event(events[date])
+                  endif
+                  if isDayNum
+                    let events[date].daynum = matchstr(events[date].events[-1].summary, '\d\+')
+                  endif
+                  if isWeekNum
+                    let events[date].weeknum = matchstr(events[date].events[-1].summary, '\d\+')
+                  endif
                 endif
               endif
             endfor
@@ -191,26 +200,10 @@ function! s:moon_event(events)
       \ : s =~# '^Full moon'     ? (s:is_dark ? "\u25cf" : "\u25cb")
       \ : s =~# '^Last quarter'  ? (s:is_dark ? "\u25d0" : "\u25d1")
       \ : ''
-  let a:events.hasMoon = 1
   let a:events.moon = calendar#string#truncate(m, 2)
   if m !=# ''
     let a:events.events[-1].summary = a:events.moon . ' ' . a:events.events[-1].summary
   endif
-endfunction
-
-function! s:daynum_event(events)
-  let a:events.hasDayNum = 1
-  let a:events.daynum = matchstr(a:events.events[-1].summary, '\d\+')
-endfunction
-
-function! s:weeknum_event(events)
-  let a:events.hasWeekNum = 1
-  let a:events.weeknum = matchstr(a:events.events[-1].summary, '\d\+')
-endfunction
-
-function! s:holiday_event(events)
-  let a:events.hasHoliday = 1
-  let a:events.holiday = a:events.events[-1].summary
 endfunction
 
 function! calendar#google#calendar#getHolidays(year, month)
