@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_days.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/17 11:06:06.
+" Last Change: 2015/02/21 09:43:14.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -327,24 +327,8 @@ function! s:instance.set_contents() dict
     let d = p < wn ? prev_days[-wn + p] : p < ld ? days[p - wn] : next_days[p - ld]
     let evts = get(events, join(d.get_ymd(), '-'), { 'events': [] } )
     let y = v.offset + h * j
-    if get(evts, 'hasHoliday')
-      let s[y] .= f.vertical . calendar#string#truncate(printf('%2d ', d.get_day()) . evts.holiday, v.inner_width)
-    else
-      let s[y] .= f.vertical . printf(e.format, d.get_day())
-    endif
-    let right = get(evts, 'hasDayNum') ? evts.daynum : ''
-    if get(evts, 'hasWeekNum') && w > len(right) + 6 + f.width
-      let right = evts.weeknum . (len(right) ? ' ' : '') . right
-    endif
-    if get(evts, 'hasMoon') && w > len(right) + 5 + f.width
-      let right = evts.moon . right
-    endif
-    if w > len(right) + 3 + f.width && len(right)
-      let le = calendar#string#strdisplaywidth(right) + 1
-      let s[y] = calendar#string#truncate(s[y], calendar#string#strdisplaywidth(s[y]) - le) . repeat(' ', le)
-      let cut = calendar#string#strwidthpart_reverse(s[y], le)
-      let s[y] = s[y][:-len(cut)-1] . ' ' . right
-    endif
+    let s[y] .= f.vertical
+    let s[y] .= self.oneday(d.get_day(), evts)
     let is_today = today.eq(d)
     if is_today
       let self.has_today = 1

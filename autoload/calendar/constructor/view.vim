@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/08 22:12:28.
+" Last Change: 2015/02/21 09:49:05.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -145,6 +145,27 @@ endfunction
 
 function! s:instance.action(action) dict
   return 0
+endfunction
+
+function! s:instance.oneday(day, events) dict
+  let width = self.view.inner_width
+  let right = get(a:events, 'hasDayNum') ? a:events.daynum : ''
+  if get(a:events, 'hasWeekNum') && width > len(right) + 6
+    let right = a:events.weeknum . (len(right) ? ' ' : '') . right
+  endif
+  if get(a:events, 'hasMoon') && width > len(right) + 5
+    let right = a:events.moon . right
+  endif
+  if width > len(right) + 3 && len(right)
+    let le = calendar#string#strdisplaywidth(right) + 1
+    let right = ' ' . right
+  else
+    let le = 0
+    let right = ''
+  endif
+  let day = (a:day < 10 ? ' ' : '') . a:day
+  let holiday = get(a:events, 'holiday', '')
+  return calendar#string#truncate(day . ' ' . holiday, width - le) . right
 endfunction
 
 let &cpo = s:save_cpo

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/month.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/20 20:28:12.
+" Last Change: 2015/02/21 09:40:54.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -164,24 +164,7 @@ function! s:self.set_contents() dict
     let s[y] .= f.vertical
     let self.length[key] = {}
     let self.length[key][0] = [ len(s[y]) ]
-    if get(evts, 'hasHoliday')
-      let s[y] .= calendar#string#truncate(printf('%2d ', d.get_day()) . evts.holiday, v.inner_width)
-    else
-      let s[y] .= printf(e.format, d.get_day())
-    endif
-    let right = get(evts, 'hasDayNum') ? evts.daynum : ''
-    if get(evts, 'hasWeekNum') && w > len(right) + 6 + f.width
-      let right = evts.weeknum . (len(right) ? ' ' : '') . right
-    endif
-    if get(evts, 'hasMoon') && w > len(right) + 5 + f.width
-      let right = evts.moon . right
-    endif
-    if w > len(right) + 3 + f.width && len(right)
-      let le = calendar#string#strdisplaywidth(right) + 1
-      let s[y] = calendar#string#truncate(s[y], calendar#string#strdisplaywidth(s[y]) - le) . repeat(' ', le)
-      let cut = calendar#string#strwidthpart_reverse(s[y], le)
-      let s[y] = s[y][:-len(cut)-1] . ' ' . right
-    endif
+    let s[y] .= self.oneday(d.get_day(), evts)
     call add(self.length[key][0], len(s[y]))
     let is_today = today.eq(d)
     let syn = othermonth ? so : is_today ? st : d.is_sunday() || get(evts, 'hasHoliday') ? su : d.is_saturday() ? sa : ''
