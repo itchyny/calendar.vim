@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/month.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/21 09:40:54.
+" Last Change: 2015/02/21 14:24:22.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -287,14 +287,16 @@ function! s:self.set_contents() dict
     endif
   endfor
   for i in range(v.week_count)
+    let y = v.offset + h * i
     for j in range(h - 1 - (v.heightincr && i == 5))
-      let s[v.offset + h * i + j] .= f.vertical
+      let s[y + j] .= f.vertical
     endfor
-    let s[v.offset + h * i + h - 1 - (v.heightincr && i == 5)] .= (i + 1 == v.week_count ? f.bottomright : f.right)
+    let s[y + h - 1 - (v.heightincr && i == 5)] .= (i + 1 == v.week_count ? f.bottomright : f.right)
     if calendar#setting#get('week_number')
       let p = 7 * (i + 1) - 1
-      let d = p < wn ? prev_days[-wn + p] : p < ld ? days[p - wn] : next_days[p - ld]
-      let s[v.offset + h * i] .= calendar#week#week_number_year(d)
+      let d = p < wn ? prev_days[-wn + p] : p < ld ? days[p - wn] : days[-1]
+      call self.add_syntax(len(s[y]), y, 2, 'Comment')
+      let s[y] .= calendar#week#week_number_year(d)
     endif
   endfor
   let self._month = month.get_ym()

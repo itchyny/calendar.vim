@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_months.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/21 14:17:24.
+" Last Change: 2015/02/21 14:18:14.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -212,6 +212,7 @@ function! s:instance.set_contents() dict
       if mi == 6
         let [mi, mj] = [0, mj + 1]
         if calendar#setting#get('week_number')
+          call add(self.top_syntax, calendar#text#new(2, len(s[y]), y, 'Comment'))
           let s[y] .= printf('%2d', calendar#week#week_number_year(dd))
         else
           let s[y] .= '  '
