@@ -78,152 +78,107 @@ function! calendar#mapping#new()
   " command line mapping
   cnoremap <buffer><silent><expr> <Plug>(calendar_command_enter) b:calendar.action('command_enter')
 
-  " move neighborhood
-  nmap <buffer> h <Plug>(calendar_left)
-  nmap <buffer> l <Plug>(calendar_right)
-  nmap <buffer> j <Plug>(calendar_down)
-  nmap <buffer> k <Plug>(calendar_up)
-  nmap <buffer> <Left> <Plug>(calendar_left)
-  nmap <buffer> <Right> <Plug>(calendar_right)
-  nmap <buffer> <Down> <Plug>(calendar_down)
-  nmap <buffer> <Up> <Plug>(calendar_up)
-  nmap <buffer> <BS> h
-  nmap <buffer> <C-h> h
-  nmap <buffer> gh h
-  nmap <buffer> gl l
-  nmap <buffer> gj j
-  nmap <buffer> gk k
-  nmap <buffer> g<Left> <Left>
-  nmap <buffer> g<Right> <Right>
-  nmap <buffer> g<Down> <Down>
-  nmap <buffer> g<Up> <Up>
-  nmap <buffer> <S-Down> <Down>
-  nmap <buffer> <S-Up> <Up>
-  nmap <buffer> <C-j> <Plug>(calendar_move_down)
-  nmap <buffer> <C-k> <Plug>(calendar_move_up)
-  nmap <buffer> <C-S-Down> <Plug>(calendar_move_down)
-  nmap <buffer> <C-S-Up> <Plug>(calendar_move_up)
-  nmap <buffer> <C-e> <Down>
-  nmap <buffer> <C-y> <Up>
-  nmap <buffer> w <Plug>(calendar_next)
-  nmap <buffer> W w
-  nmap <buffer> e w
-  nmap <buffer> <S-Right> w
-  nmap <buffer> <C-Right> w
-  nmap <buffer> b <Plug>(calendar_prev)
-  nmap <buffer> B b
-  nmap <buffer> ge b
-  nmap <buffer> gE b
-  nmap <buffer> <S-Left> b
-  nmap <buffer> <C-Left> b
-
-  " move page
-  nmap <buffer> <C-n> <Plug>(calendar_down)
-  nmap <buffer> <C-p> <Plug>(calendar_up)
-  nmap <buffer> <C-d> <Plug>(calendar_down_big)
-  nmap <buffer> <C-u> <Plug>(calendar_up_big)
-  nmap <buffer> <C-f> <Plug>(calendar_down_large)
-  nmap <buffer> <C-b> <Plug>(calendar_up_large)
-  nmap <buffer> <PageDown> <C-f>
-  nmap <buffer> <PageUp> <C-b>
-
+  let l:default_nmappings = {}
+  
+  " move neighborhood/page
+  let l:default_nmappings['<Plug>(calendar_left)']       = ['h', '<Left>', '<BS>', '<C-h>', 'gh', 'g<Left>']
+  let l:default_nmappings['<Plug>(calendar_right)']      = ['l', '<Right>', 'gl', 'g<Right>']
+  let l:default_nmappings['<Plug>(calendar_down)']       = ['j', '<Down>', 'gj', 'g<Down>', '<S-Down>', '<C-e>', '<C-n>']
+  let l:default_nmappings['<Plug>(calendar_up)']         = ['k', '<Up>', 'gk', 'g<Up>', '<S-Up>', '<C-y>', '<C-p>']
+  let l:default_nmappings['<Plug>(calendar_move_down)']  = ['<C-j>', '<C-S-Down>']
+  let l:default_nmappings['<Plug>(calendar_move_up)']    = ['<C-k>', '<C-S-Up>']
+  let l:default_nmappings['<Plug>(calendar_next)']       = ['w', 'W', 'e', '<S-Right>', '<C-Right>']
+  let l:default_nmappings['<Plug>(calendar_prev)']       = ['b', 'B', 'ge', 'gE', '<S-Left>', '<C-Left>']
+  let l:default_nmappings['<Plug>(calendar_down_big)']   = ['<C-d>']
+  let l:default_nmappings['<Plug>(calendar_up_big)']     = ['<C-u>']
+  let l:default_nmappings['<Plug>(calendar_down_large)'] = ['<C-f>', '<PageDown>']
+  let l:default_nmappings['<Plug>(calendar_up_large)']   = ['<C-b>', '<PageUp>']
+  
   " move column
-  nmap <buffer> 0 <Plug>(calendar_line_head)
-  nmap <buffer> ^ 0
-  nmap <buffer> g0 0
-  nmap <buffer> <Home> 0
-  nmap <buffer> g<Home> 0
-  nmap <buffer> g^ ^
-  nmap <buffer> gm <Plug>(calendar_line_middle)
-  nmap <buffer> $ <Plug>(calendar_line_last)
-  nmap <buffer> g$ $
-  nmap <buffer> g_ $
-  nmap <buffer> <End> $
-  nmap <buffer> g<End> $
-  nmap <buffer> gg <Plug>(calendar_first_line)
-  nmap <buffer> <C-Home> gg
-  nmap <buffer> ( <Plug>(calendar_first_line)
-  nmap <buffer> { (
-  nmap <buffer> [[ (
-  nmap <buffer> [] [[
-  nmap <buffer> G <Plug>(calendar_last_line)
-  nmap <buffer> ) <Plug>(calendar_last_line)
-  nmap <buffer> } )
-  nmap <buffer> ]] )
-  nmap <buffer> ][ ]]
-  nmap <buffer> <C-End> <Plug>(calendar_last_line_last)
-  nmap <buffer> <Bar> <Plug>(calendar_bar)
-
+  let l:default_nmappings['<Plug>(calendar_line_head)']      = ['0', '^', 'g0', '<Home>', 'g<Home>', 'g^']
+  let l:default_nmappings['<Plug>(calendar_line_middle)']    = ['gm']
+  let l:default_nmappings['<Plug>(calendar_line_last)']      = ['$', 'g$', 'g_', '<End>', 'g<End>']
+  let l:default_nmappings['<Plug>(calendar_first_line)']     = ['gg', '<C-Home>', '(', '{', '[[', '[]']
+  let l:default_nmappings['<Plug>(calendar_last_line)']      = ['G', ')', '}', ']]', '][']
+  let l:default_nmappings['<Plug>(calendar_last_line_last)'] = ['<C-End>']
+  let l:default_nmappings['<Plug>(calendar_bar)']            = ['<Bar>']
+  
   " scroll
-  nmap <buffer> z<CR> <Plug>(calendar_scroll_top_head)
-  nmap <buffer> zt <Plug>(calendar_scroll_top)
-  nmap <buffer> z. <Plug>(calendar_scroll_center_head)
-  nmap <buffer> zz <Plug>(calendar_scroll_center)
-  nmap <buffer> z- <Plug>(calendar_scroll_bottom_head)
-  nmap <buffer> zb <Plug>(calendar_scroll_bottom)
-
+  let l:default_nmappings['<Plug>(calendar_scroll_top_head)']    = ['z<CR>']
+  let l:default_nmappings['<Plug>(calendar_scroll_top)']         = ['zt']
+  let l:default_nmappings['<Plug>(calendar_scroll_center_head)'] = ['z.']
+  let l:default_nmappings['<Plug>(calendar_scroll_center)']      = ['zz']
+  let l:default_nmappings['<Plug>(calendar_scroll_bottom_head)'] = ['z-']
+  let l:default_nmappings['<Plug>(calendar_scroll_bottom)']      = ['zb']
+  
   " delete
-  nmap <buffer> d <Plug>(calendar_delete)
-  nmap <buffer> D <Plug>(calendar_delete_line)
-
+  let l:default_nmappings['<Plug>(calendar_delete)']      = ['d']
+  let l:default_nmappings['<Plug>(calendar_delete_line)'] = ['D']
+  
   " yank
-  nmap <buffer> y <Plug>(calendar_yank)
-  nmap <buffer> Y <Plug>(calendar_yank_line)
-
+  let l:default_nmappings['<Plug>(calendar_yank)']      = ['y']
+  let l:default_nmappings['<Plug>(calendar_yank_line)'] = ['Y']
+  
   " change
-  nmap <buffer> c <Plug>(calendar_change)
-  nmap <buffer> C <Plug>(calendar_change_line)
-
+  let l:default_nmappings['<Plug>(calendar_change)']      = ['c']
+  let l:default_nmappings['<Plug>(calendar_change_line)'] = ['C']
+  
   " utility
-  nmap <buffer> <Undo> <Plug>(calendar_undo)
-  nmap <buffer> u <Plug>(calendar_undo)
-  nmap <buffer> U <Plug>(calendar_undo_line)
-  nmap <buffer> <TAB> <Plug>(calendar_tab)
-  nmap <buffer> <S-Tab> <Plug>(calendar_shift_tab)
-  nmap <buffer> t <Plug>(calendar_today)
-  nmap <buffer> <CR> <Plug>(calendar_enter)
-  nmap <buffer> <C-a> <Plug>(calendar_add)
-  nmap <buffer> <C-x> <Plug>(calendar_subtract)
-  nmap <buffer> <C-g> <Plug>(calendar_status)
-  nmap <buffer> + <Plug>(calendar_plus)
-  nmap <buffer> - <Plug>(calendar_minus)
-  nmap <buffer> T <Plug>(calendar_task)
-  nmap <buffer> E <Plug>(calendar_event)
-  nmap <buffer> < <Plug>(calendar_view_left)
-  nmap <buffer> > <Plug>(calendar_view_right)
-  nmap <buffer> <Space> <Plug>(calendar_space)
-  nmap <buffer> <C-l> <Plug>(calendar_redraw)
-  nmap <buffer> <C-r> <Plug>(calendar_redraw)
-  nmap <buffer> L <Plug>(calendar_clear)
-  nmap <buffer> ? <Plug>(calendar_help)
-  nmap <buffer> q <Plug>(calendar_hide)
-  nmap <buffer> Q <Plug>(calendar_exit)
-
+  let l:default_nmappings['<Plug>(calendar_undo)']       = ['<Undo>', 'u']
+  let l:default_nmappings['<Plug>(calendar_undo_line)']  = ['U']
+  let l:default_nmappings['<Plug>(calendar_tab)']        = ['<TAB>']
+  let l:default_nmappings['<Plug>(calendar_shift_tab)']  = ['<S-Tab>']
+  let l:default_nmappings['<Plug>(calendar_today)']      = ['t']
+  let l:default_nmappings['<Plug>(calendar_enter)']      = ['<CR>']
+  let l:default_nmappings['<Plug>(calendar_add)']        = ['<C-a>']
+  let l:default_nmappings['<Plug>(calendar_subtract)']   = ['<C-x>']
+  let l:default_nmappings['<Plug>(calendar_status)']     = ['<C-g>']
+  let l:default_nmappings['<Plug>(calendar_plus)']       = ['+']
+  let l:default_nmappings['<Plug>(calendar_minus)']      = ['-']
+  let l:default_nmappings['<Plug>(calendar_task)']       = ['T']
+  let l:default_nmappings['<Plug>(calendar_event)']      = ['E']
+  let l:default_nmappings['<Plug>(calendar_view_left)']  = ['<']
+  let l:default_nmappings['<Plug>(calendar_view_right)'] = ['>']
+  let l:default_nmappings['<Plug>(calendar_space)']      = ['<Space>']
+  let l:default_nmappings['<Plug>(calendar_redraw)']     = ['<C-l>', '<C-r>']
+  let l:default_nmappings['<Plug>(calendar_clear)']      = ['L']
+  let l:default_nmappings['<Plug>(calendar_help)']       = ['?']
+  let l:default_nmappings['<Plug>(calendar_hide)']       = ['q']
+  let l:default_nmappings['<Plug>(calendar_exit)']       = ['Q']
+  
   " nop
-  nmap <buffer> H <Nop>
-  nmap <buffer> M <Nop>
-  nmap <buffer> J <Nop>
-  nmap <buffer> p <Nop>
-  nmap <buffer> P <Nop>
-  nmap <buffer> r <Nop>
-  nmap <buffer> R <Nop>
-  nmap <buffer> ~ <Nop>
-
+  let l:default_nmappings['<Nop>'] = ['H', 'M', 'J', 'p', 'P', 'r', 'R', '~']
+  
   " insert mode
-  nmap <buffer> i <Plug>(calendar_start_insert)
-  nmap <buffer> a <Plug>(calendar_start_insert_append)
-  nmap <buffer> I <Plug>(calendar_start_insert_head)
-  nmap <buffer> A <Plug>(calendar_start_insert_last)
-  nmap <buffer> O <Plug>(calendar_start_insert_prev_line)
-  nmap <buffer> o <Plug>(calendar_start_insert_next_line)
-
+  let l:default_nmappings['<Plug>(calendar_start_insert)']           = ['i']
+  let l:default_nmappings['<Plug>(calendar_start_insert_append)']    = ['a']
+  let l:default_nmappings['<Plug>(calendar_start_insert_head)']      = ['I']
+  let l:default_nmappings['<Plug>(calendar_start_insert_last)']      = ['A']
+  let l:default_nmappings['<Plug>(calendar_start_insert_prev_line)'] = ['O']
+  let l:default_nmappings['<Plug>(calendar_start_insert_next_line)'] = ['o']
+  
   " visual mode
-  nmap <buffer> v <Plug>(calendar_visual)
-  nmap <buffer> V <Plug>(calendar_visual_line)
-  nmap <buffer> <C-v> <Plug>(calendar_visual_block)
-  nmap <buffer> gh v
-  nmap <buffer> gH V
-  nmap <buffer> g<C-h> <C-v>
+  let l:default_nmappings['<Plug>(calendar_visual)']       = ['v', 'gh']
+  let l:default_nmappings['<Plug>(calendar_visual_line)']  = ['V', 'gH']
+  let l:default_nmappings['<Plug>(calendar_visual_block)'] = ['<C-v>', 'g<C-h>']
+  
+  " check for user defined mappings
+  if !exists('g:calendar_nmappings')
+    let g:calendar_nmappings = l:default_nmappings
+  else
+    for key in keys(l:default_nmappings)
+      if !has_key(g:calendar_nmappings, key)
+        let g:calendar_nmappings[key] = l:default_nmappings[key]     
+      endif
+    endfor
+  endif
+
+  " apply normal mode mappings
+  for key in keys(g:calendar_nmappings)
+     for elem in g:calendar_nmappings[key]
+        exe 'nmap <buffer> '.elem.' '.key
+     endfor
+  endfor
 
   " command line
   cmap <buffer> <CR> <Plug>(calendar_command_enter)

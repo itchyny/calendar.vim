@@ -657,6 +657,22 @@ gh		same as v
 gH		same as V
 g<C-h>		same as <C-v>
 <ESC>		|<Plug>(calendar_escape)|
+
+
+The normal mode mappings can be customized through the globlal dictonary of
+list |g:calendar_nmappings|. This dictonary uses each of the <Plug>(calendar_..)
+as a key, and a list of target mappings in its value. The procedure below is
+an example of how to remove <Ctrl-l> mapping from the calendar window: >
+
+	:Calendar
+	:nmap <buffer> <c-l>
+	   n  <C-L>        @<Plug>(calendar_redraw)
+	:echo g:calendar_nmappings['<Plug>(calendar_redraw)']
+	   ['<C-l>', '<C-r>']
+	:let g:calendar_nmappings['<Plug>(calendar_redraw)'] = ['<C-r>']
+	:bdelete   --> refresh the mappings
+<
+
 ------------------------------------------------------------------------------
 MARKS						*calendar-marks*
 In the |calendar| buffer, you can use |mark|s.
