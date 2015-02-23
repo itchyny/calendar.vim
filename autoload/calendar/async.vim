@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/async.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/10 01:26:15.
+" Last Change: 2015/02/22 10:01:15.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -61,7 +61,7 @@ function! calendar#async#call()
   if exists('b:calendar_async_reltime') && has('reltime')
     let time = split(split(reltimestr(reltime(b:calendar_async_reltime)))[0], '\.')
     if time[0] ==# '0' && len(time[1]) && time[1][0] ==# '0'
-      silent call feedkeys(mode() ==# 'i' ? "\<C-g>\<ESC>" : "g\<ESC>", 'n')
+      silent call feedkeys(mode() ==# 'i' ? "\<C-g>\<ESC>" : "g\<ESC>" . (v:count ? v:count : ''), 'n')
       return
     endif
   endif
@@ -93,7 +93,7 @@ function! calendar#async#call()
     let b:calendar_async_reltime = reltime()
   endif
   if len(b:calendar_async)
-    silent call feedkeys(mode() ==# 'i' ? "\<C-g>\<ESC>" : "g\<ESC>", 'n')
+    silent call feedkeys(mode() ==# 'i' ? "\<C-g>\<ESC>" : "g\<ESC>" . (v:count ? v:count : ''), 'n')
   else
     exec 'autocmd! CalendarAsync' . bufnr('')
     call calendar#async#restore_updatetime()
