@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2015/02/20 14:23:52.
+Last Change: 2015/02/21 17:54:57.
 
 CONTENTS					*calendar-contents*
 
@@ -395,6 +395,14 @@ Other miscellaneous options.
 		Specify the updatetime (in msec) in the calendar buffer. This
 		value is used for asynchronous web queries and the clock view.
 		The default value is 200.
+
+						*calendar-options-yank_deleting*
+						*g:calendar_yank_deleting*
+		-yank_deleting[!]
+		let g:calendar_yank_deleting = {0/1}
+		If the value is 1 or the argument is given, the application
+		yanks the text when you delete an event or a task.
+		The default value is 0.
 
 						*calendar-options-cache_directory*
 						*g:calendar_cache_directory*

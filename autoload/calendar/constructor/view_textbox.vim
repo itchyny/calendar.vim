@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_textbox.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/20 13:18:14.
+" Last Change: 2015/02/21 17:54:34.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -279,8 +279,13 @@ function! s:instance._action(action) dict
     let message = get(self.current_contents(), 'title', get(self.current_contents(), 'summary', ''))
     call calendar#echo#message(message)
     return 1
-  elseif index(['yank', 'yank_line', 'delete', 'delete_line'], a:action) >= 0
+  elseif index(['yank', 'yank_line'], a:action) >= 0
     call self.yank()
+    return 1
+  elseif index(['delete', 'delete_line'], a:action) >= 0
+    if calendar#setting#get('yank_deleting')
+      call self.yank()
+    endif
     return 1
   elseif a:action ==# 'enter'
     let url = get(self.current_contents(), 'htmlLink', '')

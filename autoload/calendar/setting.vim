@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/setting.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/20 07:24:37.
+" Last Change: 2015/02/21 17:54:38.
 " =============================================================================
 
 scriptencoding utf-8
@@ -101,6 +101,10 @@ function! s:views()
 endfunction
 
 function! s:cyclic_view()
+  return 0
+endfunction
+
+function! s:yank_deleting()
   return 0
 endfunction
 

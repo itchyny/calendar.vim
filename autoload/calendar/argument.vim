@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/argument.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/20 07:15:32.
+" Last Change: 2015/02/21 17:54:28.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -40,6 +40,7 @@ let s:all_novalue_options = [
       \ '-date_full_month_name',
       \ '-cyclic_view',
       \ '-event_start_time',
+      \ '-yank_deleting',
       \ '-clock_12hour',
       \ '-week_number',
       \ '-debug' ]
