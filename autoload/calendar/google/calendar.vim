@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/21 10:05:18.
+" Last Change: 2015/02/26 03:39:45.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -331,6 +331,11 @@ function! calendar#google#calendar#response(id, response)
               \ 'calendar#google#calendar#response',
               \ calendar#google#calendar#get_url('calendars/' . s:event_cache.escape(id) . '/events'), opt)
       else
+        let k = i + 1
+        while filereadable(s:event_cache.new(id).new(year).new(month).path(k))
+          silent! call s:event_cache.new(id).new(year).new(month).delete(k)
+          let k += 1
+        endwhile
         let g:calendar_google_event_download = 2
         let j += 1
         while j < len(calendarList.items)

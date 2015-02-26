@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/10/18 19:58:45.
+" Last Change: 2015/02/26 03:38:03.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -148,6 +148,11 @@ function! calendar#google#task#response(id, response)
               \ 'calendar#google#task#response',
               \ calendar#google#task#get_url('lists/' . id . '/tasks'), opt)
       else
+        let k = i + 1
+        while filereadable(s:task_cache.new(id).path(k))
+          silent! call s:task_cache.new(id).delete(k)
+          let k += 1
+        endwhile
         let j += 1
         while j < len(taskList.items)
           let item = taskList.items[j]
