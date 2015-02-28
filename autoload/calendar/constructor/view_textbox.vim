@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_textbox.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/21 17:54:34.
+" Last Change: 2015/02/26 17:41:31.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -301,22 +301,35 @@ function! s:instance._action(action) dict
       return calendar#util#update_keys()
     endif
   elseif a:action ==# 'command_enter' && mode() ==# 'c' && (getcmdtype() ==# '/' || getcmdtype() ==# '?')
-    let cmd = getcmdline()
+        \ || a:action ==# 'next_match' || a:action ==# 'prev_match'
+    let iscmd = a:action ==# 'command_enter'
+    let pattern = iscmd ? getcmdline() : @/
+    if iscmd && getcmdtype() ==# '/' || a:action ==# 'next_match' &&  v:searchforward
+          \                          || a:action ==# 'prev_match' && !v:searchforward
+      let indexes = range(self.select + 1 - iscmd, self.length - 1) + range(self.select + 1)
+      let status = '/' . pattern
+    else
+      let indexes = range(self.select - 1 + iscmd, 0, -1) + range(self.length - 1, self.select, -1)
+      let status = '?' . pattern
+    endif
+    let exitvalue = iscmd ? "\<C-c>:\<C-u>silent call b:calendar.update()\<CR>"
+          \                     . ":\<C-u>silent let v:searchforward=" . (getcmdtype() ==# '/') . "\<CR>"
+          \                     . ":\<C-u>echo " . string(status) . "\<CR>" : 0
+    if iscmd
+      let @/ = pattern
+    else
+      echo status
+    endif
     try
-      if getcmdtype() ==# '/'
-        let indexes = range(self.select, self.length - 1) + range(self.select)
-      else
-        let indexes = range(self.select, 0, -1) + range(self.length - 1, self.select, -1)
-      endif
       for i in indexes
-        if self.cnt[i] =~ cmd " do not use =~# (use 'ignorecase')
+        if self.cnt[i] =~ pattern " do not use =~# (use 'ignorecase')
           call self.move_select(i - self.select)
-          return "\<C-c>:\<C-u>silent call b:calendar.update()\<CR>:echo '/' . " . string(cmd) . "\<CR>"
+          return exitvalue
         endif
       endfor
     catch
     endtry
-    return "\<C-c>"
+    return exitvalue
   endif
   if self.__updated && [select, max_index] == [self.select, self.max_index] && (min_index == self.min_index || !min_index)
     return ''

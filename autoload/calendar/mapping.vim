@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/mapping.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/24 21:44:14.
+" Last Change: 2015/02/24 21:48:54.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -44,7 +44,7 @@ function! calendar#mapping#new()
         \ 'scroll_top_head', 'scroll_top', 'scroll_center_head', 'scroll_center', 'scroll_bottom_head', 'scroll_bottom',
         \ 'add', 'subtract', 'status', 'plus', 'minus', 'task', 'event', 'close_task', 'close_event',
         \ 'delete', 'delete_line', 'yank', 'yank_line', 'change', 'change_line',
-        \ 'undo', 'undo_line', 'tab', 'shift_tab',
+        \ 'undo', 'undo_line', 'tab', 'shift_tab', 'next_match', 'prev_match',
         \ 'today', 'enter', 'view_left',  'view_right', 'redraw', 'clear', 'help', 'hide', 'exit',
         \ 'visual', 'visual_line', 'visual_block', 'exit_visual',
         \ 'start_insert', 'start_insert_append', 'start_insert_head', 'start_insert_last',
@@ -180,6 +180,8 @@ function! calendar#mapping#new()
   nmap <buffer> U <Plug>(calendar_undo_line)
   nmap <buffer> <TAB> <Plug>(calendar_tab)
   nmap <buffer> <S-Tab> <Plug>(calendar_shift_tab)
+  nmap <buffer> n <Plug>(calendar_next_match)
+  nmap <buffer> N <Plug>(calendar_prev_match)
   nmap <buffer> t <Plug>(calendar_today)
   nmap <buffer> <CR> <Plug>(calendar_enter)
   nmap <buffer> <C-a> <Plug>(calendar_add)

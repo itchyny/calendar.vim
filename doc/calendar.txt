@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2015/02/21 17:54:57.
+Last Change: 2015/02/24 22:01:30.
 
 CONTENTS					*calendar-contents*
 
@@ -519,6 +519,8 @@ Utility
 <Plug>(calendar_undo_line)			*<Plug>(calendar_undo_line)*
 <Plug>(calendar_tab)				*<Plug>(calendar_tab)*
 <Plug>(calendar_shift_tab)			*<Plug>(calendar_shift_tab)*
+<Plug>(calendar_next_match)			*<Plug>(calendar_next_match)*
+<Plug>(calendar_prev_match)			*<Plug>(calendar_prev_match)*
 <Plug>(calendar_today)				*<Plug>(calendar_today)*
 <Plug>(calendar_enter)				*<Plug>(calendar_enter)*
 <Plug>(calendar_view_left)			*<Plug>(calendar_view_left)*
@@ -634,6 +636,8 @@ u		|<Plug>(calendar_undo)|
 U		|<Plug>(calendar_undo_line)|
 <TAB>		|<Plug>(calendar_tab)|
 <S-Tab>		|<Plug>(calendar_shift_tab)|
+n		|<Plug>(calendar_next_match)|
+N		|<Plug>(calendar_prev_match)|
 t		|<Plug>(calendar_today)|
 <CR>		|<Plug>(calendar_enter)|
 <C-a>		|<Plug>(calendar_add)|

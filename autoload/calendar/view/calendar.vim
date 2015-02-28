@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/07/06 07:18:44.
+" Last Change: 2015/02/26 17:41:36.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -96,6 +96,47 @@ function! s:self.action(action) dict
     call b:calendar.start_block_visual()
   elseif a:action ==# 'exit_visual'
     call b:calendar.exit_visual()
+  elseif a:action ==# 'command_enter' && mode() ==# 'c' && (getcmdtype() ==# '/' || getcmdtype() ==# '?')
+        \ || a:action ==# 'next_match' || a:action ==# 'prev_match'
+    let iscmd = a:action ==# 'command_enter'
+    let pattern = iscmd ? getcmdline() : @/
+    let day = b:calendar.day()
+    let events = b:calendar.event.get_events(day.get_year(), day.get_month())
+    let [year, month] = day.month().add(3).get_ym()
+    let events = extend(events, b:calendar.event.get_events(year, month))
+    let [year, month] = day.month().add(-3).get_ym()
+    let events = extend(events, b:calendar.event.get_events(year, month))
+    if iscmd && getcmdtype() ==# '/' || a:action ==# 'next_match' &&  v:searchforward
+          \                          || a:action ==# 'prev_match' && !v:searchforward
+      let indexes = range(1 - iscmd, 160) + range(0, -160, -1)
+      let status = '/' . pattern
+    else
+      let indexes = range(-1 + iscmd, -160, -1) + range(160)
+      let status = '?' . pattern
+    endif
+    let exitvalue = iscmd ? "\<C-c>:\<C-u>silent call b:calendar.update()\<CR>"
+          \                     . ":\<C-u>silent let v:searchforward=" . (getcmdtype() ==# '/') . "\<CR>"
+          \                     . ":\<C-u>echo " . string(status) . "\<CR>" : 0
+    if iscmd
+      let @/ = pattern
+    else
+      echo status
+    endif
+    try
+      for i in indexes
+        let ymd = join(day.add(i).get_ymd(), '-')
+        for evt in get(get(events, ymd, { 'events': [] } ), 'events', [])
+          if get(get(evt, 'start', {}), 'date', get(get(evt, 'start', {}), 'dateTime', '')) . ' '
+                \ . get(get(evt, 'end', {}), 'date', get(get(evt, 'end', {}), 'dateTime', '')) . ' '
+                \ . get(evt, 'summary', '') =~ pattern " do not use =~# (use 'ignorecase')
+            call b:calendar.move_day(i)
+            return exitvalue
+          endif
+        endfor
+      endfor
+    catch
+    endtry
+    return exitvalue
   else
     return self.view.action(a:action)
   endif
