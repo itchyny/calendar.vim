@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_months.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/21 14:18:14.
+" Last Change: 2015/03/02 15:17:58.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -309,8 +309,8 @@ function! s:instance.action(action) dict
     call b:calendar.move_month(self.is_full() ? min([v:count1, x - 1 - i]) : v:count1 * y)
   elseif index(['prev', 'next', 'space', 'add', 'subtract'], a:action) >= 0
     call b:calendar.move_month(v:count1 * (a:action ==# 'prev' || a:action ==# 'subtract' ? -1 : 1))
-  elseif index(['down', 'up'], a:action) >= 0
-    call b:calendar.move_month(v:count1 * (a:action ==# 'down' ? 1 : -1) * x)
+  elseif index(['down', 'up', 'scroll_down', 'scroll_up'], a:action) >= 0
+    call b:calendar.move_month(v:count1 * (a:action =~# 'down' ? 1 : -1) * x)
   elseif index(['plus', 'minus'], a:action) >= 0
     call b:calendar.move_month(v:count1 * (a:action ==# 'plus' ? 1 : -1) * x - i)
   elseif index(['down_big', 'up_big'], a:action) >= 0

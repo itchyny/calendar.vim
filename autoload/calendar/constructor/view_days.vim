@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_days.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/21 09:43:14.
+" Last Change: 2015/03/02 15:12:05.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -732,6 +732,15 @@ function! s:instance.action(action) dict
     call b:calendar.move_hour((v:count ? max([v:count1, 23]) : 23) - hour)
   elseif a:action ==# 'last_line_last'
     call b:calendar.move_hour((v:count ? max([v:count1, 23]) : 23) - hour)
+  elseif index(['scroll_down', 'scroll_up'], a:action) >= 0
+    let diff = v:count1 * (a:action =~# 'down' ? 1 : -1)
+    let old_hours = [self.min_hour, self.max_hour]
+    let self.min_hour += diff
+    let self.max_hour += diff
+    let new_hours = self.min_max_hour()
+    if old_hours == new_hours
+      call b:calendar.move_hour(diff)
+    endif
   elseif index(['scroll_top_head', 'scroll_top', 'scroll_bottom_head', 'scroll_bottom'], a:action) >= 0
     let self.min_hour += 23 * (a:action =~# 'top' ? 1 : -1)
     let self.max_hour += 23 * (a:action =~# 'top' ? 1 : -1)

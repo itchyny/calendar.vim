@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/mapping.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/24 21:48:54.
+" Last Change: 2015/03/01 00:30:17.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -41,7 +41,8 @@ function! calendar#mapping#new()
         \ 'down_big', 'up_big', 'down_large', 'up_large',
         \ 'line_head', 'line_middle', 'line_last', 'bar',
         \ 'first_line', 'last_line', 'first_line_head', 'last_line_last', 'space',
-        \ 'scroll_top_head', 'scroll_top', 'scroll_center_head', 'scroll_center', 'scroll_bottom_head', 'scroll_bottom',
+        \ 'scroll_down', 'scroll_up', 'scroll_top_head', 'scroll_top',
+        \ 'scroll_center_head', 'scroll_center', 'scroll_bottom_head', 'scroll_bottom',
         \ 'add', 'subtract', 'status', 'plus', 'minus', 'task', 'event', 'close_task', 'close_event',
         \ 'delete', 'delete_line', 'yank', 'yank_line', 'change', 'change_line',
         \ 'undo', 'undo_line', 'tab', 'shift_tab', 'next_match', 'prev_match',
@@ -105,8 +106,6 @@ function! calendar#mapping#new()
   nmap <buffer> <C-k> <Plug>(calendar_move_up)
   nmap <buffer> <C-S-Down> <Plug>(calendar_move_down)
   nmap <buffer> <C-S-Up> <Plug>(calendar_move_up)
-  nmap <buffer> <C-e> <Down>
-  nmap <buffer> <C-y> <Up>
   nmap <buffer> w <Plug>(calendar_next)
   nmap <buffer> W w
   nmap <buffer> e w
@@ -155,6 +154,8 @@ function! calendar#mapping#new()
   nmap <buffer> <Bar> <Plug>(calendar_bar)
 
   " scroll
+  nmap <buffer> <C-e> <Plug>(calendar_scroll_down)
+  nmap <buffer> <C-y> <Plug>(calendar_scroll_up)
   nmap <buffer> z<CR> <Plug>(calendar_scroll_top_head)
   nmap <buffer> zt <Plug>(calendar_scroll_top)
   nmap <buffer> z. <Plug>(calendar_scroll_center_head)

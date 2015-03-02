@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_ymd.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/17 10:14:21.
+" Last Change: 2015/03/02 15:21:10.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -85,8 +85,8 @@ function! s:instance.action(action) dict
     let self.select_index = max([self.select_index - 1, 0])
   elseif index(['right', 'next', 'line_last', 'last_line_last'], a:action) >= 0
     let self.select_index = min([self.select_index + 1, len(self.ymd) - 1])
-  elseif index(['down', 'up', 'add', 'subtract', 'plus', 'minus'], a:action) >= 0
-    let diff = v:count1 * (index(['down', 'add', 'plus'], a:action) >= 0 ? 1 : -1)
+  elseif index(['down', 'up', 'add', 'subtract', 'plus', 'minus', 'scroll_down', 'scroll_up'], a:action) >= 0
+    let diff = v:count1 * (index(['down', 'add', 'plus', 'scroll_down'], a:action) >= 0 ? 1 : -1)
     call b:calendar['move_' . self.ymd[self.select_index]](diff)
   elseif index(['down_big', 'up_big'], a:action) >= 0
     let diff = v:count1 * (a:action ==# 'down_big' ? 1 : -1)

@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2015/02/24 22:01:30.
+Last Change: 2015/03/01 00:37:14.
 
 CONTENTS					*calendar-contents*
 
@@ -492,6 +492,8 @@ Mappings for moving around.
 <Plug>(calendar_last_line_last)			*<Plug>(calendar_last_line_last)*
 
 Mappings for scrolling
+<Plug>(calendar_scroll_down)			*<Plug>(calendar_scroll_down)*
+<Plug>(calendar_scroll_up)			*<Plug>(calendar_scroll_up)*
 <Plug>(calendar_scroll_top_head)		*<Plug>(calendar_scroll_top_head)*
 <Plug>(calendar_scroll_top)			*<Plug>(calendar_scroll_top)*
 <Plug>(calendar_scroll_center_head)		*<Plug>(calendar_scroll_center_head)*
@@ -619,6 +621,8 @@ G		|<Plug>(calendar_last_line)|
 ][		same as ]]
 <C-End>		|<Plug>(calendar_last_line_last)|
 <Bar>		|<Plug>(calendar_bar)|
+<C-e>		|<Plug>(calendar_scroll_down)|
+<C-y>		|<Plug>(calendar_scroll_up)|
 z<CR>		|<Plug>(calendar_scroll_top_head)|
 zt		|<Plug>(calendar_scroll_top)|
 z.		|<Plug>(calendar_scroll_center_head)|

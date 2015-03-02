@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/month.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/21 14:24:22.
+" Last Change: 2015/03/02 14:57:08.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -446,8 +446,8 @@ function! s:self.action(action) dict
     call b:calendar.move_day(min([v:count1, -wnum + 6]))
   elseif index(['prev', 'next', 'space', 'add', 'subtract'], a:action) >= 0
     call b:calendar.move_day(v:count1 * (index(['prev', 'subtract'], a:action) >= 0 ? -1 : 1))
-  elseif index(['down', 'up'], a:action) >= 0
-    call b:calendar.move_day(v:count1 * (a:action ==# 'down' ? 1 : -1) * 7)
+  elseif index(['down', 'up', 'scroll_down', 'scroll_up'], a:action) >= 0
+    call b:calendar.move_day(v:count1 * (a:action =~# 'down' ? 1 : -1) * 7)
   elseif index(['plus', 'minus'], a:action) >= 0
     call b:calendar.move_day(v:count1 * (a:action ==# 'plus' ? 1 : -1) * 7 - wnum)
   elseif index(['down_big', 'up_big'], a:action) >= 0

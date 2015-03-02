@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_textbox.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/26 17:41:31.
+" Last Change: 2015/03/02 14:51:06.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -271,6 +271,15 @@ function! s:instance._action(action) dict
     call self.move_select((v:count ? max([v:count1, self.length - 1]) : self.length - 1) - hour)
   elseif a:action ==# 'last_line_last'
     call self.move_select((v:count ? max([v:count1, self.length - 1]) : self.length - 1) - hour)
+  elseif index(['scroll_down', 'scroll_up'], a:action) >= 0
+    let diff = v:count1 * (a:action =~# 'down' ? 1 : -1)
+    let old_indeces = [self.min_index, self.max_index]
+    let self.min_index += diff
+    let self.max_index += diff
+    let new_indeces = self.min_max_index(self.length)
+    if old_indeces == new_indeces
+      call self.move_select(diff)
+    endif
   elseif index(['scroll_top_head', 'scroll_top', 'scroll_bottom_head', 'scroll_bottom', 'scroll_center_head', 'scroll_center'], a:action) >= 0
     let diff = a:action =~# 'center' ? hour - (self.max_index - self.min_index) / 2 + 1 - self.min_index : (self.length - 1) * (a:action =~# 'top' ? 1 : -1)
     let self.min_index += diff
