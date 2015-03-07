@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/mapping.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/01 00:30:17.
+" Last Change: 2015/03/07 17:10:33.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -15,23 +15,23 @@ function! calendar#mapping#new()
   let save_cpo = &cpo
   set cpo&vim
 
-  if &l:filetype ==# 'calendar'
-    if has_key(get(b:, 'calendar', {}), 'view')
-      let v = b:calendar.view
-      if maparg('<ESC>', 'n') !=# '<Plug>(calendar_escape)'
-        if v._help || v._event || v._task || b:calendar.visual_mode()
-          if v:version > 703
-            nmap <buffer><nowait> <ESC> <Plug>(calendar_escape)
-          else
-            nmap <buffer>         <ESC> <Plug>(calendar_escape)
-          endif
-        endif
-      else
-        if !(v._help || v._event || v._task || b:calendar.visual_mode())
-          nunmap <buffer> <ESC>
+  if has_key(get(b:, 'calendar', {}), 'view')
+    let v = b:calendar.view
+    if maparg('<ESC>', 'n') !=# '<Plug>(calendar_escape)'
+      if v._help || v._event || v._task || b:calendar.visual_mode()
+        if v:version > 703
+          nmap <buffer><nowait> <ESC> <Plug>(calendar_escape)
+        else
+          nmap <buffer>         <ESC> <Plug>(calendar_escape)
         endif
       endif
+    else
+      if !(v._help || v._event || v._task || b:calendar.visual_mode())
+        nunmap <buffer> <ESC>
+      endif
     endif
+  endif
+  if &l:filetype ==# 'calendar'
     let &cpo = save_cpo
     return
   endif
