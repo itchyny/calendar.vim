@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/07 16:18:49.
+" Last Change: 2015/03/08 06:20:47.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -358,7 +358,6 @@ function! s:self.action(action) dict
         let self.order = filter(copy(self.order), 'v:val != ii') + [ii]
       endif
     elseif a:action ==# 'close_task'
-      echo [self.order, self._task]
       if self._task
         call self.action('task')
       endif
