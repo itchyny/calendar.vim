@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/setting.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/21 17:54:38.
+" Last Change: 2015/03/07 16:19:33.
 " =============================================================================
 
 scriptencoding utf-8
@@ -56,6 +56,10 @@ function! s:date_month_name()
 endfunction
 
 function! s:date_full_month_name()
+  return 0
+endfunction
+
+function! s:task()
   return 0
 endfunction
 

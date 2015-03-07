@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/20 07:22:43.
+" Last Change: 2015/03/07 16:18:49.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -13,6 +13,7 @@ function! calendar#view#new()
   call self.set_view_source(calendar#setting#get('view_source'))
   call self.set_calendar_views(calendar#setting#get('views'))
   call self.set_index(calendar#setting#get('view'))
+  call self.set_task_visibility(calendar#setting#get('task'))
   return self
 endfunction
 
@@ -28,7 +29,6 @@ let s:self._task = 0
 let s:self._event = 0
 let s:self._help_order = []
 let s:self._event_order = []
-let s:self._task_order = []
 
 function! s:self.set_calendar_views(views) dict
   let views = [ 'year', 'month', 'week', 'weekday', 'day_7', 'day_6', 'day_5', 'day_4', 'day_3', 'day_2', 'day_1', 'day', 'clock' ]
@@ -75,6 +75,10 @@ endfunction
 
 function! s:self.task_visible() dict
   return self._task
+endfunction
+
+function! s:self.set_task_visibility(_task) dict
+  let self._task = type(a:_task) == type('') ? a:_task ==# '1' : a:_task
 endfunction
 
 function! s:self.set_view_source(source) dict
@@ -350,8 +354,11 @@ function! s:self.action(action) dict
       elseif has_key(self, '_task_order')
         let self.order = self._task_order
         let self._task = 0
+      elseif ii >= 0 && !self._task
+        let self.order = filter(copy(self.order), 'v:val != ii') + [ii]
       endif
     elseif a:action ==# 'close_task'
+      echo [self.order, self._task]
       if self._task
         call self.action('task')
       endif

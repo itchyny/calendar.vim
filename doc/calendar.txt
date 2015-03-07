@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2015/03/01 00:37:14.
+Last Change: 2015/03/07 16:34:39.
 
 CONTENTS					*calendar-contents*
 
@@ -260,6 +260,17 @@ The following options change the appearance of the calendar.
 		let g:calendar_week_number={0/1}
 		If on, it shows the week numbers. In order to disable
 		this option from the argument, add the trailing '!'.
+		The default value is 0.
+
+						*calendar-options-task*
+						*g:calendar_task*
+		-task[!]
+		let g:calendar_task={0/1}
+		If on, the app shows the task list on its startup. You can
+		toggle the task list with the T key, which is mapped to
+		|<Plug>(calendar_task)|. If you want to disable the visibility
+		of the task list after you set the global variable on, add the
+		trailing '!'.
 		The default value is 0.
 
 						*calendar-options-event_start_time*
