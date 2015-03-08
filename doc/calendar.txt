@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2015/03/07 16:34:39.
+Last Change: 2015/03/07 18:13:35.
 
 CONTENTS					*calendar-contents*
 
@@ -684,6 +684,27 @@ gh		same as v
 gH		same as V
 g<C-h>		same as <C-v>
 <ESC>		|<Plug>(calendar_escape)|
+
+You can configure the mappings in the calendar buffers.
+Example configuration: >
+	augroup calendar-mappings
+		autocmd!
+
+		" diamond cursor
+		autocmd FileType calendar nmap <buffer> i <Plug>(calendar_up)
+		autocmd FileType calendar nmap <buffer> j <Plug>(calendar_left)
+		autocmd FileType calendar nmap <buffer> k <Plug>(calendar_down)
+		autocmd FileType calendar nmap <buffer> l <Plug>(calendar_right)
+
+		" swap v and V
+		autocmd FileType calendar nmap <buffer> V <Plug>(calendar_visual)
+		autocmd FileType calendar nmap <buffer> v <Plug>(calendar_visual_line)
+
+		" unmap <C-n>, <C-p> for other plugins
+		autocmd FileType calendar nunmap <buffer> <C-n>
+		autocmd FileType calendar nunmap <buffer> <C-p>
+	augroup END
+<
 ------------------------------------------------------------------------------
 MARKS						*calendar-marks*
 In the |calendar| buffer, you can use |mark|s.
@@ -889,13 +910,32 @@ Problem 4:					*calendar-problem-4*
 	How to change key-mapping settings for calendar buffers.
 
 		Add the following configuration to your vimrc. >
-		augroup CalendarKey
+		augroup calendar-mappings
 			autocmd!
 			autocmd FileType calendar nmap <buffer> {key}
 				\ <Plug>(calendar_...)
 			autocmd FileType calendar nunmap <buffer> {key}
 		augroup END
+<
+		Example configuration: >
+		augroup calendar-mappings
+			autocmd!
 
+			" diamond cursor
+			autocmd FileType calendar nmap <buffer> i <Plug>(calendar_up)
+			autocmd FileType calendar nmap <buffer> j <Plug>(calendar_left)
+			autocmd FileType calendar nmap <buffer> k <Plug>(calendar_down)
+			autocmd FileType calendar nmap <buffer> l <Plug>(calendar_right)
+
+			" swap v and V
+			autocmd FileType calendar nmap <buffer> V <Plug>(calendar_visual)
+			autocmd FileType calendar nmap <buffer> v <Plug>(calendar_visual_line)
+
+			" unmap <C-n>, <C-p> for other plugins
+			autocmd FileType calendar nunmap <buffer> <C-n>
+			autocmd FileType calendar nunmap <buffer> <C-p>
+		augroup END
+<
 Problem 5:					*calendar-problem-5*
 	The frame collapses (on Ubuntu).
 
