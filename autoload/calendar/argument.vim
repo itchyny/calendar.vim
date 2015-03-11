@@ -244,8 +244,8 @@ function! calendar#argument#parse(args)
   elseif command ==# 'vnew' && width > 0
     let command = width . ' ' . command
   endif
-  let cmd1 = commandprefix . command . (addname ? name : '')
-  let cmd2 = 'edit' . name
+  let cmd1 = 'keepalt '. commandprefix . command . (addname ? name : '')
+  let cmd2 = 'keepalt edit' . name
   let command = 'if isnewbuffer | ' . cmd1 . ' | else | ' . cmd2 . '| endif'
   if flg_ymd
     let ymd = [arg_year, arg_month, arg_day, flg_year, flg_month, flg_day]
