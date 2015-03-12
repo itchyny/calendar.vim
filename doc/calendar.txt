@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2015/03/07 18:13:35.
+Last Change: 2015/03/12 11:28:09.
 
 CONTENTS					*calendar-contents*
 
@@ -413,7 +413,7 @@ Other miscellaneous options.
 		let g:calendar_yank_deleting = {0/1}
 		If the value is 1 or the argument is given, the application
 		yanks the text when you delete an event or a task.
-		The default value is 0.
+		The default value is 1.
 
 						*calendar-options-cache_directory*
 						*g:calendar_cache_directory*
