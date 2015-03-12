@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_days.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/02 15:12:05.
+" Last Change: 2015/03/13 05:40:00.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -323,6 +323,8 @@ function! s:instance.set_contents() dict
   let longevt = []
   let longtimeevt = []
   let self.timeevent_syntax = []
+  let event_start_time = calendar#setting#get('event_start_time')
+  let event_start_time_minwidth = calendar#setting#get('event_start_time_minwidth')
   for p in range
     let d = p < wn ? prev_days[-wn + p] : p < ld ? days[p - wn] : next_days[p - ld]
     let evts = get(events, join(d.get_ymd(), '-'), { 'events': [] } )
@@ -381,7 +383,7 @@ function! s:instance.set_contents() dict
           else
             let trailing = ''
           endif
-          let starttime = calendar#setting#get('event_start_time') && self.view.width >= calendar#setting#get('event_start_time_minwidth')
+          let starttime = event_start_time && self.view.width >= event_start_time_minwidth
                 \ && has_key(evts.events[z], 'start') && has_key(evts.events[z].start, 'dateTime')
                 \ ? substitute(substitute(evts.events[z].start.dateTime, '^\d\+-\d\+-\d\+T\|[-+]\d\+:\d\+$\|Z$', '', 'g'), ':00$', '', '') . ' ' : ''
           let eventtext = calendar#string#truncate(starttime . evts.events[z].summary . trailing, v.inner_width)

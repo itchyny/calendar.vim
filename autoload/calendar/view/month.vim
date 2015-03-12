@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/month.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/02 14:57:08.
+" Last Change: 2015/03/13 05:39:32.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -155,6 +155,8 @@ function! s:self.set_contents() dict
   let longevt = []
   let self.syntax_name = {}
   let self.length = {}
+  let event_start_time = calendar#setting#get('event_start_time')
+  let event_start_time_minwidth = calendar#setting#get('event_start_time_minwidth')
   for p in range(v.week_count * 7)
     let d = p < wn ? prev_days[-wn + p] : p < ld ? days[p - wn] : next_days[p - ld]
     let key = i . ',' . j
@@ -237,7 +239,7 @@ function! s:self.set_contents() dict
             let trailing = ''
             let nextweek = 0
           endif
-          let starttime = calendar#setting#get('event_start_time') && self.view.width >= calendar#setting#get('event_start_time_minwidth')
+          let starttime = event_start_time && self.view.width >= event_start_time_minwidth
                 \ && has_key(evts.events[z], 'start') && has_key(evts.events[z].start, 'dateTime')
                 \ ? substitute(substitute(evts.events[z].start.dateTime, '^\d\+-\d\+-\d\+T\|[-+]\d\+:\d\+$\|Z$', '', 'g'), ':00$', '', '') . ' ' : ''
           let eventorigtext = starttime . evts.events[z].summary
