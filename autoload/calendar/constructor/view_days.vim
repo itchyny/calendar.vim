@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_days.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/13 05:40:00.
+" Last Change: 2015/03/13 06:02:31.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -325,6 +325,7 @@ function! s:instance.set_contents() dict
   let self.timeevent_syntax = []
   let event_start_time = calendar#setting#get('event_start_time')
   let event_start_time_minwidth = calendar#setting#get('event_start_time_minwidth')
+  let clock_12hour = calendar#setting#get('clock_12hour')
   for p in range
     let d = p < wn ? prev_days[-wn + p] : p < ld ? days[p - wn] : next_days[p - ld]
     let evts = get(events, join(d.get_ymd(), '-'), { 'events': [] } )
@@ -496,7 +497,7 @@ function! s:instance.set_contents() dict
     endif
     if !((j + 1) % v.hourheight)
       let hour = self.min_hour + j / v.hourheight + 1
-      if calendar#setting#get('clock_12hour')
+      if clock_12hour
         let postfix = hour < 12 || hour == 24 ? ' a.m.' : ' p.m.'
         let hour = calendar#time#hour12(hour)
       else
@@ -506,7 +507,7 @@ function! s:instance.set_contents() dict
     endif
     if !j
       let hour = self.min_hour
-      if calendar#setting#get('clock_12hour')
+      if clock_12hour
         let postfix = ' a.m.'
         let hour = calendar#time#hour12(hour)
       else
