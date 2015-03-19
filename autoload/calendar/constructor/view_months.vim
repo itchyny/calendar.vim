@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_months.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/13 05:50:31.
+" Last Change: 2015/03/19 09:51:30.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -278,7 +278,7 @@ function! s:instance.contents() dict
   let o = self.month_names_offset[j]
   let sunsat = []
   if self.is_selected()
-    for x in range(calendar#week#week_count(b:calendar.month()) * mh + v.offset)
+    for x in range(calendar#week#week_count(month) * mh + v.offset)
       let l = x ? (x > 1 ? w * 7 : self.day_names_len) : o[i * 2 + 1] - o[i * 2]
       let offset = x ? ((x > 1 ? w * 7 : self.day_names_len) + v.pad) * i : o[i * 2]
       if x != mh
