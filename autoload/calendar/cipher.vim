@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/cipher.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/24 09:16:13.
+" Last Change: 2015/03/29 06:25:35.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -15,7 +15,7 @@ set cpo&vim
 " the keys in raw strings, which can be extracted easily.
 " Reference: http://en.wikipedia.org/wiki/Caesar_cipher
 
-function! calendar#cipher#cipher(val, num)
+function! calendar#cipher#cipher(val, num) abort
   if type(a:val) == type('')
     return s:cipher(a:val, a:num)
   elseif type(a:val) == type(0)
@@ -31,11 +31,11 @@ function! calendar#cipher#cipher(val, num)
   endif
 endfunction
 
-function! calendar#cipher#decipher(val, num)
+function! calendar#cipher#decipher(val, num) abort
   return calendar#cipher#cipher(a:val, - a:num)
 endfunction
 
-function! s:cipher(str, num)
+function! s:cipher(str, num) abort
   let ret = ''
   let r = range(len(a:str))
   for i in r

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/color.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/12/14 15:23:54.
+" Last Change: 2015/03/29 06:25:55.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -16,7 +16,7 @@ let s:is_win32cui = (has('win32') || has('win64')) && !has('gui_running')
 let s:term = has('gui_running') ? 'gui' : 'cterm'
 let s:is_dark = &background ==# 'dark'
 
-function! calendar#color#new_syntax(id, fg, bg)
+function! calendar#color#new_syntax(id, fg, bg) abort
   if has_key(b:, 'calendar')
     if !has_key(b:calendar, 'syntaxnames')
       let b:calendar.syntaxnames = []
@@ -77,7 +77,7 @@ function! calendar#color#new_syntax(id, fg, bg)
   return ''
 endfunction
 
-function! calendar#color#refresh_syntax()
+function! calendar#color#refresh_syntax() abort
   if !has_key(b:, 'calendar') || !has_key(b:calendar, 'syntaxnames') || !has_key(b:calendar, 'syntax')
     return
   endif
@@ -87,7 +87,7 @@ function! calendar#color#refresh_syntax()
   endfor
 endfunction
 
-function! calendar#color#convert(rgb)
+function! calendar#color#convert(rgb) abort
   let rgb = map(matchlist(a:rgb, '#\(..\)\(..\)\(..\)')[1:3], '0 + ("0x".v:val)')
   if len(rgb) == 0
     return -1
@@ -117,7 +117,7 @@ function! calendar#color#convert(rgb)
   endif
 endfunction
 
-function! calendar#color#whiten(rgb)
+function! calendar#color#whiten(rgb) abort
   let rgb = map(matchlist(a:rgb, '#\(..\)\(..\)\(..\)')[1:3], '0 + ("0x".v:val)')
   if len(rgb) == 0
     return -1
@@ -125,7 +125,7 @@ function! calendar#color#whiten(rgb)
   return printf('#%02x%02x%02x', min([rgb[0] + 0x36, 0xff]), min([rgb[1] + 0x36, 0xff]), min([rgb[2] + 0x36, 0xff]))
 endfunction
 
-function! s:black(x)
+function! s:black(x) abort
   if a:x < 0x04
     return 16
   elseif a:x > 0xf4
@@ -138,11 +138,11 @@ function! s:black(x)
   endif
 endfunction
 
-function! s:nr(x)
+function! s:nr(x) abort
   return a:x < 0x2f ? 0 : a:x < 0x73 ? 1 : a:x < 0x9b ? 2 : a:x < 0xc7 ? 3 : a:x < 0xef ? 4 : 5
 endfunction
 
-function! calendar#color#gui_color()
+function! calendar#color#gui_color() abort
   if has_key(s:, '_gui_color') | return s:_gui_color | endif
   let s:_gui_color = {
         \ 'black'          : '#000000',
@@ -196,7 +196,7 @@ function! calendar#color#gui_color()
   return s:_gui_color
 endfunction
 
-function! calendar#color#to_256color(nr, fg)
+function! calendar#color#to_256color(nr, fg) abort
   if a:nr == 0 || a:nr == 16
     return 232
   elseif a:nr == 15 || a:nr == 231
@@ -212,21 +212,21 @@ function! calendar#color#to_256color(nr, fg)
   endif
 endfunction
 
-function! calendar#color#fg_color(syntax_name)
+function! calendar#color#fg_color(syntax_name) abort
   let color = synIDattr(synIDtrans(hlID(a:syntax_name)), 'fg', s:term)
   return s:is_gui ? color : calendar#color#to_256color((len(color) == 0 ? -1 : color) + 0, 1)
 endfunction
 
-function! calendar#color#bg_color(syntax_name)
+function! calendar#color#bg_color(syntax_name) abort
   let color = synIDattr(synIDtrans(hlID(a:syntax_name)), 'bg', s:term)
   return s:is_gui ? color : calendar#color#to_256color((len(color) == 0 ? -1 : color) + 0, 0)
 endfunction
 
-function! calendar#color#is_dark()
+function! calendar#color#is_dark() abort
   return &background ==# 'dark'
 endfunction
 
-function! calendar#color#normal_fg_color()
+function! calendar#color#normal_fg_color() abort
   if s:is_win32cui
     if calendar#color#is_dark()
       return 15
@@ -245,7 +245,7 @@ function! calendar#color#normal_fg_color()
   return fg_color
 endfunction
 
-function! calendar#color#normal_bg_color()
+function! calendar#color#normal_bg_color() abort
   if s:is_win32cui
     if calendar#color#is_dark()
       return 0
@@ -264,7 +264,7 @@ function! calendar#color#normal_bg_color()
   return bg_color
 endfunction
 
-function! calendar#color#comment_fg_color()
+function! calendar#color#comment_fg_color() abort
   if s:is_win32cui
     return 7
   endif
@@ -279,7 +279,7 @@ function! calendar#color#comment_fg_color()
   return fg_color
 endfunction
 
-function! calendar#color#comment_bg_color()
+function! calendar#color#comment_bg_color() abort
   if s:is_win32cui
     if calendar#color#is_dark()
       return 0
@@ -298,7 +298,7 @@ function! calendar#color#comment_bg_color()
   return bg_color
 endfunction
 
-function! calendar#color#nr_rgb(nr)
+function! calendar#color#nr_rgb(nr) abort
   let x = a:nr * 1
   if x < 8
     let [b, rg] = [x / 4, x % 4]
@@ -324,13 +324,13 @@ endfunction
 
 if s:is_win32cui
 
-  function! calendar#color#gen_color(fg, bg, weightfg, weightbg)
+  function! calendar#color#gen_color(fg, bg, weightfg, weightbg) abort
     return a:weightfg > a:weightbg ? a:fg : a:bg
   endfunction
 
 elseif s:is_cterm
 
-  function! calendar#color#gen_color(fg, bg, weightfg, weightbg)
+  function! calendar#color#gen_color(fg, bg, weightfg, weightbg) abort
     let fg = a:fg < 0 ? (s:is_dark ?  255 : 232) : a:fg
     let bg = a:bg < 0 ? (s:is_dark ?  232 : 255) : a:bg
     let fg_rgb = calendar#color#nr_rgb(fg)
@@ -346,7 +346,7 @@ elseif s:is_cterm
     return color
   endfunction
 
-  function! calendar#color#select_rgb(color, rgb, weight)
+  function! calendar#color#select_rgb(color, rgb, weight) abort
     let c = calendar#color#nr_rgb(a:color < 0 ? (s:is_dark ? 255 : 232) : a:color)
     let cc = max([(c[0] + c[1] + c[2]) / 3, 5])
     let colors = [cc / a:weight, cc / a:weight, cc / a:weight]
@@ -357,7 +357,7 @@ elseif s:is_cterm
 
 else
 
-  function! calendar#color#gen_color(fg, bg, weightfg, weightbg)
+  function! calendar#color#gen_color(fg, bg, weightfg, weightbg) abort
     let fg_rgb = map(matchlist(a:fg[0] == '#' ? a:fg : get(calendar#color#gui_color(), a:fg, ''), '#\(..\)\(..\)\(..\)')[1:3], '("0x".v:val) + 0')
     let bg_rgb = map(matchlist(a:bg[0] == '#' ? a:bg : get(calendar#color#gui_color(), a:bg, ''), '#\(..\)\(..\)\(..\)')[1:3], '("0x".v:val) + 0')
     if len(fg_rgb) != 3 | let fg_rgb = s:is_dark ?  [0xe4, 0xe4, 0xe4] : [0x12, 0x12, 0x12] | endif
@@ -368,7 +368,7 @@ else
     return printf('#%06x', color)
   endfunction
 
-  function! calendar#color#select_rgb(color, rgb)
+  function! calendar#color#select_rgb(color, rgb) abort
     let c = map(matchlist(a:color[0] == '#' ? a:color : get(calendar#color#gui_color(), a:color, ''), '#\(..\)\(..\)\(..\)')[1:3], '("0x".v:val) + 0')
     if len(c) != 3 | let c = s:is_dark ? [0xe4, 0xe4, 0xe4] : [0x12, 0x12, 0x12] | endif
     let cc = max([(c[0] + c[1] + c[2]) / 3, 0x6f])
@@ -379,7 +379,7 @@ else
 
 endif
 
-function! calendar#color#colors()
+function! calendar#color#colors() abort
   return [
         \ '#16a765',
         \ '#4986e7',
@@ -401,7 +401,7 @@ function! calendar#color#colors()
         \ ]
 endfunction
 
-function! calendar#color#syntax(name, fg, bg, attr)
+function! calendar#color#syntax(name, fg, bg, attr) abort
   let term = len(a:attr) ? ' term=' . a:attr . ' cterm=' . a:attr . ' gui=' . a:attr : ''
   if s:is_gui
     let fg = len(a:fg) ? ' guifg=' . a:fg : ''
@@ -414,7 +414,7 @@ function! calendar#color#syntax(name, fg, bg, attr)
 endfunction
 
 let s:_select_color = {}
-function! s:select_color()
+function! s:select_color() abort
   let key = get(g:, 'colors_name', '') . &bg
   if has_key(s:_select_color, key)
     return s:_select_color[key]
@@ -431,7 +431,7 @@ endfunction
 
 let s:num = 0
 let s:nums = {}
-function! s:shorten(name)
+function! s:shorten(name) abort
   let name = matchstr(a:name, '...')
   let name = name ==# '' ? a:name : name
   let s:num = (s:num + 1) % 26

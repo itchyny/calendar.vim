@@ -2,14 +2,14 @@
 " Filename: autoload/calendar/controller.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/12 23:40:27.
+" Last Change: 2015/03/29 06:28:27.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
 " Calendar controller. This object is the top-level object, b:calendar.
-function! calendar#controller#new()
+function! calendar#controller#new() abort
   let self = deepcopy(s:self)
   let self.model = calendar#model#new()
   let self.view = calendar#view#new()
@@ -34,156 +34,156 @@ let s:self.defaultsyntaxnames = ['Select', 'Sunday', 'Saturday',
       \ 'OtherMonth', 'OtherMonthSelect', 'DayTitle', 'SundayTitle', 'SaturdayTitle',
       \ 'NormalSpace', 'Comment', 'CommentSelect']
 
-function! s:self.time() dict
+function! s:self.time() dict abort
   return self.model.time()
 endfunction
 
-function! s:self.set_time(time) dict
+function! s:self.set_time(time) dict abort
   return self.model.set_time(a:time)
 endfunction
 
-function! s:self.second() dict
+function! s:self.second() dict abort
   return self.model.second()
 endfunction
 
-function! s:self.minute() dict
+function! s:self.minute() dict abort
   return self.model.minute()
 endfunction
 
-function! s:self.hour() dict
+function! s:self.hour() dict abort
   return self.model.hour()
 endfunction
 
-function! s:self.move_second(diff) dict
+function! s:self.move_second(diff) dict abort
   call self.model.move_second(a:diff)
 endfunction
 
-function! s:self.move_minute(diff) dict
+function! s:self.move_minute(diff) dict abort
   call self.model.move_minute(a:diff)
 endfunction
 
-function! s:self.move_hour(diff) dict
+function! s:self.move_hour(diff) dict abort
   call self.model.move_hour(a:diff)
 endfunction
 
-function! s:self.day() dict
+function! s:self.day() dict abort
   return self.model.day()
 endfunction
 
-function! s:self.set_day(day) dict
+function! s:self.set_day(day) dict abort
   return self.model.set_day(a:day)
 endfunction
 
-function! s:self.month() dict
+function! s:self.month() dict abort
   return self.model.month()
 endfunction
 
-function! s:self.set_month() dict
+function! s:self.set_month() dict abort
   return self.model.set_month(self.day().month())
 endfunction
 
-function! s:self.year() dict
+function! s:self.year() dict abort
   return self.model.year()
 endfunction
 
-function! s:self.get_days() dict
+function! s:self.get_days() dict abort
   return self.model.get_days()
 endfunction
 
-function! s:self.move_day(diff) dict
+function! s:self.move_day(diff) dict abort
   call self.model.move_day(a:diff)
 endfunction
 
-function! s:self.move_month(diff) dict
+function! s:self.move_month(diff) dict abort
   call self.model.move_month(a:diff)
 endfunction
 
-function! s:self.move_year(diff) dict
+function! s:self.move_year(diff) dict abort
   call self.model.move_year(a:diff)
 endfunction
 
-function! s:self.start_visual() dict
+function! s:self.start_visual() dict abort
   call self.model.start_visual()
 endfunction
 
-function! s:self.start_line_visual() dict
+function! s:self.start_line_visual() dict abort
   call self.model.start_line_visual()
 endfunction
 
-function! s:self.start_block_visual() dict
+function! s:self.start_block_visual() dict abort
   call self.model.start_block_visual()
 endfunction
 
-function! s:self.exit_visual() dict
+function! s:self.exit_visual() dict abort
   call self.model.exit_visual()
 endfunction
 
-function! s:self.visual_mode() dict
+function! s:self.visual_mode() dict abort
   return self.model.visual_mode()
 endfunction
 
-function! s:self.is_visual() dict
+function! s:self.is_visual() dict abort
   return self.model.is_visual()
 endfunction
 
-function! s:self.is_line_visual() dict
+function! s:self.is_line_visual() dict abort
   return self.model.is_line_visual()
 endfunction
 
-function! s:self.is_block_visual() dict
+function! s:self.is_block_visual() dict abort
   return self.model.is_block_visual()
 endfunction
 
-function! s:self.visual_start_day() dict
+function! s:self.visual_start_day() dict abort
   return self.model.visual_start_day()
 endfunction
 
-function! s:self.visual_start_time() dict
+function! s:self.visual_start_time() dict abort
   return self.model.visual_start_time()
 endfunction
 
-function! s:self.go(day) dict
+function! s:self.go(day) dict abort
   call self.set_day(a:day)
   call self.set_month()
   call self.update()
 endfunction
 
-function! s:self.prepare() dict
+function! s:self.prepare() dict abort
   let [self.winheight, self.winwidth] = [calendar#util#winheight(), calendar#util#winwidth()]
   call calendar#mapping#new()
   call calendar#autocmd#new()
   call calendar#setlocal#new()
 endfunction
 
-function! s:self.update() dict
+function! s:self.update() dict abort
   call self.prepare()
   call self.redraw(0)
 endfunction
 
-function! s:self.update_force() dict
+function! s:self.update_force() dict abort
   call self.prepare()
   call self.redraw(1)
 endfunction
 
-function! s:self.update_force_redraw() dict
+function! s:self.update_force_redraw() dict abort
   call self.event.clear_cache()
   call self.prepare()
   call self.redraw(1, 1)
 endfunction
 
-function! s:self.update_if_resized() dict
+function! s:self.update_if_resized() dict abort
   if self.winheight != calendar#util#winheight() || self.winwidth != calendar#util#winwidth()
     call self.update_force_redraw()
   endif
 endfunction
 
-function! s:self.clear() dict
+function! s:self.clear() dict abort
   for name in self.defaultsyntaxnames + get(b:calendar, 'syntaxnames', [])
     exec 'silent! syntax clear Calendar' . name
   endfor
 endfunction
 
-function! s:self.redraw(...) dict
+function! s:self.redraw(...) dict abort
   if histget(':', -1) ==# 'silent call b:calendar.update()'
     silent! call histdel(':', -1)
   endif
@@ -218,12 +218,12 @@ function! s:self.redraw(...) dict
   call calendar#setlocal#nomodifiable()
 endfunction
 
-function! s:self.cursor() dict
+function! s:self.cursor() dict abort
   let b:calendar.cursor_pos = [self.pos[1] + 1, self.pos[0] + 1]
   call cursor(b:calendar.cursor_pos[0], b:calendar.cursor_pos[1])
 endfunction
 
-function! s:self.cursor_moved() dict
+function! s:self.cursor_moved() dict abort
   if [line('.'), col('.')] == b:calendar.cursor_pos
     return
   else
@@ -247,7 +247,7 @@ function! s:self.cursor_moved() dict
   endif
 endfunction
 
-function! s:self.action(action) dict
+function! s:self.action(action) dict abort
   let action = a:action
   if index([ 'delete', 'yank', 'change' ], action) >= 0
     if self.mode ==# action

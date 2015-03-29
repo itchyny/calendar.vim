@@ -2,13 +2,13 @@
 " Filename: autoload/calendar/view.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/08 06:20:47.
+" Last Change: 2015/03/29 06:34:20.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! calendar#view#new()
+function! calendar#view#new() abort
   let self = copy(s:self)
   call self.set_view_source(calendar#setting#get('view_source'))
   call self.set_calendar_views(calendar#setting#get('views'))
@@ -30,7 +30,7 @@ let s:self._event = 0
 let s:self._help_order = []
 let s:self._event_order = []
 
-function! s:self.set_calendar_views(views) dict
+function! s:self.set_calendar_views(views) dict abort
   let views = [ 'year', 'month', 'week', 'weekday', 'day_7', 'day_6', 'day_5', 'day_4', 'day_3', 'day_2', 'day_1', 'day', 'clock' ]
   let calendar_views = filter(a:views, 'index(views, v:val) >= 0')
   if len(calendar_views) > 0
@@ -40,11 +40,11 @@ function! s:self.set_calendar_views(views) dict
   return self
 endfunction
 
-function! s:self.get_calendar_views() dict
+function! s:self.get_calendar_views() dict abort
   return self.calendar_views[self.index]
 endfunction
 
-function! s:self.set_index(view) dict
+function! s:self.set_index(view) dict abort
   let i = index(self.calendar_views, a:view)
   if i < 0
     if a:view ==# 'day'
@@ -63,7 +63,7 @@ function! s:self.set_index(view) dict
   return self
 endfunction
 
-function! s:self.change_index(diff) dict
+function! s:self.change_index(diff) dict abort
   if calendar#setting#get('cyclic_view')
     let m = self.index_max + 1
     let self.index = (((self.index + a:diff) % m) + m) % m
@@ -73,26 +73,26 @@ function! s:self.change_index(diff) dict
   let self.updated = 1
 endfunction
 
-function! s:self.task_visible() dict
+function! s:self.task_visible() dict abort
   return self._task
 endfunction
 
-function! s:self.set_task_visibility(_task) dict
+function! s:self.set_task_visibility(_task) dict abort
   let self._task = type(a:_task) == type('') ? a:_task ==# '1' : a:_task
 endfunction
 
-function! s:self.set_view_source(source) dict
+function! s:self.set_view_source(source) dict abort
   let self.source = a:source
   let self.views = map(deepcopy(self.source), 'calendar#view#{v:val.type}#new(v:val)')
   let self.order = range(len(self.source))
   return self
 endfunction
 
-function! s:self.current_view() dict
+function! s:self.current_view() dict abort
   return self.views[self.current_view_index()]
 endfunction
 
-function! s:self.current_view_index() dict
+function! s:self.current_view_index() dict abort
   let i = len(self.order) - 1
   while !self.views[self.order[i]].is_visible()
     let i -= 1
@@ -100,7 +100,7 @@ function! s:self.current_view_index() dict
   return self.order[i]
 endfunction
 
-function! s:self.view_count() dict
+function! s:self.view_count() dict abort
   let num = 0
   for i in range(len(self.order))
     let num += self.views[self.order[i]].is_visible()
@@ -108,7 +108,7 @@ function! s:self.view_count() dict
   return num
 endfunction
 
-function! s:self.visible_num() dict
+function! s:self.visible_num() dict abort
   let num = 0
   for i in range(len(self.views))
     if self.views[i].is_visible()
@@ -118,7 +118,7 @@ function! s:self.visible_num() dict
   return num
 endfunction
 
-function! s:self.event_view() dict
+function! s:self.event_view() dict abort
   for i in range(len(self.views))
     if self.views[i].source.type ==# 'event'
       return self.views[i]
@@ -126,7 +126,7 @@ function! s:self.event_view() dict
   endfor
 endfunction
 
-function! s:self.get_overlap() dict
+function! s:self.get_overlap() dict abort
   let height = calendar#util#winheight()
   let diffy = max([(height - self.ymax()) / 2, 0])
   let o = []
@@ -172,7 +172,7 @@ function! s:self.get_overlap() dict
   return [f, o, diffy]
 endfunction
 
-function! s:self.ymax() dict
+function! s:self.ymax() dict abort
   let d = len(self.order)
   let ymax = 0
   for i in range(d)
@@ -185,7 +185,7 @@ function! s:self.ymax() dict
 endfunction
 
 let [s:height, s:width] = [0, 0]
-function! s:self.gather(...) dict
+function! s:self.gather(...) dict abort
   let d = len(self.order)
   let updated = self.updated || a:0 && a:1
   for i in range(d)
@@ -229,7 +229,7 @@ function! s:self.gather(...) dict
   return texts
 endfunction
 
-function! s:split_over(t, texts, v, llen, i, height)
+function! s:split_over(t, texts, v, llen, i, height) abort
   let t = a:t
   if len(t.syn) && len(t.syn[0]) == 5
     let flg = 0
@@ -250,7 +250,7 @@ function! s:split_over(t, texts, v, llen, i, height)
   endif
 endfunction
 
-function! s:self.action(action) dict
+function! s:self.action(action) dict abort
   let ret = self.current_view().action(a:action)
   if type(ret) == 0 && ret == 0
     if a:action ==# 'redraw'

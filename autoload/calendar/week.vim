@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/week.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/09/11 06:47:53.
+" Last Change: 2015/03/29 06:35:11.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -12,40 +12,40 @@ set cpo&vim
 "   week: week string (one of s:weeks)
 "   default: week string (one of s:weeks), the default value which is used when
 "            the first argument is not found in s:weeks.
-function! calendar#week#new(week, default)
+function! calendar#week#new(week, default) abort
   let self = extend(copy(s:self), { '_week': a:week, '_default': a:default })
   let self.week = self.get()
   let self.index = index(s:weeks, self.week)
   return self
 endfunction
 
-function! calendar#week#first_day_index()
+function! calendar#week#first_day_index() abort
   let w = calendar#setting#get('first_day')
   return calendar#week#new(w, 'sunday').index
 endfunction
 
-function! calendar#week#last_day_index()
+function! calendar#week#last_day_index() abort
   let w = calendar#setting#get('first_day')
   return calendar#week#new(w, 'sunday').add(6).index
 endfunction
 
-function! calendar#week#is_first_day(day)
+function! calendar#week#is_first_day(day) abort
   return a:day.week() == calendar#week#first_day_index()
 endfunction
 
-function! calendar#week#is_last_day(day)
+function! calendar#week#is_last_day(day) abort
   return a:day.week() == calendar#week#last_day_index()
 endfunction
 
-function! calendar#week#week_number(day)
+function! calendar#week#week_number(day) abort
   return (a:day.week() + 7 - calendar#week#first_day_index()) % 7
 endfunction
 
-function! calendar#week#week_count(month)
+function! calendar#week#week_count(month) abort
   return (a:month.last_day().sub(a:month.head_day()) + 1 + calendar#week#week_number(a:month.head_day()) + 6) / 7
 endfunction
 
-function! calendar#week#week_number_year(day)
+function! calendar#week#week_number_year(day) abort
   return (a:day.sub(a:day.year().head_day()) + 1 + calendar#week#week_number(a:day.year().head_day()) + 6) / 7
 endfunction
 
@@ -53,16 +53,16 @@ let s:self = {}
 
 let s:weeks = [ 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday' ]
 
-function! s:self.new(week, default) dict
+function! s:self.new(week, default) dict abort
   return calendar#week#new(a:week, a:default)
 endfunction
 
-function! s:self.new_index(index) dict
+function! s:self.new_index(index) dict abort
   let index = a:index % 7 + 7 * ((a:index < 0) && (a:index % 7))
   return calendar#week#new(s:weeks[index], s:weeks[index])
 endfunction
 
-function! s:self.get() dict
+function! s:self.get() dict abort
   if has_key(self, 'week') | return self.week | endif
   let flg = 0
   for index in range(len(s:weeks))
@@ -75,7 +75,7 @@ function! s:self.get() dict
   return self.week
 endfunction
 
-function! s:self.add(diff) dict
+function! s:self.add(diff) dict abort
   return self.new_index(self.index + a:diff)
 endfunction
 

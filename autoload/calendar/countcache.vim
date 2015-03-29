@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/countcache.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/08 17:24:52.
+" Last Change: 2015/03/29 06:28:31.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -21,7 +21,7 @@ set cpo&vim
 let s:cache = calendar#cache#new('countcache')
 let s:caches = []
 
-function! calendar#countcache#new(name)
+function! calendar#countcache#new(name) abort
   let self = extend(copy(s:self), { 'name': a:name })
   let cache = s:cache.get(a:name)
   " When restoring from the cache file, negate each count by 1.
@@ -36,7 +36,7 @@ let s:saveflag = {}
 let s:count = 0
 
 " Saving the cache to the cache file.
-function! calendar#countcache#save()
+function! calendar#countcache#save() abort
   if s:count < 10
     let s:count += 1
     return
@@ -67,18 +67,18 @@ augroup END
 let s:self = {}
 
 " Check if the key is found in the cache.
-function! s:self.has_key(k) dict
+function! s:self.has_key(k) dict abort
   return has_key(self.cache, a:k)
 endfunction
 
 " Be sure to check has_key before getting the data.
-function! s:self.get(k) dict
+function! s:self.get(k) dict abort
   let self.cache[a:k][0] += 1
   return self.cache[a:k][1]
 endfunction
 
 " Save a data with a key.
-function! s:self.save(k, v) dict
+function! s:self.save(k, v) dict abort
   let self.cache[a:k] = [ get(self.cache, a:k, [0])[0] + 1, a:v ]
   let s:saveflag[self.name] = 1
   return a:v

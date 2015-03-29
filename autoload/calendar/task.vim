@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/08/23 08:26:41.
+" Last Change: 2015/03/29 06:32:01.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -10,7 +10,7 @@ set cpo&vim
 
 " Task controller.
 " This object handles both local task and Google Task.
-function! calendar#task#new()
+function! calendar#task#new() abort
   let self = copy(s:self)
   if calendar#setting#get('google_task')
     let self.task_source_name = 'google'
@@ -25,15 +25,15 @@ let s:self = {}
 
 let s:self._updated = 0
 
-function! s:self.updated() dict
+function! s:self.updated() dict abort
   return [self._updated]
 endfunction
 
-function! s:self.get_taskList() dict
+function! s:self.get_taskList() dict abort
   return self.task_source.get_taskList()
 endfunction
 
-function! s:self.get_task() dict
+function! s:self.get_task() dict abort
   if self._updated || !has_key(self, 'task')
     let self.task = self.task_source.get_task()
   endif
@@ -41,32 +41,32 @@ function! s:self.get_task() dict
   return self.task
 endfunction
 
-function! s:self.insert(listid, previous, title, ...) dict
+function! s:self.insert(listid, previous, title, ...) dict abort
   let self._updated = 1
   call self.task_source.insert(a:listid, a:previous, a:title, a:0 ? a:1 : {})
 endfunction
 
-function! s:self.move(listid, taskid, previous) dict
+function! s:self.move(listid, taskid, previous) dict abort
   let self._updated = 1
   call self.task_source.move(a:listid, a:taskid, a:previous)
 endfunction
 
-function! s:self.update(listid, taskid, title, ...) dict
+function! s:self.update(listid, taskid, title, ...) dict abort
   let self._updated = 1
   call self.task_source.update(a:listid, a:taskid, a:title, a:0 ? a:1 : {})
 endfunction
 
-function! s:self.complete(listid, taskid) dict
+function! s:self.complete(listid, taskid) dict abort
   let self._updated = 1
   call self.task_source.complete(a:listid, a:taskid)
 endfunction
 
-function! s:self.uncomplete(listid, taskid) dict
+function! s:self.uncomplete(listid, taskid) dict abort
   let self._updated = 1
   call self.task_source.uncomplete(a:listid, a:taskid)
 endfunction
 
-function! s:self.clear_completed(listid) dict
+function! s:self.clear_completed(listid) dict abort
   let self._updated = 1
   call self.task_source.clear_completed(a:listid)
 endfunction

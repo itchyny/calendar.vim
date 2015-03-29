@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/message/en.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/08 20:54:45.
+" Last Change: 2015/03/29 06:30:39.
 " =============================================================================
 
 scriptencoding utf-8
@@ -10,7 +10,7 @@ scriptencoding utf-8
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! calendar#message#en#get()
+function! calendar#message#en#get() abort
   return s:message
 endfunction
 

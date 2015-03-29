@@ -2,13 +2,13 @@
 " Filename: autoload/calendar/view/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/26 17:41:36.
+" Last Change: 2015/03/29 06:32:32.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! calendar#view#calendar#new(source)
+function! calendar#view#calendar#new(source) abort
   return extend(s:constructor.new(a:source), { 'source': deepcopy(a:source) })
 endfunction
 
@@ -16,21 +16,21 @@ let s:self = {}
 
 let s:self.views = {}
 
-function! s:self.width() dict
+function! s:self.width() dict abort
   return self.view.width()
 endfunction
 
-function! s:self.height() dict
+function! s:self.height() dict abort
   return self.view.height()
 endfunction
 
-function! s:self.set_selected(selected) dict
+function! s:self.set_selected(selected) dict abort
   let self._selected = a:selected
   call self.view.set_selected(a:selected)
   return self
 endfunction
 
-function! s:self.set_size() dict
+function! s:self.set_size() dict abort
   let w = self.maxwidth()
   let h = self.maxheight()
   let index = self.get_index()
@@ -50,15 +50,15 @@ function! s:self.set_size() dict
   return self
 endfunction
 
-function! s:self.is_selected() dict
+function! s:self.is_selected() dict abort
   return self.view.is_selected()
 endfunction
 
-function! s:self.on_resize() dict
+function! s:self.on_resize() dict abort
   return self.view.on_resize()
 endfunction
 
-function! s:self.contents() dict
+function! s:self.contents() dict abort
   let contents = self.view.contents()
   if has_key(self.view, 'get_min_max_hour')
     let self.min_max_hour = self.view.get_min_max_hour()
@@ -71,15 +71,15 @@ function! s:self.contents() dict
   return contents
 endfunction
 
-function! s:self.updated() dict
+function! s:self.updated() dict abort
   return self.view.updated()
 endfunction
 
-function! s:self.timerange() dict
+function! s:self.timerange() dict abort
   return self.view.timerange()
 endfunction
 
-function! s:self.action(action) dict
+function! s:self.action(action) dict abort
   if !has_key(self, 'view') || !has_key(self.view, 'action')
     return
   endif

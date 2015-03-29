@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/26 03:39:45.
+" Last Change: 2015/03/29 06:30:00.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -16,11 +16,11 @@ let g:calendar_google_event_download = 0
 let g:calendar_google_event_downloading = {}
 let g:calendar_google_event_downloading_list = 0
 
-function! calendar#google#calendar#get_url(type)
+function! calendar#google#calendar#get_url(type) abort
   return 'https://www.googleapis.com/calendar/v3/' . a:type
 endfunction
 
-function! calendar#google#calendar#getCalendarList()
+function! calendar#google#calendar#getCalendarList() abort
   if g:calendar_google_event_downloading_list
     return {}
   endif
@@ -37,7 +37,7 @@ function! calendar#google#calendar#getCalendarList()
   return content
 endfunction
 
-function! calendar#google#calendar#getCalendarList_response(id, response)
+function! calendar#google#calendar#getCalendarList_response(id, response) abort
   let [_calendarlist, err; rest] = s:getdata(a:id)
   if a:response.status =~# '^2'
     let cnt = calendar#webapi#decode(a:response.content)
@@ -59,13 +59,13 @@ function! calendar#google#calendar#getCalendarList_response(id, response)
   endif
 endfunction
 
-function! calendar#google#calendar#getMyCalendarList()
+function! calendar#google#calendar#getMyCalendarList() abort
   let calendarList = calendar#google#calendar#getCalendarList()
   let validCalendar = filter(get(deepcopy(calendarList), 'items', []), 'type(v:val) == type({}) && has_key(v:val, "summary") && has_key(v:val, "id")')
   return filter(validCalendar, 'get(v:val, "selected") && (get(v:val, "accessRole", "") ==# "owner" || (get(v:val, "summary", "") !=# "Phases of the Moon") && get(v:val, "id", "") !~# "holiday@")')
 endfunction
 
-function! calendar#google#calendar#getEventSummary(year, month)
+function! calendar#google#calendar#getEventSummary(year, month) abort
   let calendarList = calendar#google#calendar#getCalendarList()
   let events = []
   if has_key(calendarList, 'items') && type(calendarList.items) == type([]) && len(calendarList.items)
@@ -86,7 +86,7 @@ function! calendar#google#calendar#getEventSummary(year, month)
   return events
 endfunction
 
-function! calendar#google#calendar#initialDownload(year, month, index)
+function! calendar#google#calendar#initialDownload(year, month, index) abort
   let myCalendarList = calendar#google#calendar#getMyCalendarList()
   let key = join([a:year, a:month], '/')
   if a:index < len(myCalendarList) && get(s:initial_download, key, 2) < 2
@@ -96,7 +96,7 @@ endfunction
 
 let s:initial_download = {}
 let s:event_download = {}
-function! calendar#google#calendar#getEventsInitial(year, month)
+function! calendar#google#calendar#getEventsInitial(year, month) abort
   let myCalendarList = calendar#google#calendar#getMyCalendarList()
   let events = {}
   let key = join([a:year, a:month], '/')
@@ -109,7 +109,7 @@ function! calendar#google#calendar#getEventsInitial(year, month)
 endfunction
 
 " The optional argument: Forcing initial download. s:initial_download is used to check.
-function! calendar#google#calendar#getEvents(year, month, ...)
+function! calendar#google#calendar#getEvents(year, month, ...) abort
   let s:is_dark = &background ==# 'dark'
   let calendarList = calendar#google#calendar#getCalendarList()
   let events = {}
@@ -193,7 +193,7 @@ function! calendar#google#calendar#getEvents(year, month, ...)
   return events
 endfunction
 
-function! s:moon_event(events)
+function! s:moon_event(events) abort
   let s = a:events.events[-1].summary
   let m = s =~# '^New moon'      ? (s:is_dark ? "\u25cb" : "\u25cf")
       \ : s =~# '^First quarter' ? (s:is_dark ? "\u25d1" : "\u25d0")
@@ -206,7 +206,7 @@ function! s:moon_event(events)
   endif
 endfunction
 
-function! calendar#google#calendar#getHolidays(year, month)
+function! calendar#google#calendar#getHolidays(year, month) abort
   let _calendarList = s:cache.get('calendarList')
   let calendarList = type(_calendarList) == type({}) ? _calendarList : {}
   let events = {}
@@ -271,7 +271,7 @@ endfunction
 "   The first argument: Specify the calendar id. If this argument is given,
 "                       the only one calendar is downloaded.
 "   The second argument: Initial download. See calendar#google#calendar#initialDownload.
-function! calendar#google#calendar#downloadEvents(year, month, ...)
+function! calendar#google#calendar#downloadEvents(year, month, ...) abort
   let calendarList = calendar#google#calendar#getCalendarList()
   let key = join([a:year, a:month], '/')
   if a:0 < 1
@@ -312,7 +312,7 @@ function! calendar#google#calendar#downloadEvents(year, month, ...)
   endif
 endfunction
 
-function! calendar#google#calendar#response(id, response)
+function! calendar#google#calendar#response(id, response) abort
   let calendarList = calendar#google#calendar#getCalendarList()
   let [_download, err, j, i, timemin, timemax, year, month, id; rest] = s:getdata(a:id)
   let opt = { 'timeMin': timemin, 'timeMax': timemax, 'singleEvents': 'true' }
@@ -375,7 +375,7 @@ function! calendar#google#calendar#response(id, response)
   endif
 endfunction
 
-function! calendar#google#calendar#update(calendarId, eventId, title, year, month, ...)
+function! calendar#google#calendar#update(calendarId, eventId, title, year, month, ...) abort
   let opt = a:0 ? a:1 : {}
   if has_key(opt, 'start')
     call s:set_timezone(a:calendarId, opt.start)
@@ -392,7 +392,7 @@ function! calendar#google#calendar#update(calendarId, eventId, title, year, mont
         \ extend({ 'id': a:eventId, 'summary': a:title }, opt))
 endfunction
 
-function! calendar#google#calendar#update_response(id, response)
+function! calendar#google#calendar#update_response(id, response) abort
   let [_update, err, year, month, calendarId, eventId, title, opt; rest] = s:getdata(a:id)
   if a:response.status =~# '^2'
     call calendar#google#calendar#downloadEvents(year, month, calendarId)
@@ -412,7 +412,7 @@ function! calendar#google#calendar#update_response(id, response)
   endif
 endfunction
 
-function! calendar#google#calendar#insert(calendarId, title, start, end, year, month, ...)
+function! calendar#google#calendar#insert(calendarId, title, start, end, year, month, ...) abort
   let start = a:start =~# 'T\d' && len(a:start) > 10 ? { 'dateTime': a:start } : { 'date': a:start }
   let end = a:end =~# 'T\d' && len(a:end) > 10 ? { 'dateTime': a:end } : { 'date': a:end }
   let location = matchstr(a:title, '\%( at \)\@<=.\+$')
@@ -433,7 +433,7 @@ function! calendar#google#calendar#insert(calendarId, title, start, end, year, m
         \ extend({ 'summary': a:title, 'start': start, 'end': end, 'transparency': 'transparent' }, opt))
 endfunction
 
-function! calendar#google#calendar#insert_response(id, response)
+function! calendar#google#calendar#insert_response(id, response) abort
   let [_insert, err, year, month, calendarId, start, end, title, opt; rest] = s:getdata(a:id)
   if a:response.status =~# '^2'
     call calendar#google#calendar#downloadEvents(year, month, calendarId)
@@ -451,14 +451,14 @@ function! calendar#google#calendar#insert_response(id, response)
   endif
 endfunction
 
-function! calendar#google#calendar#delete(calendarId, eventId, year, month)
+function! calendar#google#calendar#delete(calendarId, eventId, year, month) abort
   call calendar#google#client#delete_async(s:newid(['delete', 0, a:year, a:month, a:calendarId, a:eventId]),
         \ 'calendar#google#calendar#delete_response',
         \ calendar#google#calendar#get_url('calendars/' . s:event_cache.escape(a:calendarId) . '/events/' . a:eventId),
         \ { 'calendarId': a:calendarId, 'eventId': a:eventId }, {})
 endfunction
 
-function! calendar#google#calendar#delete_response(id, response)
+function! calendar#google#calendar#delete_response(id, response) abort
   let [_delete, err, year, month, calendarId, eventId; rest] = s:getdata(a:id)
   if a:response.status =~# '^2' || a:response.status ==# '410'
     call calendar#google#calendar#downloadEvents(year, month, calendarId)
@@ -477,7 +477,7 @@ function! calendar#google#calendar#delete_response(id, response)
   endif
 endfunction
 
-function! s:set_timezone(calendarId, obj)
+function! s:set_timezone(calendarId, obj) abort
   let calendars = filter(calendar#google#calendar#getMyCalendarList(), 'v:val.id ==# a:calendarId')
   let timezone = get(get(calendars, 0, get(calendar#google#calendar#getMyCalendarList(), 0, {})), 'timeZone', 'Z')
   if timezone ==# 'Z'
@@ -495,13 +495,13 @@ function! s:set_timezone(calendarId, obj)
 endfunction
 
 let s:id_data = {}
-function! s:newid(data)
+function! s:newid(data) abort
   let id = join([ 'google', 'calendar', a:data[0] ], '_') . '_' . calendar#util#id()
   let s:id_data[id] = a:data
   return id
 endfunction
 
-function! s:getdata(id)
+function! s:getdata(id) abort
   return s:id_data[a:id]
 endfunction
 

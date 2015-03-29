@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/async.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/22 10:01:15.
+" Last Change: 2015/03/29 06:25:23.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -11,7 +11,7 @@ set cpo&vim
 " Register a command to be executed asyncronously. Commands are executed using
 " CursorHold recursion.
 " Optional argument: Allow duplication of commands.
-function! calendar#async#new(command, ...)
+function! calendar#async#new(command, ...) abort
   if !exists('b:calendar_async')
     let b:calendar_async = []
   endif
@@ -37,7 +37,7 @@ function! calendar#async#new(command, ...)
 endfunction
 
 " Set updatetime for the calendar buffer.
-function! calendar#async#set_updatetime()
+function! calendar#async#set_updatetime() abort
   if !has_key(b:, 'calendar_set_updatetime') || !b:calendar_set_updatetime
     let s:updatetime = &updatetime
     let &updatetime = calendar#setting#get('updatetime')
@@ -46,7 +46,7 @@ function! calendar#async#set_updatetime()
 endfunction
 
 " Restore updatetime.
-function! calendar#async#restore_updatetime()
+function! calendar#async#restore_updatetime() abort
   if has_key(s:, 'updatetime')
     let &updatetime = s:updatetime
   endif
@@ -54,7 +54,7 @@ function! calendar#async#restore_updatetime()
 endfunction
 
 " Execute the registered commands.
-function! calendar#async#call()
+function! calendar#async#call() abort
   if !exists('b:calendar_async')
     return
   endif

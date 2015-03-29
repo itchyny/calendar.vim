@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/autocmd.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/05 15:06:16.
+" Last Change: 2015/03/29 06:25:24.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -10,7 +10,7 @@ set cpo&vim
 
 " Autocmd commands.
 
-function! calendar#autocmd#new()
+function! calendar#autocmd#new() abort
 
   if &l:filetype ==# 'calendar'
     return
@@ -60,7 +60,7 @@ function! calendar#autocmd#new()
 endfunction
 
 " Seach the calendar buffer and updates.
-function! s:update_visible(bufnr, is_colorscheme)
+function! s:update_visible(bufnr, is_colorscheme) abort
   try
     let nr = -1
     let newnr = str2nr(a:bufnr)

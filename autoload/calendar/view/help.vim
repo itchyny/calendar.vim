@@ -2,13 +2,13 @@
 " Filename: autoload/calendar/view/help.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/05 16:09:56.
+" Last Change: 2015/03/29 06:33:09.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! calendar#view#help#new(source)
+function! calendar#view#help#new(source) abort
   return s:constructor.new(a:source)
 endfunction
 
@@ -18,7 +18,7 @@ let s:self._select_line = 0
 let s:self._select_title = 1
 let s:self._contents_cache = {}
 
-function! s:self.split_message(message) dict
+function! s:self.split_message(message) dict abort
   let messages = split(a:message, "\n")
   let frame = calendar#setting#frame()
   let width = calendar#string#strdisplaywidth(frame.vertical)
@@ -42,7 +42,7 @@ function! s:self.split_message(message) dict
   return msg
 endfunction
 
-function! s:self.get_raw_contents() dict
+function! s:self.get_raw_contents() dict abort
   let key = self.sizex() . '-' . self.sizey() . '-' . calendar#setting#get('locale')
   if has_key(self._contents_cache, key)
     return self._contents_cache[key]
@@ -79,7 +79,7 @@ let s:nmapping_order =
       \ , { 'title': 'Utility'
       \   , 'mappings': [ 'today', 'help', 'exit' ] } ]
 
-function! s:self.get_mapping(mode) dict
+function! s:self.get_mapping(mode) dict abort
   redir => redir
   exec 'silent! ' . a:mode . 'map <buffer>'
   redir END
@@ -144,7 +144,7 @@ function! s:self.get_mapping(mode) dict
   return keylist
 endfunction
 
-function! s:compare(a, b)
+function! s:compare(a, b) abort
   return len(a:a) == 1 ? -1 : len(a:b) == 1 ? 1 :
         \ len(a:a) == len(a:b) ? (a:a =~ '^[a-z]\+$' ? -1 : 1) :
         \ a:a !~# '\S-' ? -1 : a:b !~# '\S-' ? 1 : len(a:a) > len(a:b) ? 1 : -1

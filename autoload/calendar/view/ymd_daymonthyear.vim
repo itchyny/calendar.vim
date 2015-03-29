@@ -2,13 +2,13 @@
 " Filename: autoload/calendar/view/ymd_daymonthyear.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/10 00:40:18.
+" Last Change: 2015/03/29 06:34:00.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! calendar#view#ymd_daymonthyear#new(source)
+function! calendar#view#ymd_daymonthyear#new(source) abort
   return s:constructor.new(a:source)
 endfunction
 

@@ -2,13 +2,13 @@
 " Filename: autoload/calendar/view/ymd.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/10 01:01:10.
+" Last Change: 2015/03/29 06:33:59.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! calendar#view#ymd#new(source)
+function! calendar#view#ymd#new(source) abort
   return extend(s:constructor.new(a:source), { 'source': deepcopy(a:source) })
 endfunction
 
@@ -16,21 +16,21 @@ let s:self = {}
 
 let s:self.views = {}
 
-function! s:self.width() dict
+function! s:self.width() dict abort
   return self.view.width()
 endfunction
 
-function! s:self.height() dict
+function! s:self.height() dict abort
   return self.view.height()
 endfunction
 
-function! s:self.set_selected(selected) dict
+function! s:self.set_selected(selected) dict abort
   let self._selected = a:selected
   call self.view.set_selected(a:selected)
   return self
 endfunction
 
-function! s:self.set_size() dict
+function! s:self.set_size() dict abort
   let index = self.get_index()
   let endian = calendar#setting#get('date_endian')
   if index ==# 'year'
@@ -50,19 +50,19 @@ function! s:self.set_size() dict
   return self
 endfunction
 
-function! s:self.is_selected() dict
+function! s:self.is_selected() dict abort
   return self.view.is_selected()
 endfunction
 
-function! s:self.on_resize() dict
+function! s:self.on_resize() dict abort
   return self.view.on_resize()
 endfunction
 
-function! s:self.contents() dict
+function! s:self.contents() dict abort
   return self.view.contents()
 endfunction
 
-function! s:self.action(action) dict
+function! s:self.action(action) dict abort
   return self.view.action(a:action)
 endfunction
 

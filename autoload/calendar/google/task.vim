@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/27 12:00:12.
+" Last Change: 2015/03/29 06:30:30.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -12,11 +12,11 @@ let s:cache = calendar#cache#new('google')
 
 let s:task_cache = s:cache.new('task')
 
-function! calendar#google#task#get_url(type)
+function! calendar#google#task#get_url(type) abort
   return 'https://www.googleapis.com/tasks/v1/' . a:type
 endfunction
 
-function! calendar#google#task#getTaskList()
+function! calendar#google#task#getTaskList() abort
   let taskList = s:cache.get('taskList')
   if type(taskList) != type({})
     call calendar#google#client#get_async(s:newid(['taskList', 0]),
@@ -28,7 +28,7 @@ function! calendar#google#task#getTaskList()
   endif
 endfunction
 
-function! calendar#google#task#getTaskList_response(id, response)
+function! calendar#google#task#getTaskList_response(id, response) abort
   let [_tasklist, err; rest] = s:getdata(a:id)
   if a:response.status =~# '^2'
     let cnt = calendar#webapi#decode(a:response.content)
@@ -49,7 +49,7 @@ function! calendar#google#task#getTaskList_response(id, response)
 endfunction
 
 let s:task = []
-function! calendar#google#task#getTasks()
+function! calendar#google#task#getTasks() abort
   if calendar#timestamp#update('google_task', 3 * 60 * 60)
     call calendar#async#new('calendar#google#task#downloadTasks(1)')
   endif
@@ -101,7 +101,7 @@ function! calendar#google#task#getTasks()
 endfunction
 
 " Optional argument: Force download.
-function! calendar#google#task#downloadTasks(...)
+function! calendar#google#task#downloadTasks(...) abort
   let taskList = calendar#google#task#getTaskList()
   if has_key(taskList, 'items') && type(taskList.items) == type([]) && len(taskList.items)
     let j = 0
@@ -125,7 +125,7 @@ function! calendar#google#task#downloadTasks(...)
   endif
 endfunction
 
-function! calendar#google#task#response(id, response)
+function! calendar#google#task#response(id, response) abort
   let taskList = calendar#google#task#getTaskList()
   let [_download, err, j, i, id, force; rest] = s:getdata(a:id)
   let opt = { 'tasklist': id }
@@ -180,7 +180,7 @@ function! calendar#google#task#response(id, response)
   endif
 endfunction
 
-function! calendar#google#task#insert(id, previous, title, ...)
+function! calendar#google#task#insert(id, previous, title, ...) abort
   let opt = extend({ 'tasklist': a:id }, a:previous !=# '' ? { 'previous': a:previous } : {})
   let due = ''
   if a:0
@@ -204,7 +204,7 @@ function! calendar#google#task#insert(id, previous, title, ...)
         \ opt, extend({ 'title': title, 'notes': note }, due ==# '' ? {} : { 'due': due ==# '-1Z' ? function('calendar#webapi#null') : due }))
 endfunction
 
-function! calendar#google#task#insert_response(id, response)
+function! calendar#google#task#insert_response(id, response) abort
   let [_insert, err, id, title, note, due, opt; rest] = s:getdata(a:id)
   if a:response.status =~# '^2'
     call calendar#google#task#downloadTasks(1, id)
@@ -219,7 +219,7 @@ function! calendar#google#task#insert_response(id, response)
   endif
 endfunction
 
-function! calendar#google#task#move(id, taskid, previous)
+function! calendar#google#task#move(id, taskid, previous) abort
   let opt = extend({ 'tasklist': a:id }, a:previous !=# '' ? { 'previous': a:previous } : {})
   call calendar#google#client#post_async(s:newid(['move', 0, a:id, a:taskid, opt]),
         \ 'calendar#google#task#move_response',
@@ -227,7 +227,7 @@ function! calendar#google#task#move(id, taskid, previous)
         \ opt, {})
 endfunction
 
-function! calendar#google#task#move_response(id, response)
+function! calendar#google#task#move_response(id, response) abort
   let [_move, err, id, taskid, opt; rest] = s:getdata(a:id)
   if a:response.status =~# '^2'
     call calendar#google#task#downloadTasks(1, id)
@@ -242,14 +242,14 @@ function! calendar#google#task#move_response(id, response)
   endif
 endfunction
 
-function! calendar#google#task#clear_completed(id)
+function! calendar#google#task#clear_completed(id) abort
   call calendar#google#client#post_async(s:newid(['clear_completed', 0, a:id]),
         \ 'calendar#google#task#clear_completed_response',
         \ calendar#google#task#get_url('lists/' . a:id . '/clear'),
         \ { 'tasklist': a:id })
 endfunction
 
-function! calendar#google#task#clear_completed_response(id, response)
+function! calendar#google#task#clear_completed_response(id, response) abort
   let [_clear_completed, err, id; rest] = s:getdata(a:id)
   if a:response.status =~# '^2'
     call calendar#google#task#downloadTasks(1, id)
@@ -264,7 +264,7 @@ function! calendar#google#task#clear_completed_response(id, response)
   endif
 endfunction
 
-function! calendar#google#task#update(id, taskid, title, ...)
+function! calendar#google#task#update(id, taskid, title, ...) abort
   let due = ''
   if a:0
     let due = get(a:1, 'due', '')
@@ -288,7 +288,7 @@ function! calendar#google#task#update(id, taskid, title, ...)
         \ extend({ 'id': a:taskid, 'title': title, 'notes': note }, due ==# '' ? {} : { 'due': due ==# '-1Z' ? function('calendar#webapi#null') : due }))
 endfunction
 
-function! calendar#google#task#update_response(id, response)
+function! calendar#google#task#update_response(id, response) abort
   let [_update, err, id, taskid, title, note, due; rest] = s:getdata(a:id)
   if a:response.status =~# '^2'
     call calendar#google#task#downloadTasks(1, id)
@@ -304,7 +304,7 @@ function! calendar#google#task#update_response(id, response)
   endif
 endfunction
 
-function! calendar#google#task#complete(id, taskid)
+function! calendar#google#task#complete(id, taskid) abort
   call calendar#google#client#put_async(s:newid(['complete', 0, a:id, a:taskid]),
         \ 'calendar#google#task#complete_response',
         \ calendar#google#task#get_url('lists/' . a:id . '/tasks/' . a:taskid),
@@ -312,7 +312,7 @@ function! calendar#google#task#complete(id, taskid)
         \ { 'id': a:taskid, 'status': 'completed' })
 endfunction
 
-function! calendar#google#task#complete_response(id, response)
+function! calendar#google#task#complete_response(id, response) abort
   let [_complete, err, id, taskid; rest] = s:getdata(a:id)
   if a:response.status =~# '^2'
     call calendar#google#task#downloadTasks(1, id)
@@ -328,7 +328,7 @@ function! calendar#google#task#complete_response(id, response)
   endif
 endfunction
 
-function! calendar#google#task#uncomplete(id, taskid)
+function! calendar#google#task#uncomplete(id, taskid) abort
   call calendar#google#client#put_async(s:newid(['uncomplete', 0, a:id, a:taskid]),
         \ 'calendar#google#task#uncomplete_response',
         \ calendar#google#task#get_url('lists/' . a:id . '/tasks/' . a:taskid),
@@ -336,7 +336,7 @@ function! calendar#google#task#uncomplete(id, taskid)
         \ { 'id': a:taskid, 'status': 'needsAction' })
 endfunction
 
-function! calendar#google#task#uncomplete_response(id, response)
+function! calendar#google#task#uncomplete_response(id, response) abort
   let [_uncomplete, err, id, taskid; rest] = s:getdata(a:id)
   if a:response.status =~# '^2'
     call calendar#google#task#downloadTasks(1, id)
@@ -353,13 +353,13 @@ function! calendar#google#task#uncomplete_response(id, response)
 endfunction
 
 let s:id_data = {}
-function! s:newid(data)
+function! s:newid(data) abort
   let id = join([ 'google', 'task', a:data[0] ], '_') . '_' . calendar#util#id()
   let s:id_data[id] = a:data
   return id
 endfunction
 
-function! s:getdata(id)
+function! s:getdata(id) abort
   return s:id_data[a:id]
 endfunction
 

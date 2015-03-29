@@ -2,19 +2,19 @@
 " Filename: autoload/calendar/constructor/view_ymd.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/02 15:21:10.
+" Last Change: 2015/03/29 06:27:52.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! calendar#constructor#view_ymd#new(instance)
+function! calendar#constructor#view_ymd#new(instance) abort
   return extend({ 'instance': a:instance }, s:constructor)
 endfunction
 
 let s:constructor = {}
 
-function! s:constructor.new(source) dict
+function! s:constructor.new(source) dict abort
   let instance = extend(extend(s:super_constructor.new(a:source), s:instance), self.instance)
   let iday = index(instance.ymd, 'day')
   let imonth = index(instance.ymd, 'month')
@@ -25,15 +25,15 @@ endfunction
 
 let s:instance = {}
 
-function! s:instance.width() dict
+function! s:instance.width() dict abort
   return len(self.contents()[0].s)
 endfunction
 
-function! s:instance.height() dict
+function! s:instance.height() dict abort
   return 1
 endfunction
 
-function! s:sum(l)
+function! s:sum(l) abort
   let n = 0
   for i in a:l
     let n += i
@@ -41,7 +41,7 @@ function! s:sum(l)
   return n
 endfunction
 
-function! s:instance.contents() dict
+function! s:instance.contents() dict abort
   let y = b:calendar.month().get_year()
   let year = y > 0 ? string(y) : (1 - y) . ' BC'
   let use_month_name = calendar#setting#get('date_month_name')
@@ -80,7 +80,7 @@ function! s:instance.contents() dict
   endif
 endfunction
 
-function! s:instance.action(action) dict
+function! s:instance.action(action) dict abort
   if index(['left', 'prev', 'line_head', 'first_line', 'last_line' ], a:action) >= 0
     let self.select_index = max([self.select_index - 1, 0])
   elseif index(['right', 'next', 'line_last', 'last_line_last'], a:action) >= 0

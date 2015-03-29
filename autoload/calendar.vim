@@ -2,14 +2,14 @@
 " Filename: autoload/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/12/13 12:02:42.
+" Last Change: 2015/03/29 06:35:29.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
 " Creates a new buffer and start calendar.
-function! calendar#new(args)
+function! calendar#new(args) abort
 
   " Argument parsing
   let [isnewbuffer, command, variables, args] = calendar#argument#parse(a:args)
@@ -39,7 +39,7 @@ let s:calendar = {}
 let s:_calendar = {}
 
 " Save b:calendar and b:_calendar.
-function! calendar#save()
+function! calendar#save() abort
   let nr = bufnr('')
   if has_key(b:, 'calendar')
     let s:calendar[nr] = b:calendar
@@ -50,7 +50,7 @@ function! calendar#save()
 endfunction
 
 " Revive b:calendar and b:_calendar.
-function! calendar#revive()
+function! calendar#revive() abort
   let nr = bufnr('')
   if !has_key(b:, 'calendar') && has_key(s:calendar, nr)
     let b:calendar = get(s:calendar, nr, {})

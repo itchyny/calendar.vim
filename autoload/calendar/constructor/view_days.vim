@@ -2,29 +2,29 @@
 " Filename: autoload/calendar/constructor/view_days.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/13 06:02:31.
+" Last Change: 2015/03/29 06:27:20.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! calendar#constructor#view_days#new(instance)
+function! calendar#constructor#view_days#new(instance) abort
   return extend({ 'instance': a:instance }, s:constructor)
 endfunction
 
 let s:constructor = {}
 
-function! s:constructor.new(source) dict
+function! s:constructor.new(source) dict abort
   return extend(extend(s:super_constructor.new(a:source), s:instance), self.instance)
 endfunction
 
 let s:instance = {}
 
-function! s:instance.height() dict
+function! s:instance.height() dict abort
   return max([self.maxheight(), 6])
 endfunction
 
-function! s:instance.on_resize() dict
+function! s:instance.on_resize() dict abort
   let self.frame = copy(calendar#setting#frame())
   let width = calendar#string#strdisplaywidth(self.frame.vertical)
   let self.view = {}
@@ -54,7 +54,7 @@ function! s:instance.on_resize() dict
   let self._cache_key = []
 endfunction
 
-function! s:instance.width() dict
+function! s:instance.width() dict abort
   let frame = calendar#setting#frame()
   let width = calendar#string#strdisplaywidth(frame.vertical)
   let w = max([(self.maxwidth() - calendar#setting#get('clock_12hour') * 7) / 8, 3])
@@ -81,7 +81,7 @@ function! s:instance.width() dict
   return w * 7 / daynum / width * width * daynum + width
 endfunction
 
-function! s:instance.get_min_day() dict
+function! s:instance.get_min_day() dict abort
   let day = b:calendar.day()
   if has_key(self, 'min_day')
     if day.sub(self.min_day) < 0
@@ -96,7 +96,7 @@ function! s:instance.get_min_day() dict
   return self.min_day
 endfunction
 
-function! s:instance.cache_key() dict
+function! s:instance.cache_key() dict abort
   if has_key(self, 'min_hour') && (self.min_hour < 0 || self.max_hour > 23)
     return []
   else
@@ -106,7 +106,7 @@ function! s:instance.cache_key() dict
   endif
 endfunction
 
-function! s:instance.min_max_hour() dict
+function! s:instance.min_max_hour() dict abort
   let height = self.height() - self.view.offset - self.view.dayheight
   let heighthour = height / self.view.hourheight
   let time = b:calendar.time()
@@ -129,15 +129,15 @@ function! s:instance.min_max_hour() dict
   return [min, max]
 endfunction
 
-function! s:instance.set_min_max_hour(hours) dict
+function! s:instance.set_min_max_hour(hours) dict abort
   let [self.min_hour, self.max_hour] = a:hours
 endfunction
 
-function! s:instance.get_min_max_hour() dict
+function! s:instance.get_min_max_hour() dict abort
   return [self.min_hour, self.max_hour]
 endfunction
 
-function! s:instance.set_day_name() dict
+function! s:instance.set_day_name() dict abort
   let [h, w, ww] = [self.view.dayheight, self.view.width, self.view.realwidth]
   let key = h . ',' . w . ',' . ww . ',' . calendar#setting#get('frame') . ','
         \ . calendar#setting#get('locale') . ',' . calendar#week#week_number(self.get_min_day()) . ',' . calendar#setting#get('first_day')
@@ -191,7 +191,7 @@ function! s:instance.set_day_name() dict
   let self.day_name_cache[key] = [s, syntax]
 endfunction
 
-function! s:get_timeevts(events, blockmin)
+function! s:get_timeevts(events, blockmin) abort
   let time_events = {}
   let r = range(len(a:events))
   for i in r
@@ -290,7 +290,7 @@ function! s:get_timeevts(events, blockmin)
   return ret
 endfunction
 
-function! s:instance.set_contents() dict
+function! s:instance.set_contents() dict abort
   if self.frame.type !=# calendar#setting#get('frame') | call self.on_resize() | endif
   call self.set_day_name()
   let [f, v, e] = [self.frame, self.view, self.element]
@@ -522,7 +522,7 @@ function! s:instance.set_contents() dict
   let self.min_day = self.get_min_day()
 endfunction
 
-function! s:instance.contents() dict
+function! s:instance.contents() dict abort
   if self._cache_key != self.cache_key() | call self.set_contents() | endif
   let [f, v, e] = [self.frame, self.view, self.element]
   let select = []
@@ -567,7 +567,7 @@ function! s:instance.contents() dict
   return deepcopy(self.days) + select + deepcopy(self.syntax) + select_over + cursor + nowsyn
 endfunction
 
-function! s:instance.select_index() dict
+function! s:instance.select_index() dict abort
   let lasti = b:calendar.day().sub(self.get_min_day())
   let lasthour = b:calendar.time().hour()
   if !b:calendar.visual_mode()
@@ -608,11 +608,11 @@ function! s:instance.select_index() dict
   return ret
 endfunction
 
-function! s:div(x, y)
+function! s:div(x, y) abort
   return a:x/a:y-((a:x<0)&&(a:x%a:y))
 endfunction
 
-function! s:instance.timerange() dict
+function! s:instance.timerange() dict abort
   let hour = b:calendar.time().hour()
   if !b:calendar.visual_mode()
     return printf('%d:00-%d:00 ', hour, hour + 1)
@@ -665,7 +665,7 @@ function! s:instance.timerange() dict
   endif
 endfunction
 
-function! s:instance.action(action) dict
+function! s:instance.action(action) dict abort
   let d = b:calendar.day()
   let hday = b:calendar.month().head_day()
   let lday = b:calendar.month().last_day()

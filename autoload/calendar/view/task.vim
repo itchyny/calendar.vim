@@ -2,13 +2,13 @@
 " Filename: autoload/calendar/view/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/21 17:54:42.
+" Last Change: 2015/03/29 06:33:44.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! calendar#view#task#new(source)
+function! calendar#view#task#new(source) abort
   return s:constructor.new(a:source)
 endfunction
 
@@ -16,15 +16,15 @@ let s:self = {}
 
 let s:self._select_line = 1
 
-function! s:self.get_key() dict
+function! s:self.get_key() dict abort
   return b:calendar.task.updated()
 endfunction
 
-function! s:self.get_raw_contents() dict
+function! s:self.get_raw_contents() dict abort
   return b:calendar.task.get_task()
 endfunction
 
-function! s:self.action(action) dict
+function! s:self.action(action) dict abort
   let task = self.current_contents()
   let taskid = get(task, 'id', '')
   let prevtask = self.prev_contents()
@@ -81,7 +81,7 @@ function! s:self.action(action) dict
   endif
 endfunction
 
-function! s:parse_title(title)
+function! s:parse_title(title) abort
   let title = a:title
   let duedate = ''
   let endian = calendar#setting#get('date_endian')

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/string.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/04 18:56:30.
+" Last Change: 2015/03/29 06:31:41.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -13,29 +13,29 @@ set cpo&vim
 
 let s:c = calendar#countcache#new('string.vim')
 
-fu! calendar#string#truncate(s, w)
+fu! calendar#string#truncate(s, w) abort
   retu s:C(a:s, a:w)
 endf
 
-fu! calendar#string#truncate_reverse(s, w)
+fu! calendar#string#truncate_reverse(s, w) abort
   retu s:U(a:s, a:w)
 endf
 
 if exists('*strdisplaywidth')
-  fu! calendar#string#strdisplaywidth(s)
+  fu! calendar#string#strdisplaywidth(s) abort
     retu strdisplaywidth(a:s)
   endf
 el
-  fu! calendar#string#strdisplaywidth(s)
+  fu! calendar#string#strdisplaywidth(s) abort
     retu s:S(a:s)
   endf
 en
 
-fu! calendar#string#strwidthpart(s, w)
+fu! calendar#string#strwidthpart(s, w) abort
   retu s:T(a:s, a:w)
 endf
 
-fu! calendar#string#strwidthpart_reverse(s, w)
+fu! calendar#string#strwidthpart_reverse(s, w) abort
   retu s:R(a:s, a:w)
 endf
 
@@ -45,7 +45,7 @@ endf
 
 let s:r = '^[\x20-\x7e]*$'
 " fu! s:truncate(s, w)
-fu! s:C(s, w)
+fu! s:C(s, w) abort
   if a:w <= 0 | retu '' | en
   let k = a:w . 'C' . a:s
   if s:c.has_key(k) | retu s:c.get(k) | en
@@ -66,7 +66,7 @@ fu! s:C(s, w)
 endf
 
 " fu! s:truncate_reverse(s, w)
-fu! s:U(s, w)
+fu! s:U(s, w) abort
   let k = a:w . 'U' . a:s
   if a:w == 0 | retu '' | en
   if s:c.has_key(k) | retu s:c.get(k) | en
@@ -87,7 +87,7 @@ fu! s:U(s, w)
 endf
 
 " fu! s:truncate_smart(s, m, f, p)
-fu! s:M(s, m, f, p)
+fu! s:M(s, m, f, p) abort
   let w = s:S(a:s)
   if w <= a:m
     let r = a:s
@@ -99,7 +99,7 @@ fu! s:M(s, m, f, p)
 endf
 
 " fu! s:strwidthpart(s, w)
-fu! s:T(s, w)
+fu! s:T(s, w) abort
   let k = a:w . 'T' . a:s
   if s:c.has_key(k) | retu s:c.get(k) | en
   let t = split(a:s, '\zs')
@@ -121,7 +121,7 @@ fu! s:T(s, w)
 endf
 
 " fu! s:strwidthpart_reverse(s, w)
-fu! s:R(s, w)
+fu! s:R(s, w) abort
   if a:w <= 0
     retu ''
   en
@@ -146,7 +146,7 @@ endf
 if exists('*strdisplaywidth')
 
   " fu! s:strdisplaywidth(s)
-  fu! s:S(s)
+  fu! s:S(s) abort
     retu strdisplaywidth(a:s)
   endf
 
@@ -154,7 +154,7 @@ el
 
   let s:c1 = {}
   " fu! s:strdisplaywidth(s)
-  fu! s:S(s)
+  fu! s:S(s) abort
     if !len(a:s) | retu 0 | en
     if has_key(s:c1, a:s) | retu s:c1[a:s] | en
     if a:s =~# '^[\x00-\x7f]*$'
@@ -179,7 +179,7 @@ el
 
   let s:c2 = {}
   " fu! s:_wcwidth(u)
-  fu! s:H(u)
+  fu! s:H(u) abort
     if has_key(s:c2, a:u) | retu s:c2[a:u] | en
     let u = a:u
     if u > 0x7f && u <= 0xff

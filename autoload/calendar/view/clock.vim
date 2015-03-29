@@ -2,13 +2,13 @@
 " Filename: autoload/calendar/view/clock.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/26 16:22:36.
+" Last Change: 2015/03/29 06:32:40.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! calendar#view#clock#new(source)
+function! calendar#view#clock#new(source) abort
   let instance = s:constructor.new(deepcopy(a:source))
   let instance.views = {}
   for name in [ 'clock_date', 'clock_date_monthday', 'clock_date_time', 'clock_date_monthday_time', 'clock_time', 'clock_time_hourmin' ]
@@ -20,7 +20,7 @@ endfunction
 let s:self = {}
 let s:self.y_height = 1
 
-function! s:self.width() dict
+function! s:self.width() dict abort
   let [date_scale, time_scale] = [self.views.clock_date.get_scale(2), self.views.clock_time.get_scale(2)]
   if (date_scale == 0 || time_scale <= 1) && self.views.clock_date_monthday.get_scale(2) > 0
     let self.date_view = self.views.clock_date_monthday
@@ -72,19 +72,19 @@ function! s:self.width() dict
   return max([self.date_view.width(), self.time_view.width()])
 endfunction
 
-function! s:self.height() dict
+function! s:self.height() dict abort
   let date_height = self.date_view.height()
   let time_height = self.time_view.height()
   return date_height + (time_height + self.get_padding()) * self.time_view.is_visible()
 endfunction
 
-function! s:self.set_selected(selected) dict
+function! s:self.set_selected(selected) dict abort
   let self._selected = a:selected
   call self.time_view.set_selected(a:selected)
   return self
 endfunction
 
-function! s:self.set_size() dict
+function! s:self.set_size() dict abort
   let self._size = copy(self.size)
   let self.size.x = self.width()
   let self.size.y = self.height()
@@ -95,18 +95,18 @@ function! s:self.set_size() dict
   return self
 endfunction
 
-function! s:self.is_selected() dict
+function! s:self.is_selected() dict abort
   return self.time_view.is_selected()
 endfunction
 
-function! s:self.get_padding() dict
+function! s:self.get_padding() dict abort
   let date_height = self.date_view.height()
   let time_height = self.time_view.height()
   return min([(self.time_view.scale + self.date_view.scale),
         \ max([0, (self.maxheight() - date_height - time_height) / 3])])
 endfunction
 
-function! s:self.contents() dict
+function! s:self.contents() dict abort
   let date_contents = self.date_view.contents()
   let diff = - get(self.source, 'top', 0)
   if !self.time_view.is_visible()
@@ -137,16 +137,16 @@ function! s:self.contents() dict
   return date_contents + time_contents
 endfunction
 
-function! s:self.on_resize() dict
+function! s:self.on_resize() dict abort
   call self.date_view.on_resize()
   call self.time_view.on_resize()
 endfunction
 
-function! s:self.updated() dict
+function! s:self.updated() dict abort
   return self.date_view.updated() || self.time_view.updated()
 endfunction
 
-function! s:self.action(action) dict
+function! s:self.action(action) dict abort
   return self.time_view.action(a:action)
 endfunction
 

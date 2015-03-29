@@ -2,13 +2,13 @@
 " Filename: autoload/calendar/task/local.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/08/23 08:27:26.
+" Last Change: 2015/03/29 06:31:55.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! calendar#task#local#new()
+function! calendar#task#local#new() abort
   return deepcopy(s:self)
 endfunction
 
@@ -18,7 +18,7 @@ let s:task_cache = s:cache.new('task')
 
 let s:self = {}
 
-function! s:self.get_taskList() dict
+function! s:self.get_taskList() dict abort
   if has_key(self, 'localtasklist')
     return self.localtasklist
   else
@@ -33,7 +33,7 @@ function! s:self.get_taskList() dict
   return self.localtasklist
 endfunction
 
-function! s:self.get_task() dict
+function! s:self.get_task() dict abort
   let taskList = self.get_taskList()
   let task = []
   if has_key(taskList, 'items') && type(taskList.items) == type([])
@@ -59,7 +59,7 @@ function! s:self.get_task() dict
   return task
 endfunction
 
-function! s:self.insert(listid, previous, title, ...) dict
+function! s:self.insert(listid, previous, title, ...) dict abort
   let k = self.get_tasklist_index(a:listid)
   if k >= 0
     let j = self.get_index(k, a:previous) + 1
@@ -68,7 +68,7 @@ function! s:self.insert(listid, previous, title, ...) dict
   endif
 endfunction
 
-function! s:self.move(listid, taskid, previous) dict
+function! s:self.move(listid, taskid, previous) dict abort
   let k = self.get_tasklist_index(a:listid)
   if k >= 0
     let j = self.get_index(k, a:taskid)
@@ -83,7 +83,7 @@ function! s:self.move(listid, taskid, previous) dict
   endif
 endfunction
 
-function! s:self.update(listid, taskid, title, ...) dict
+function! s:self.update(listid, taskid, title, ...) dict abort
   let k = self.get_tasklist_index(a:listid)
   if k >= 0
     let j = self.get_index(k, a:taskid)
@@ -94,7 +94,7 @@ function! s:self.update(listid, taskid, title, ...) dict
   endif
 endfunction
 
-function! s:self.complete(listid, taskid) dict
+function! s:self.complete(listid, taskid) dict abort
   let k = self.get_tasklist_index(a:listid)
   if k >= 0
     let j = self.get_index(k, a:taskid)
@@ -105,7 +105,7 @@ function! s:self.complete(listid, taskid) dict
   endif
 endfunction
 
-function! s:self.uncomplete(listid, taskid) dict
+function! s:self.uncomplete(listid, taskid) dict abort
   let k = self.get_tasklist_index(a:listid)
   if k >= 0
     let j = self.get_index(k, a:taskid)
@@ -118,7 +118,7 @@ function! s:self.uncomplete(listid, taskid) dict
   endif
 endfunction
 
-function! s:self.clear_completed(listid) dict
+function! s:self.clear_completed(listid) dict abort
   if has_key(self, 'localtask')
     for task in self.localtask
       call filter(task.items, 'get(v:val, "status", "") !=# "completed"')
@@ -127,7 +127,7 @@ function! s:self.clear_completed(listid) dict
   endif
 endfunction
 
-function! s:self.save() dict
+function! s:self.save() dict abort
   if has_key(self, 'localtask')
     for task in self.localtask
       silent! call s:task_cache.new(task.id).save(0, task)
@@ -136,7 +136,7 @@ function! s:self.save() dict
   endif
 endfunction
 
-function! s:self.get_tasklist_index(id) dict
+function! s:self.get_tasklist_index(id) dict abort
   if has_key(self, 'localtask')
     let j = -1
     for i in range(len(self.localtask))
@@ -153,7 +153,7 @@ function! s:self.get_tasklist_index(id) dict
   return -1
 endfunction
 
-function! s:self.get_index(listindex, id) dict
+function! s:self.get_index(listindex, id) dict abort
   if has_key(self, 'localtask')
     if 0 <= a:listindex && a:listindex < len(self.localtask)
       let j = -1

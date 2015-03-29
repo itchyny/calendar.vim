@@ -2,13 +2,13 @@
 " Filename: autoload/calendar/event/google.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/19 18:25:39.
+" Last Change: 2015/03/29 06:29:28.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! calendar#event#google#new()
+function! calendar#event#google#new() abort
   return deepcopy(s:self)
 endfunction
 
@@ -16,7 +16,7 @@ let s:self = {}
 let s:self._key = {}
 let s:self._events = {}
 
-function! s:self.get_events_one_month(year, month, ...) dict
+function! s:self.get_events_one_month(year, month, ...) dict abort
   let key = a:year . '-' . a:month
   if has_key(self._key, key) && has_key(self._events, key) && get(g:, 'calendar_google_event_download', 1) <= 0 && self._events[key] != {}
     if a:0 && a:1
@@ -37,23 +37,23 @@ function! s:self.get_events_one_month(year, month, ...) dict
   return self._events[key]
 endfunction
 
-function! s:self.update(calendarId, eventId, title, year, month, ...) dict
+function! s:self.update(calendarId, eventId, title, year, month, ...) dict abort
   call calendar#google#calendar#update(a:calendarId, a:eventId, a:title, a:year, a:month, a:0 ? a:1 : {})
 endfunction
 
-function! s:self.insert(calendarId, title, start, end, year, month, ...) dict
+function! s:self.insert(calendarId, title, start, end, year, month, ...) dict abort
   call calendar#google#calendar#insert(a:calendarId, a:title, a:start, a:end, a:year, a:month, a:0 ? a:1 : {})
 endfunction
 
-function! s:self.delete(calendarId, eventId, year, month) dict
+function! s:self.delete(calendarId, eventId, year, month) dict abort
   call calendar#google#calendar#delete(a:calendarId, a:eventId, a:year, a:month)
 endfunction
 
-function! s:self.calendarList() dict
+function! s:self.calendarList() dict abort
   return calendar#google#calendar#getMyCalendarList()
 endfunction
 
-function! s:self.createCalendar() dict
+function! s:self.createCalendar() dict abort
 endfunction
 
 let &cpo = s:save_cpo

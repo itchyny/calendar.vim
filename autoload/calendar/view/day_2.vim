@@ -2,13 +2,13 @@
 " Filename: autoload/calendar/view/day_2.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/08 09:45:03.
+" Last Change: 2015/03/29 06:32:54.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! calendar#view#day_2#new(source)
+function! calendar#view#day_2#new(source) abort
   return s:constructor.new(a:source)
 endfunction
 

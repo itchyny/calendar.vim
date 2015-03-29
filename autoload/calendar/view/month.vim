@@ -2,19 +2,19 @@
 " Filename: autoload/calendar/view/month.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/13 05:50:07.
+" Last Change: 2015/03/29 06:33:25.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! calendar#view#month#new(source)
+function! calendar#view#month#new(source) abort
   return s:constructor.new(a:source)
 endfunction
 
 let s:self = {}
 
-function! s:self.width() dict
+function! s:self.width() dict abort
   let frame = calendar#setting#frame()
   let width = calendar#string#strdisplaywidth(frame.vertical)
   let w = max([self.maxwidth() / 8, 3])
@@ -27,11 +27,11 @@ function! s:self.width() dict
   return w / width * width * 7 + width
 endfunction
 
-function! s:self.height() dict
+function! s:self.height() dict abort
   return max([self.maxheight(), 6])
 endfunction
 
-function! s:self.on_resize() dict
+function! s:self.on_resize() dict abort
   let self.frame = copy(calendar#setting#frame())
   let self.view = {}
   let self.view.width = self.sizex() / 7
@@ -62,7 +62,7 @@ function! s:self.on_resize() dict
   let self._today = [0, 0, 0]
 endfunction
 
-function! s:self.set_day_name() dict
+function! s:self.set_day_name() dict abort
   let [h, w, ww] = [self.view.height, self.view.width, self.view.realwidth]
   let key = h . ',' . w . ',' . ww . ',' . calendar#setting#get('frame') . ',' . calendar#setting#get('locale') . ',' . calendar#setting#get('first_day')
   if !has_key(self, 'day_name_cache')
@@ -115,7 +115,7 @@ function! s:self.set_day_name() dict
   let self.day_name_cache[key] = [s, syntax]
 endfunction
 
-function! s:self.add_syntax(x, y, l, syn, ...) dict
+function! s:self.add_syntax(x, y, l, syn, ...) dict abort
   if has_key(self.syntax_index, a:y)
     call add(self.syntax[self.syntax_index[a:y]].syn, [a:syn, a:y, a:x, a:x + a:l, 0])
   else
@@ -130,7 +130,7 @@ function! s:self.add_syntax(x, y, l, syn, ...) dict
   endif
 endfunction
 
-function! s:self.set_contents() dict
+function! s:self.set_contents() dict abort
   if self.view.week_count != calendar#week#week_count(b:calendar.month()) || self.frame.type !=# calendar#setting#get('frame') | call self.on_resize() | endif
   call self.set_day_name()
   let [f, v, e] = [self.frame, self.view, self.element]
@@ -307,11 +307,11 @@ function! s:self.set_contents() dict
   let self.days = map(range(len(s)), 'calendar#text#new(s[v:val], 0, v:val, "")')
 endfunction
 
-function! calendar#view#month#sorter(l, r)
+function! calendar#view#month#sorter(l, r) abort
   return a:l.viewoffset == a:r.viewoffset ? 0 : a:l.viewoffset > a:r.viewoffset ? 1 : -1
 endfunction
 
-function! s:self.contents() dict
+function! s:self.contents() dict abort
   if self.view.week_count != calendar#week#week_count(b:calendar.month()) || self.frame.type !=# calendar#setting#get('frame')
     call self.on_resize()
   endif
@@ -349,7 +349,7 @@ function! s:self.contents() dict
   return deepcopy(self.days) + select + deepcopy(self.syntax) + select_over + cursor
 endfunction
 
-function! s:self.select_index() dict
+function! s:self.select_index() dict abort
   let head = b:calendar.month().head_day()
   let wn = calendar#week#week_number(head)
   let lastij = b:calendar.day().sub(head) + wn
@@ -391,7 +391,7 @@ function! s:self.select_index() dict
   return ijs
 endfunction
 
-function! s:self.timerange() dict
+function! s:self.timerange() dict abort
   if !b:calendar.visual_mode()
     return ''
   endif
@@ -435,7 +435,7 @@ function! s:self.timerange() dict
   endif
 endfunction
 
-function! s:self.action(action) dict
+function! s:self.action(action) dict abort
   let d = b:calendar.day()
   let month = b:calendar.month()
   let hday = month.head_day()

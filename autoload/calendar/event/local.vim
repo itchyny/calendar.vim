@@ -2,13 +2,13 @@
 " Filename: autoload/calendar/event/local.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/12/03 13:53:47.
+" Last Change: 2015/03/29 06:29:34.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! calendar#event#local#new()
+function! calendar#event#local#new() abort
   return deepcopy(s:self)
 endfunction
 
@@ -20,7 +20,7 @@ let s:self = {}
 let s:self._key = {}
 let s:self._events = {}
 
-function! s:self.get_events_one_month(year, month, ...) dict
+function! s:self.get_events_one_month(year, month, ...) dict abort
   let events = {}
   let calendarList = self.calendarList()
   let [y, m] = [printf('%04d', a:year), printf('%02d', a:month)]
@@ -62,7 +62,7 @@ function! s:self.get_events_one_month(year, month, ...) dict
   return events
 endfunction
 
-function! s:self.update(calendarId, eventId, title, year, month, ...) dict
+function! s:self.update(calendarId, eventId, title, year, month, ...) dict abort
   let calendarList = self.calendarList()
   let [y, m] = [printf('%04d', a:year), printf('%02d', a:month)]
   for calendar in calendarList
@@ -81,7 +81,7 @@ function! s:self.update(calendarId, eventId, title, year, month, ...) dict
   endfor
 endfunction
 
-function! s:self.insert(calendarId, title, start, end, year, month, ...) dict
+function! s:self.insert(calendarId, title, start, end, year, month, ...) dict abort
   let calendarList = self.calendarList()
   let [y, m] = [printf('%04d', a:year), printf('%02d', a:month)]
   if a:start =~# '^\d\+[-/]\d\+[-/]\d\+'
@@ -107,7 +107,7 @@ function! s:self.insert(calendarId, title, start, end, year, month, ...) dict
   endfor
 endfunction
 
-function! s:self.delete(calendarId, eventId, year, month) dict
+function! s:self.delete(calendarId, eventId, year, month) dict abort
   let calendarList = self.calendarList()
   let [y, m] = [printf('%04d', a:year), printf('%02d', a:month)]
   for calendar in calendarList
@@ -125,7 +125,7 @@ function! s:self.delete(calendarId, eventId, year, month) dict
   endfor
 endfunction
 
-function! s:self.calendarList() dict
+function! s:self.calendarList() dict abort
   if has_key(self, '_calendarList')
     return self._calendarList
   endif
@@ -137,7 +137,7 @@ function! s:self.calendarList() dict
   return self._calendarList
 endfunction
 
-function! s:self.createCalendar() dict
+function! s:self.createCalendar() dict abort
   let cnt = s:cache.get('calendarList')
   if type(cnt) == type({}) && has_key(cnt, 'items') && type(cnt.items) == type([])
     let c = cnt

@@ -2,29 +2,29 @@
 " Filename: autoload/calendar/constructor/view_months.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/19 09:51:30.
+" Last Change: 2015/03/29 06:27:32.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! calendar#constructor#view_months#new(instance)
+function! calendar#constructor#view_months#new(instance) abort
   return extend({ 'instance': a:instance }, s:constructor)
 endfunction
 
 let s:constructor = {}
 
-function! s:constructor.new(source) dict
+function! s:constructor.new(source) dict abort
   return extend(extend(s:super_constructor.new(a:source), s:instance), self.instance)
 endfunction
 
 let s:instance = {}
 
-function! s:instance.is_full() dict
+function! s:instance.is_full() dict abort
   return self.x_months * self.y_months == 12
 endfunction
 
-function! s:instance.get_months() dict
+function! s:instance.get_months() dict abort
   if self.is_full()
     return b:calendar.year().get_months()
   else
@@ -40,7 +40,7 @@ function! s:instance.get_months() dict
   endif
 endfunction
 
-function! s:instance.width() dict
+function! s:instance.width() dict abort
   let daywidth = 2
   let pad = 100
   while pad > daywidth * 7
@@ -52,11 +52,11 @@ function! s:instance.width() dict
   return (daywidth * 7 + pad) * self.x_months - pad - self.daywidth + 2
 endfunction
 
-function! s:instance.height() dict
+function! s:instance.height() dict abort
   return self.y_months > 1 ? max([9, (self.maxheight()) * 4/5 / self.y_months]) * self.y_months : 9
 endfunction
 
-function! s:instance.display_point() dict
+function! s:instance.display_point() dict abort
   let w = self.maxwidth() - 2
   let h = self.maxheight()
   let lw = w - self.width()
@@ -64,7 +64,7 @@ function! s:instance.display_point() dict
   return (lw >= 0 && lh >= 0) * (lw + lh + (lw - lh >= 0 ? lw - lh : - (lw - lh)) * 5)
 endfunction
 
-function! s:instance.on_resize() dict
+function! s:instance.on_resize() dict abort
   let self.view = {}
   let self.view.width = ((self.sizex() + self.pad + self.daywidth - 2)/ self.x_months - self.pad) / 7
   let self.view.pad = self.pad
@@ -82,7 +82,7 @@ function! s:instance.on_resize() dict
   call self.set_day_name()
 endfunction
 
-function! s:instance.set_day_name() dict
+function! s:instance.set_day_name() dict abort
   let day_name = copy(calendar#message#get('day_name'))
   let [v, e] = [self.view, self.element]
   let [mh, h, w] = [v.dheight, v.height, v.width]
@@ -128,7 +128,7 @@ function! s:instance.set_day_name() dict
   let self._first_day = calendar#setting#get('first_day')
 endfunction
 
-function! s:instance.changed() dict
+function! s:instance.changed() dict abort
   if self._today != calendar#day#today().get_ymd() || get(self, '_first_day', '') != calendar#setting#get('first_day')
     return 1
   elseif self.is_full()
@@ -138,7 +138,7 @@ function! s:instance.changed() dict
   endif
 endfunction
 
-function! s:instance.set_contents() dict
+function! s:instance.set_contents() dict abort
   let month_name = copy(calendar#message#get('month_name_long'))
   let self.month_names_offset = []
   for i in range(self.y_months)
@@ -266,7 +266,7 @@ function! s:instance.set_contents() dict
   let self.syntax = syntax
 endfunction
 
-function! s:instance.contents() dict
+function! s:instance.contents() dict abort
   if get(self, '_first_day', '') != calendar#setting#get('first_day') | call self.on_resize() | endif
   if self.changed() | call self.set_contents() | endif
   let [v, e] = [self.view, self.element]
@@ -298,7 +298,7 @@ function! s:instance.contents() dict
   return deepcopy(self.days) + select + deepcopy(self.syntax) + sunsat + deepcopy(self.top_syntax)
 endfunction
 
-function! s:instance.action(action) dict
+function! s:instance.action(action) dict abort
   let month = b:calendar.month()
   let months = self.get_months()
   let ij = month.sub(months[0])

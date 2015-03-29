@@ -2,19 +2,19 @@
 " Filename: autoload/calendar/constructor/view_clock.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/12/03 14:04:08.
+" Last Change: 2015/03/29 06:26:59.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! calendar#constructor#view_clock#new(instance)
+function! calendar#constructor#view_clock#new(instance) abort
   return extend({ 'instance': a:instance }, s:constructor)
 endfunction
 
 let s:constructor = {}
 
-function! s:constructor.new(source) dict
+function! s:constructor.new(source) dict abort
   return extend(extend(s:super_constructor.new(a:source), s:instance), self.instance)
 endfunction
 
@@ -32,7 +32,7 @@ let s:instance.str = ''
 let s:instance.len = 0
 let s:instance._colnum = 0
 
-function! s:instance.get_scale(...) dict
+function! s:instance.get_scale(...) dict abort
   let colnum = a:0 ? a:1 : self.colnum
   let [h, w] = [self.maxheight(), self.maxwidth()]
   if self.winwidth == w && self.winheight == h && self._colnum == colnum
@@ -55,7 +55,7 @@ function! s:instance.get_scale(...) dict
   return scale
 endfunction
 
-function! s:instance.width() dict
+function! s:instance.width() dict abort
   let str = self.get_letter()[0]
   if self.str !=# str
     let self.len = calendar#pixel#len(str) + 2 * (len(str) - 1)
@@ -70,7 +70,7 @@ function! s:instance.width() dict
   return self.scale ? self.len * self.scale : len(str)
 endfunction
 
-function! s:instance.height() dict
+function! s:instance.height() dict abort
   if self.winwidth != self.maxwidth() || self.winheight != self.maxheight()
     let scale = self.get_scale()
   endif
@@ -78,7 +78,7 @@ function! s:instance.height() dict
   return self.scale ? self.one_height * self.y_height : 1
 endfunction
 
-function! s:instance.gen_syn(chr, offsetx, offsety, syn) dict
+function! s:instance.gen_syn(chr, offsetx, offsety, syn) dict abort
   if !len(a:chr)
     return [[], 0]
   endif
@@ -126,7 +126,7 @@ function! s:instance.gen_syn(chr, offsetx, offsety, syn) dict
   return [syn, max]
 endfunction
 
-function! s:instance.set_contents() dict
+function! s:instance.set_contents() dict abort
   let cs = self.get_letter()
   let syntax = []
   let diffs = []
@@ -189,12 +189,12 @@ function! s:instance.set_contents() dict
   endfor
 endfunction
 
-function! s:instance.on_resize() dict
+function! s:instance.on_resize() dict abort
   let self.letters = []
   let self.syntax = []
 endfunction
 
-function! s:instance.contents() dict
+function! s:instance.contents() dict abort
   if self.letters != self.get_letter()
     call self.set_contents()
   endif
@@ -211,7 +211,7 @@ function! s:instance.contents() dict
   return syn
 endfunction
 
-function! s:instance.updated() dict
+function! s:instance.updated() dict abort
   return self.letters != self.get_letter()
 endfunction
 

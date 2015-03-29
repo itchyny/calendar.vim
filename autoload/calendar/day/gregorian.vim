@@ -2,43 +2,43 @@
 " Filename: autoload/calendar/day/gregorian.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/16 23:57:55.
+" Last Change: 2015/03/29 06:28:54.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! s:div(x, y)
+function! s:div(x, y) abort
   return a:x/a:y-((a:x<0)&&(a:x%a:y))
 endfunction
 
-function! calendar#day#gregorian#new(y, m, d)
+function! calendar#day#gregorian#new(y, m, d) abort
   return s:constructor.new(a:y, a:m, a:d)
 endfunction
 
-function! calendar#day#gregorian#new_mjd(mjd)
+function! calendar#day#gregorian#new_mjd(mjd) abort
   return s:constructor.new_mjd(a:mjd)
 endfunction
 
-function! calendar#day#gregorian#today()
+function! calendar#day#gregorian#today() abort
   return s:constructor.new_mjd(calendar#day#today_mjd())
 endfunction
 
 let s:self = {}
 
-function! s:self.new(y, m, d) dict
+function! s:self.new(y, m, d) dict abort
   let y = a:y - (a:m < 3)
   let mjd = s:div(y*1461,4)+s:div(y,400)-s:div(y,100)+((a:m+12*(a:m<3)-3)*153+2)/5+a:d-678882
   return extend(self.new_mjd(calendar#mjd#new(mjd)), { '_ymd': [a:y, a:m, a:d] })
 endfunction
 
-function! s:self.new_mjd(mjd) dict
+function! s:self.new_mjd(mjd) dict abort
   return s:constructor.new_mjd(a:mjd)
 endfunction
 
 let s:_ = {}
 let s:days = { '1': 31, '2': 28, '3': 31, '4': 30, '5': 31, '6': 30, '7': 31, '8': 31, '9': 30, '10': 31, '11': 30, '12': 31 }
-function! s:self.get_ymd() dict
+function! s:self.get_ymd() dict abort
   if has_key(self, 'ymd') | return self.ymd | endif
   let _ = self.mjd.get()
   if has_key(s:_, _) | return s:_[_] | endif
@@ -61,11 +61,11 @@ function! s:self.get_ymd() dict
   return self.ymd
 endfunction
 
-function! s:self.is_gregorian() dict
+function! s:self.is_gregorian() dict abort
   return 1
 endfunction
 
-function! s:self.get_calendar() dict
+function! s:self.get_calendar() dict abort
   return 'gregorian'
 endfunction
 

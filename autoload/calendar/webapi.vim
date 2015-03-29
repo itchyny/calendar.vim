@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/01/18 08:39:24.
+" Last Change: 2015/03/29 06:34:57.
 " =============================================================================
 
 " Web interface.
@@ -25,7 +25,7 @@ if !calendar#setting#get('debug')
   call s:cache.rmdir_on_exit()
 endif
 
-function! s:nr2byte(nr)
+function! s:nr2byte(nr) abort
   if a:nr < 0x80
     return nr2char(a:nr)
   elseif a:nr < 0x800
@@ -35,7 +35,7 @@ function! s:nr2byte(nr)
   endif
 endfunction
 
-function! s:nr2enc_char(charcode)
+function! s:nr2enc_char(charcode) abort
   if &encoding == 'utf-8'
     return nr2char(a:charcode)
   endif
@@ -46,7 +46,7 @@ function! s:nr2enc_char(charcode)
   return char
 endfunction
 
-function! s:execute(command)
+function! s:execute(command) abort
   let res = calendar#util#system(a:command)
   while res =~ '^HTTP/1.\d 3' || res =~ '^HTTP/1\.\d 200 Connection established' || res =~ '^HTTP/1\.\d 100 Continue'
     let pos = stridx(res, "\r\n\r\n")
@@ -84,55 +84,55 @@ function! s:execute(command)
         \}
 endfunction
 
-function! calendar#webapi#get(url, ...)
+function! calendar#webapi#get(url, ...) abort
   return s:request(1, {}, a:url, get(a:000, 0, {}), get(a:000, 1, {}), get(a:000, 2, 'GET'))
 endfunction
 
-function! calendar#webapi#post(url, ...)
+function! calendar#webapi#post(url, ...) abort
   return s:request(1, {}, a:url, get(a:000, 0, {}), get(a:000, 1, {}), get(a:000, 2, 'POST'))
 endfunction
 
-function! calendar#webapi#delete(url, ...)
+function! calendar#webapi#delete(url, ...) abort
   return s:request(1, {}, a:url, get(a:000, 0, {}), get(a:000, 1, {}), get(a:000, 2, 'DELETE'))
 endfunction
 
-function! calendar#webapi#patch(url, ...)
+function! calendar#webapi#patch(url, ...) abort
   return s:request(1, {}, a:url, get(a:000, 0, {}), get(a:000, 1, {}), get(a:000, 2, 'PATCH'))
 endfunction
 
-function! calendar#webapi#put(url, ...)
+function! calendar#webapi#put(url, ...) abort
   return s:request(1, {}, a:url, get(a:000, 0, {}), get(a:000, 1, {}), get(a:000, 2, 'PUT'))
 endfunction
 
-function! calendar#webapi#post_nojson(url, ...)
+function! calendar#webapi#post_nojson(url, ...) abort
   return s:request(0, {}, a:url, get(a:000, 0, {}), get(a:000, 1, {}), get(a:000, 2, 'POST'))
 endfunction
 
-function! calendar#webapi#get_async(id, cb, url, ...)
+function! calendar#webapi#get_async(id, cb, url, ...) abort
   return s:request(1, { 'id': a:id, 'cb': a:cb } , a:url, get(a:000, 0, {}), get(a:000, 1, {}), get(a:000, 2, 'GET'))
 endfunction
 
-function! calendar#webapi#post_async(id, cb, url, ...)
+function! calendar#webapi#post_async(id, cb, url, ...) abort
   return s:request(1, { 'id': a:id, 'cb': a:cb }, a:url, get(a:000, 0, {}), get(a:000, 1, {}), get(a:000, 2, 'POST'))
 endfunction
 
-function! calendar#webapi#delete_async(id, cb, url, ...)
+function! calendar#webapi#delete_async(id, cb, url, ...) abort
   return s:request(1, { 'id': a:id, 'cb': a:cb }, a:url, get(a:000, 0, {}), get(a:000, 1, {}), get(a:000, 2, 'DELETE'))
 endfunction
 
-function! calendar#webapi#patch_async(id, cb, url, ...)
+function! calendar#webapi#patch_async(id, cb, url, ...) abort
   return s:request(1, { 'id': a:id, 'cb': a:cb }, a:url, get(a:000, 0, {}), get(a:000, 1, {}), get(a:000, 2, 'PATCH'))
 endfunction
 
-function! calendar#webapi#put_async(id, cb, url, ...)
+function! calendar#webapi#put_async(id, cb, url, ...) abort
   return s:request(1, { 'id': a:id, 'cb': a:cb }, a:url, get(a:000, 0, {}), get(a:000, 1, {}), get(a:000, 2, 'PUT'))
 endfunction
 
-function! calendar#webapi#post_nojson_async(id, cb, url, ...)
+function! calendar#webapi#post_nojson_async(id, cb, url, ...) abort
   return s:request(0, { 'id': a:id, 'cb': a:cb }, a:url, get(a:000, 0, {}), get(a:000, 1, {}), get(a:000, 2, 'POST'))
 endfunction
 
-function! s:request(json, async, url, ...)
+function! s:request(json, async, url, ...) abort
   let url = a:url
   let param = a:0 > 0 ? a:000[0] : {}
   let postdata = a:0 > 1 ? a:000[1] : {}
@@ -202,7 +202,7 @@ function! s:request(json, async, url, ...)
 endfunction
 
 let s:callback_datalen = {}
-function! calendar#webapi#callback(id, cb)
+function! calendar#webapi#callback(id, cb) abort
   let data = s:cache.get_raw(a:id)
   if type(data) == type([])
     let prevdatalen = get(s:callback_datalen, a:id)
@@ -254,19 +254,19 @@ function! calendar#webapi#callback(id, cb)
   return 1
 endfunction
 
-function! calendar#webapi#null()
+function! calendar#webapi#null() abort
   return 0
 endfunction
 
-function! calendar#webapi#true()
+function! calendar#webapi#true() abort
   return 1
 endfunction
 
-function! calendar#webapi#false()
+function! calendar#webapi#false() abort
   return 0
 endfunction
 
-function! calendar#webapi#encode(val)
+function! calendar#webapi#encode(val) abort
   if type(a:val) == 0
     return a:val
   elseif type(a:val) == 1
@@ -294,7 +294,7 @@ function! calendar#webapi#encode(val)
   endif
 endfunction
 
-function! calendar#webapi#decode(json)
+function! calendar#webapi#decode(json) abort
   let json = iconv(a:json, 'utf-8', &encoding)
   let json = substitute(json, '\n', '', 'g')
   let json = substitute(json, '\\u34;', '\\"', 'g')
@@ -312,7 +312,7 @@ function! calendar#webapi#decode(json)
   return ret
 endfunction
 
-function! calendar#webapi#open_url(url)
+function! calendar#webapi#open_url(url) abort
   if has('win32') || has('win64')
     silent! call calendar#util#system('cmd /c start "" "' . a:url . '"')
   elseif executable('xdg-open')
@@ -322,7 +322,7 @@ function! calendar#webapi#open_url(url)
   endif
 endfunction
 
-function! calendar#webapi#echo_error(response)
+function! calendar#webapi#echo_error(response) abort
   let message = get(a:response, 'message', '')
   if has_key(a:response, 'content')
     let cnt = calendar#webapi#decode(a:response.content)
@@ -335,7 +335,7 @@ function! calendar#webapi#echo_error(response)
   endif
 endfunction
 
-function! s:make_header_args(headdata, option, quote)
+function! s:make_header_args(headdata, option, quote) abort
   let args = ''
   for key in keys(a:headdata)
     unlet! value
@@ -350,18 +350,18 @@ function! s:make_header_args(headdata, option, quote)
   return args
 endfunction
 
-function! s:decodeURI(str)
+function! s:decodeURI(str) abort
   let ret = a:str
   let ret = substitute(ret, '+', ' ', 'g')
   let ret = substitute(ret, '%\(\x\x\)', '\=printf("%c", str2nr(submatch(1), 16))', 'g')
   return ret
 endfunction
 
-function! s:escape(str)
+function! s:escape(str) abort
   return substitute(a:str, '[^a-zA-Z0-9_.-]', '\=printf("%%%02X", char2nr(submatch(0)))', 'g')
 endfunction
 
-function! calendar#webapi#encodeURI(items)
+function! calendar#webapi#encodeURI(items) abort
   let ret = ''
   if type(a:items) == type({})
     for key in sort(keys(a:items))
@@ -383,7 +383,7 @@ function! calendar#webapi#encodeURI(items)
   return ret
 endfunction
 
-function! s:postdata(data)
+function! s:postdata(data) abort
   if type(a:data) == type({})
     return [calendar#webapi#encodeURI(a:data)]
   elseif type(a:data) == type([])
@@ -393,7 +393,7 @@ function! s:postdata(data)
   endif
 endfunction
 
-function! s:_quote()
+function! s:_quote() abort
   return &shellxquote == '"' ?  "'" : '"'
 endfunction
 

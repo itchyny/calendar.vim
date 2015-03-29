@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/mapping.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/07 17:10:33.
+" Last Change: 2015/03/29 06:30:33.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -10,7 +10,7 @@ set cpo&vim
 
 " Setting mappings in the calendar buffer.
 
-function! calendar#mapping#new()
+function! calendar#mapping#new() abort
 
   let save_cpo = &cpo
   set cpo&vim

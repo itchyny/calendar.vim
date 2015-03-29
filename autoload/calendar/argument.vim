@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/argument.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/07 16:19:04.
+" Last Change: 2015/03/29 06:25:16.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -73,7 +73,7 @@ endfor
 unlet s:key s:val
 
 " Completion function.
-function! calendar#argument#complete(arglead, cmdline, cursorpos)
+function! calendar#argument#complete(arglead, cmdline, cursorpos) abort
   try
     for key in keys(s:value_options)
       if a:cmdline =~# key
@@ -122,7 +122,7 @@ endfunction
 
 " Splitting the argument.
 " This function deals with quotes.
-function! calendar#argument#split(args)
+function! calendar#argument#split(args) abort
   let args = ['']
   let quoteflag = 0
   let quote = ''
@@ -152,7 +152,7 @@ function! calendar#argument#split(args)
 endfunction
 
 " Option parsing and constructing the buffer-creating command.
-function! calendar#argument#parse(args)
+function! calendar#argument#parse(args) abort
   let args = calendar#argument#split(a:args)
   let isnewbuffer = bufname('%') != '' || &l:filetype != '' || &modified
   let name = " `='" . calendar#argument#buffername('calendar') . "'`"
@@ -255,7 +255,7 @@ endfunction
 
 " :Calendar [year month day]
 " The order is properly dealt with based on the endian setting.
-function! calendar#argument#day(day, default)
+function! calendar#argument#day(day, default) abort
   let [y, m, d] = a:default
   let l = len(a:day)
   let endian = calendar#setting#get('date_endian')
@@ -294,7 +294,7 @@ function! calendar#argument#day(day, default)
 endfunction
 
 " Desicion of the buffer name.
-function! calendar#argument#buffername(name)
+function! calendar#argument#buffername(name) abort
   let buflist = []
   for i in range(tabpagenr('$'))
    call extend(buflist, tabpagebuflist(i + 1))

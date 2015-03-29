@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/time.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/20 21:14:39.
+" Last Change: 2015/03/29 06:32:16.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -12,39 +12,39 @@ set cpo&vim
 "   h: hour
 "   m: minute
 "   s: second
-function! calendar#time#new(h, m, s)
+function! calendar#time#new(h, m, s) abort
   return extend(copy(s:self), { 'h': a:h, 'm': a:m, 's': a:s })
 endfunction
 
 if exists('*strftime')
-  function! calendar#time#now()
+  function! calendar#time#now() abort
     return calendar#time#new(strftime('%H') * 1, strftime('%M') * 1, strftime('%S') * 1)
   endfunction
 else
-  function! calendar#time#now()
+  function! calendar#time#now() abort
     return calendar#time#new(system('date "+%H"') * 1, system('date "+%M"') * 1, system('date "+%S"') * 1)
   endfunction
 endif
 
-function! calendar#time#hour12(h)
+function! calendar#time#hour12(h) abort
   return a:h == 0 ? 12 : a:h < 13 ? a:h : a:h - 12
 endfunction
 
 let s:self = {}
 
-function! s:div(x, y)
+function! s:div(x, y) abort
   return a:x/a:y-((a:x<0)&&(a:x%a:y))
 endfunction
 
-function! s:self.new(h, m, s) dict
+function! s:self.new(h, m, s) dict abort
   return calendar#time#new(a:h, a:m, a:s)
 endfunction
 
-function! s:self.get_hms() dict
+function! s:self.get_hms() dict abort
   return [self.h, self.m, self.s]
 endfunction
 
-function! s:self.add_hour(diff) dict
+function! s:self.add_hour(diff) dict abort
   let [h, m, s] = self.get_hms()
   let d = 0
   let h += a:diff
@@ -53,7 +53,7 @@ function! s:self.add_hour(diff) dict
   return [d, self.new(h, m, s)]
 endfunction
 
-function! s:self.add_minute(diff) dict
+function! s:self.add_minute(diff) dict abort
   let [h, m, s] = self.get_hms()
   let d = 0
   let m += a:diff
@@ -64,7 +64,7 @@ function! s:self.add_minute(diff) dict
   return [d, self.new(h, m, s)]
 endfunction
 
-function! s:self.add_second(diff) dict
+function! s:self.add_second(diff) dict abort
   let [h, m, s] = self.get_hms()
   let d = 0
   let s += a:diff
@@ -77,23 +77,23 @@ function! s:self.add_second(diff) dict
   return [d, self.new(h, m, s)]
 endfunction
 
-function! s:self.second() dict
+function! s:self.second() dict abort
   return self.get_hms()[2]
 endfunction
 
-function! s:self.minute() dict
+function! s:self.minute() dict abort
   return self.get_hms()[1]
 endfunction
 
-function! s:self.hour() dict
+function! s:self.hour() dict abort
   return self.get_hms()[0]
 endfunction
 
-function! s:self.seconds() dict
+function! s:self.seconds() dict abort
   return (self.hour() * 60 + self.minute()) * 60 + self.second()
 endfunction
 
-function! s:self.sub(time) dict
+function! s:self.sub(time) dict abort
   return self.seconds() - a:time.seconds()
 endfunction
 

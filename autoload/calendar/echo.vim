@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/echo.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/05/11 14:11:45.
+" Last Change: 2015/03/29 06:29:23.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -10,15 +10,15 @@ set cpo&vim
 
 " Echo messages.
 
-function! calendar#echo#echo(msg)
+function! calendar#echo#echo(msg) abort
   echo a:msg
 endfunction
 
-function! calendar#echo#message(msg)
+function! calendar#echo#message(msg) abort
   call calendar#echo#message_raw(calendar#setting#get('message_prefix') . a:msg)
 endfunction
 
-function! calendar#echo#message_raw(msg)
+function! calendar#echo#message_raw(msg) abort
   redraw
   echo ''
   for msg in split(a:msg, '\n')
@@ -26,11 +26,11 @@ function! calendar#echo#message_raw(msg)
   endfor
 endfunction
 
-function! calendar#echo#error(msg)
+function! calendar#echo#error(msg) abort
   call calendar#echo#error_raw(calendar#setting#get('message_prefix') . a:msg)
 endfunction
 
-function! calendar#echo#error_raw(msg)
+function! calendar#echo#error_raw(msg) abort
   redraw
   echo ''
   echohl ErrorMsg
@@ -40,11 +40,11 @@ function! calendar#echo#error_raw(msg)
   echohl None
 endfunction
 
-function! calendar#echo#normal_message(name)
+function! calendar#echo#normal_message(name) abort
   call calendar#echo#message(calendar#message#get(a:name))
 endfunction
 
-function! calendar#echo#error_message(name)
+function! calendar#echo#error_message(name) abort
   call calendar#echo#error(calendar#message#get(a:name))
 endfunction
 

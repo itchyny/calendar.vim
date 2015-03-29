@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/timestamp.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/01/30 17:39:52.
+" Last Change: 2015/03/29 06:32:17.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -13,7 +13,7 @@ set cpo&vim
 
 let s:cache = calendar#cache#new('timestamp')
 
-function! calendar#timestamp#update(name, sec)
+function! calendar#timestamp#update(name, sec) abort
   let cache = s:cache.get(a:name)
   if type(cache) == type({})
         \ && has_key(cache, 'name') && cache.name ==# a:name

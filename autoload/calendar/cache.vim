@@ -2,21 +2,21 @@
 " Filename: autoload/calendar/cache.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/07 21:46:15.
+" Last Change: 2015/03/29 06:25:33.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
 " Cache object.
-function! calendar#cache#new(...)
+function! calendar#cache#new(...) abort
   let self = copy(s:self)
   let self.subpath = a:0 ? a:1 : ''
   let self.subpath .= len(self.subpath) && self.subpath[len(self.subpath) - 1] !~ '^[/\\]$' ? '/' : ''
   return self
 endfunction
 
-function! calendar#cache#clear()
+function! calendar#cache#clear() abort
   for path in s:clearpath
     call calendar#util#rmdir(path, 'rf')
   endfor
@@ -31,33 +31,33 @@ augroup END
 
 let s:self = {}
 
-function! s:self.new(...) dict
+function! s:self.new(...) dict abort
   return calendar#cache#new(self.subpath . (a:0 ? self.escape(a:1) : ''))
 endfunction
 
-function! s:self.escape(key) dict
+function! s:self.escape(key) dict abort
   return substitute(a:key, '[^a-zA-Z0-9_.-]', '\=printf("%%%02X",char2nr(submatch(0)))', 'g')
 endfunction
 
 if has('win32') || has('win64')
-  function! s:self.dir() dict
+  function! s:self.dir() dict abort
     return substitute(substitute(calendar#setting#get('cache_directory'), '[/\\]$', '', '') . '/' . self.subpath, '/', '\', 'g')
   endfunction
 else
-  function! s:self.dir() dict
+  function! s:self.dir() dict abort
     return substitute(calendar#setting#get('cache_directory'), '[/\\]$', '', '') . '/' . self.subpath
   endfunction
 endif
 
-function! s:self.path(key) dict
+function! s:self.path(key) dict abort
   return self.dir() . self.escape(a:key)
 endfunction
 
-function! s:self.rmdir_on_exit() dict
+function! s:self.rmdir_on_exit() dict abort
   call add(s:clearpath, self.dir())
 endfunction
 
-function! s:self.check_dir(...) dict
+function! s:self.check_dir(...) dict abort
   let dir = self.dir()
   if !get(a:000, 0)
     return !isdirectory(dir)
@@ -78,7 +78,7 @@ function! s:self.check_dir(...) dict
   endif
 endfunction
 
-function! s:self.save(key, val) dict
+function! s:self.save(key, val) dict abort
   if self.check_dir(1)
     return 1
   endif
@@ -95,7 +95,7 @@ function! s:self.save(key, val) dict
   endtry
 endfunction
 
-function! s:self.get(key) dict
+function! s:self.get(key) dict abort
   if self.check_dir()
     return 1
   endif
@@ -116,7 +116,7 @@ function! s:self.get(key) dict
   endif
 endfunction
 
-function! s:self.get_raw(key) dict
+function! s:self.get_raw(key) dict abort
   if self.check_dir()
     return 1
   endif
@@ -128,7 +128,7 @@ function! s:self.get_raw(key) dict
   endif
 endfunction
 
-function! s:self.delete(key) dict
+function! s:self.delete(key) dict abort
   if self.check_dir()
     return 1
   endif
@@ -137,7 +137,7 @@ function! s:self.delete(key) dict
 endfunction
 
 " string() with making newlines and indents properly.
-function! calendar#cache#string(v, ...)
+function! calendar#cache#string(v, ...) abort
   let r = []
   let f = 1
   let s = a:0 ? a:1 : ''

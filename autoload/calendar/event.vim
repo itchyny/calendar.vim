@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/02/22 23:06:53.
+" Last Change: 2015/03/29 06:29:42.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -10,7 +10,7 @@ set cpo&vim
 
 " Event controller.
 " This object handles both local and Google Calendar.
-function! calendar#event#new()
+function! calendar#event#new() abort
   let self = deepcopy(s:self)
   if calendar#setting#get('google_calendar')
     let self.event_source_name = 'google'
@@ -27,14 +27,14 @@ let s:self.__events = {}
 let s:self._holidays = {}
 let s:self._updated = 0
 
-function! s:self.updated() dict
+function! s:self.updated() dict abort
   if self._updated > 0
     let self._updated -= 1
   endif
   return [self._updated]
 endfunction
 
-function! s:self.get_events_one_month(year, month, ...) dict
+function! s:self.get_events_one_month(year, month, ...) dict abort
   let events = self.event_source.get_events_one_month(a:year, a:month, a:0 && a:1)
   if self.event_source_name !=# 'google'
     let holiday = self.get_holidays(a:year, a:month)
@@ -52,12 +52,12 @@ function! s:self.get_events_one_month(year, month, ...) dict
   return events
 endfunction
 
-function! s:self.clear_cache() dict
+function! s:self.clear_cache() dict abort
   let self.__events = {}
   let self._holidays = {}
 endfunction
 
-function! s:self.get_events(year, month) dict
+function! s:self.get_events(year, month) dict abort
   let key = a:year . '-' . a:month
   if self._updated > 0
     let self._updated -= 1
@@ -74,7 +74,7 @@ function! s:self.get_events(year, month) dict
   return self.__events[key]
 endfunction
 
-function! s:self.get_holidays(year, month) dict
+function! s:self.get_holidays(year, month) dict abort
   let key = a:year . '-' . a:month
   if has_key(self._holidays, key) && (!calendar#setting#get('google_calendar') || get(g:, 'calendar_google_event_download', 1) <= 0)
     return self._holidays[key]
@@ -83,27 +83,27 @@ function! s:self.get_holidays(year, month) dict
   return self._holidays[key]
 endfunction
 
-function! s:self.update(calendarId, eventId, title, year, month, ...) dict
+function! s:self.update(calendarId, eventId, title, year, month, ...) dict abort
   let self._updated = 10
   return self.event_source.update(a:calendarId, a:eventId, a:title, a:year, a:month, a:0 ? a:1 : {})
 endfunction
 
-function! s:self.insert(calendarId, title, start, end, year, month, ...) dict
+function! s:self.insert(calendarId, title, start, end, year, month, ...) dict abort
   let self._updated = 10
   return self.event_source.insert(a:calendarId, a:title, a:start, a:end, a:year, a:month, a:0 ? a:1 : {})
 endfunction
 
-function! s:self.delete(calendarId, eventId, year, month) dict
+function! s:self.delete(calendarId, eventId, year, month) dict abort
   let self._updated = 10
   return self.event_source.delete(a:calendarId, a:eventId, a:year, a:month)
 endfunction
 
-function! s:self.createCalendar() dict
+function! s:self.createCalendar() dict abort
   let self._updated = 10
   return self.event_source.createCalendar()
 endfunction
 
-function! s:self.calendarList() dict
+function! s:self.calendarList() dict abort
   return self.event_source.calendarList()
 endfunction
 

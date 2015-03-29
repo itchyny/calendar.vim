@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/message.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/12/05 20:02:39.
+" Last Change: 2015/03/29 06:30:41.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -10,7 +10,7 @@ set cpo&vim
 
 " Getting the message based on the locale setting.
 " The message files are found in message/.
-function! calendar#message#get(type)
+function! calendar#message#get(type) abort
   let locale = calendar#setting#get('locale')
   try
     let message = calendar#message#{locale}#get()

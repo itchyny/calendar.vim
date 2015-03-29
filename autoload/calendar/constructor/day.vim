@@ -2,13 +2,13 @@
 " Filename: autoload/calendar/constructor/day.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/11/10 11:34:43.
+" Last Change: 2015/03/29 06:26:11.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! calendar#constructor#day#new(instance)
+function! calendar#constructor#day#new(instance) abort
   let constructor = extend({ 'instance': a:instance }, s:constructor)
   let constructor.month_constructor = calendar#constructor#month#new(constructor)
   let constructor.year_constructor = calendar#constructor#year#new(constructor)
@@ -17,25 +17,25 @@ endfunction
 
 let s:constructor = {}
 
-function! s:constructor.new(y, m, d) dict
+function! s:constructor.new(y, m, d) dict abort
   return extend(self.instance.new(a:y, a:m, a:d), { 'constructor': self })
 endfunction
 
-function! s:constructor.new_mjd(mjd) dict
+function! s:constructor.new_mjd(mjd) dict abort
   return extend(extend(copy(s:instance), self.instance), { 'mjd': a:mjd, 'constructor': self })
 endfunction
 
 let s:instance = {}
 
-function! s:div(x, y)
+function! s:div(x, y) abort
   return a:x/a:y-((a:x<0)&&(a:x%a:y))
 endfunction
 
-function! s:instance.add(diff) dict
+function! s:instance.add(diff) dict abort
   return self.new_mjd(self.mjd.add(a:diff))
 endfunction
 
-function! s:instance.add_month(diff) dict
+function! s:instance.add_month(diff) dict abort
   let [y, m, d] = self.get_ymd()
   let m += a:diff - 1
   let y += s:div(m, 12)
@@ -57,90 +57,90 @@ function! s:instance.add_month(diff) dict
   return new_day
 endfunction
 
-function! s:instance.add_year(diff) dict
+function! s:instance.add_year(diff) dict abort
   return self.add_month(a:diff * 12)
 endfunction
 
-function! s:instance.sub(day) dict
+function! s:instance.sub(day) dict abort
   return self.mjd.sub(a:day.mjd)
 endfunction
 
-function! s:instance.week() dict
+function! s:instance.week() dict abort
   return self.mjd.week()
 endfunction
 
-function! s:instance.today() dict
+function! s:instance.today() dict abort
   return self.new_mjd(calendar#day#today_mjd())
 endfunction
 
-function! s:instance.eq(day) dict
+function! s:instance.eq(day) dict abort
   return self.mjd.eq(a:day.mjd)
 endfunction
 
-function! s:instance.eq_month(day) dict
+function! s:instance.eq_month(day) dict abort
   return self.month().eq(a:day.month())
 endfunction
 
-function! s:instance.eq_year(day) dict
+function! s:instance.eq_year(day) dict abort
   return self.year().eq(a:day.year())
 endfunction
 
-function! s:instance.eq_week(day) dict
+function! s:instance.eq_week(day) dict abort
   return self.week() == a:day.week()
 endfunction
 
-function! s:instance.is_sunday() dict
+function! s:instance.is_sunday() dict abort
   return self.mjd.is_sunday()
 endfunction
 
-function! s:instance.is_monday() dict
+function! s:instance.is_monday() dict abort
   return self.mjd.is_monday()
 endfunction
 
-function! s:instance.is_tuesday() dict
+function! s:instance.is_tuesday() dict abort
   return self.mjd.is_tuesday()
 endfunction
 
-function! s:instance.is_wednesday() dict
+function! s:instance.is_wednesday() dict abort
   return self.mjd.is_wednesday()
 endfunction
 
-function! s:instance.is_thursday() dict
+function! s:instance.is_thursday() dict abort
   return self.mjd.is_thursday()
 endfunction
 
-function! s:instance.is_friday() dict
+function! s:instance.is_friday() dict abort
   return self.mjd.is_friday()
 endfunction
 
-function! s:instance.is_saturday() dict
+function! s:instance.is_saturday() dict abort
   return self.mjd.is_saturday()
 endfunction
 
-function! s:instance.is_valid() dict
+function! s:instance.is_valid() dict abort
   return !has_key(self, '_ymd') || self._ymd == self.get_ymd()
 endfunction
 
-function! s:instance.get_year() dict
+function! s:instance.get_year() dict abort
   return self.get_ymd()[0]
 endfunction
 
-function! s:instance.get_month() dict
+function! s:instance.get_month() dict abort
   return self.get_ymd()[1]
 endfunction
 
-function! s:instance.get_day() dict
+function! s:instance.get_day() dict abort
   return self.get_ymd()[2]
 endfunction
 
-function! s:instance.month() dict
+function! s:instance.month() dict abort
   if has_key(self, '_month') | return self._month | endif
   let [y, m, d] = self.get_ymd()
   let self._month = self.constructor.month_constructor.new(y, m)
   return self._month
 endfunction
 
-function! s:instance.year() dict
+function! s:instance.year() dict abort
   if has_key(self, '_year') | return self._year | endif
   let self._year = self.constructor.year_constructor.new(self.get_year())
   return self._year

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/pixel.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/11/29 10:28:15.
+" Last Change: 2015/03/29 06:31:09.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -15,7 +15,7 @@ set cpo&vim
 "   returns: pixel data in an array
 let s:pixel = { ' ': [ '..', '..', '..', '..', '..'] }
 let s:dir = expand('<sfile>:p:h') . '/pixel/'
-function! calendar#pixel#get(chr)
+function! calendar#pixel#get(chr) abort
   if a:chr ==# ''
     return repeat([''], 5)
   endif
@@ -31,7 +31,7 @@ function! calendar#pixel#get(chr)
   return get(s:pixel, a:chr, s:pixel[' '])
 endfunction
 
-function! calendar#pixel#len(chr)
+function! calendar#pixel#len(chr) abort
   let len = 0
   for c in split(a:chr, '\zs')
     unlet! px
@@ -47,7 +47,7 @@ function! calendar#pixel#len(chr)
   return len
 endfunction
 
-function! calendar#pixel#whitelen(chr, ...)
+function! calendar#pixel#whitelen(chr, ...) abort
   let pat = a:0 ? a:1 : '^\.*'
   let px = calendar#pixel#get(a:chr)
   if type(px) != type([])

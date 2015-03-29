@@ -2,13 +2,13 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/02/21 17:54:40.
+" Last Change: 2015/03/29 06:33:05.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! calendar#view#event#new(source)
+function! calendar#view#event#new(source) abort
   return s:constructor.new(a:source)
 endfunction
 
@@ -16,11 +16,11 @@ let s:self = {}
 
 let s:self._select_line = 1
 
-function! s:self.get_key() dict
+function! s:self.get_key() dict abort
   return b:calendar.day().get_ymd() + [get(g:, 'calendar_google_event_download')] + b:calendar.event.updated()
 endfunction
 
-function! s:self.get_raw_contents() dict
+function! s:self.get_raw_contents() dict abort
   let [year, month, day] = b:calendar.day().get_ymd()
   let key = join([year, month, day], '-')
   let events = deepcopy(get(get(b:calendar.event.get_events_one_month(year, month), key, {}), 'events', []))
@@ -61,7 +61,7 @@ function! s:self.get_raw_contents() dict
   return cnt
 endfunction
 
-function! calendar#view#event#sorter(l, r)
+function! calendar#view#event#sorter(l, r) abort
   let l = get(a:l, 'title', get(a:l, 'summary', ''))
   let r = get(a:r, 'title', get(a:l, 'summary', ''))
   return l =~# '^\d' && r !~# '^\d' ? 1 :
@@ -69,7 +69,7 @@ function! calendar#view#event#sorter(l, r)
        \ l > r ? 1 : -1
 endfunction
 
-function! s:self.action(action) dict
+function! s:self.action(action) dict abort
   let event = self.current_contents()
   let calendarId = get(event, 'calendarId', '')
   let [year, month, day] = b:calendar.day().get_ymd()
@@ -109,7 +109,7 @@ function! s:self.action(action) dict
   endif
 endfunction
 
-function! s:self.insert_new_event(action, ...) dict
+function! s:self.insert_new_event(action, ...) dict abort
   let event = a:0 ? a:1 : self.current_contents()
   let calendarId = get(event, 'calendarId', '')
   let [year, month, day] = b:calendar.day().get_ymd()
@@ -168,7 +168,7 @@ function! s:self.insert_new_event(action, ...) dict
   endif
 endfunction
 
-function! s:parse_title(title, ...)
+function! s:parse_title(title, ...) abort
   let title = a:title
   let [year, month, day] = b:calendar.day().get_ymd()
   let [nyear, nmonth, nday] = b:calendar.day().new(year, month, day).add(1).get_ymd()
@@ -241,7 +241,7 @@ function! s:parse_title(title, ...)
   return [title, startdate, enddate, recurrence]
 endfunction
 
-function! s:format_time(time)
+function! s:format_time(time) abort
   let time = substitute(a:time, '^\s\+\|\s\+$', '', 'g')
   let endian = calendar#setting#get('date_endian')
   if time =~# '^\d\+-\d\+-\d\+T\s*$'
@@ -292,7 +292,7 @@ function! s:format_time(time)
   return time
 endfunction
 
-function! s:format_time_end(time)
+function! s:format_time_end(time) abort
   let time = s:format_time(a:time)
   if time =~# '^\d\+-\d\+-\d\+$'
     let ymdstr = matchstr(time, '^\d\+-\d\+-\d\+$')

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/text.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/12/14 15:19:09.
+" Last Change: 2015/03/29 06:32:06.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -13,14 +13,14 @@ set cpo&vim
 "   x: Position x
 "   y: Position y
 "   syn: The syntax string (For example, Sunday, Saturday and Cursor)
-fu! calendar#text#new(s, x, y, syn)
+fu! calendar#text#new(s, x, y, syn) abort
   retu extend(copy(s:self),{'s':a:s,'x':a:x,'y':a:y,'t':!type(a:s),'syn':[[a:syn,a:y,a:x,a:x+(type(a:s)?len(a:s):a:s),0]]})
 endfu
 
 let s:self = {}
 
 " Move all the things.
-fu! s:self.move(x, y) dict
+fu! s:self.move(x, y) dict abort
   let self.x += a:x
   let self.y += a:y
   cal map(self.syn, '[v:val[0],v:val[1]+a:y,v:val[2]+a:x,v:val[3]+a:x,v:val[4]]')
@@ -28,7 +28,7 @@ fu! s:self.move(x, y) dict
 endfu
 
 " Extend the syntaxes.
-fu! s:self.height(h) dict
+fu! s:self.height(h) dict abort
   for s in self.syn
     if a:h
       let s[4] = a:h
@@ -38,7 +38,7 @@ fu! s:self.height(h) dict
 endfu
 
 " Split all the extend the syntaxes.
-fu! s:self.split() dict
+fu! s:self.split() dict abort
   let syn = []
   for s in self.syn
     if s[4]
@@ -63,7 +63,7 @@ let s:W = function((exists('*strdisplaywidth') ? '' : 'calendar#string#') . 'str
 let s:T = function('calendar#string#truncate')
 let s:R = function('calendar#string#truncate_reverse')
 
-fu! s:self.concat(t) dict
+fu! s:self.concat(t) dict abort
   let s = self.syn
   let t = a:t.syn
   let q = range(len(s))
@@ -87,7 +87,7 @@ fu! s:self.concat(t) dict
   retu x
 endfu
 
-fu! s:shift(t, x)
+fu! s:shift(t, x) abort
   let p = range(len(a:t))
   for i in p
     let a:t[i][2] += a:x
@@ -95,7 +95,7 @@ fu! s:shift(t, x)
   endfo
 endfu
 
-fu! s:over(j, v, u)
+fu! s:over(j, v, u) abort
   let [s, d] = [[], []]
   let v = a:v
   let u = a:u
@@ -119,7 +119,7 @@ fu! s:over(j, v, u)
 endfu
 
 " Text piling, the most important method of text object.
-fu! s:self.over(t) dict
+fu! s:self.over(t) dict abort
   let s = self.syn
   let t = a:t.syn
   let x = a:t.t ? 0 : self.concat(a:t)

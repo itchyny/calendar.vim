@@ -2,19 +2,19 @@
 " Filename: autoload/calendar/constructor/view_textbox.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/02 14:51:06.
+" Last Change: 2015/03/29 06:27:47.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! calendar#constructor#view_textbox#new(instance)
+function! calendar#constructor#view_textbox#new(instance) abort
   return extend({ 'instance': a:instance }, s:constructor)
 endfunction
 
 let s:constructor = {}
 
-function! s:constructor.new(source) dict
+function! s:constructor.new(source) dict abort
   return extend(extend(s:super_constructor.new(a:source), s:instance), self.instance)
 endfunction
 
@@ -34,13 +34,13 @@ let s:instance._next_contents = {}
 let s:instance._current_group_id = ''
 let s:instance._nocontents = 1
 
-function! s:instance.width() dict
+function! s:instance.width() dict abort
   let frame = calendar#setting#frame()
   let width = calendar#string#strdisplaywidth(frame.vertical)
   return self.maxwidth() / width * width + 2
 endfunction
 
-function! s:instance.contents() dict
+function! s:instance.contents() dict abort
   if self._key == [self.is_selected(), self.select, self.sizex(), self.sizey(), get(self, 'min_index'), get(self, 'max_index')] + self.get_key()
     return deepcopy(self._texts)
   endif
@@ -94,11 +94,11 @@ function! s:instance.contents() dict
   return texts
 endfunction
 
-function! s:instance.get_key() dict
+function! s:instance.get_key() dict abort
   return []
 endfunction
 
-function! s:instance.get_contents() dict
+function! s:instance.get_contents() dict abort
   if self.__key == [self.select, self.sizex(), self.sizey(), get(self, 'min_index'), get(self, 'max_index')] + self.get_key()
     return self.cnt
   endif
@@ -179,7 +179,7 @@ function! s:instance.get_contents() dict
   return cnt
 endfunction
 
-function! s:instance.min_max_index(length) dict
+function! s:instance.min_max_index(length) dict abort
   let height = self.sizey() - 2
   let length = max([a:length, height])
   if has_key(self, 'min_index')
@@ -200,7 +200,7 @@ function! s:instance.min_max_index(length) dict
   return [min, max]
 endfunction
 
-function! s:instance.move_select(diff) dict
+function! s:instance.move_select(diff) dict abort
   let self.select = max([min([self.select + a:diff, self.length - 1]), 0])
   let diff = a:diff > 0 ? 1 : -1
   while index(self.noindex, self.select) >= 0
@@ -215,27 +215,27 @@ function! s:instance.move_select(diff) dict
   let [self.min_index, self.max_index] = self.min_max_index(self.length)
 endfunction
 
-function! s:instance.current_contents() dict
+function! s:instance.current_contents() dict abort
   return self._current_contents
 endfunction
 
-function! s:instance.prev_contents() dict
+function! s:instance.prev_contents() dict abort
   return self._prev_contents
 endfunction
 
-function! s:instance.prevprev_contents() dict
+function! s:instance.prevprev_contents() dict abort
   return self._prevprev_contents
 endfunction
 
-function! s:instance.next_contents() dict
+function! s:instance.next_contents() dict abort
   return self._next_contents
 endfunction
 
-function! s:instance.current_group_id() dict
+function! s:instance.current_group_id() dict abort
   return self._current_group_id
 endfunction
 
-function! s:instance._action(action) dict
+function! s:instance._action(action) dict abort
   let hour = self.select
   let self.__updated = 0
   let [select, min_index, max_index] = [self.select, self.min_index, self.max_index]
@@ -345,12 +345,12 @@ function! s:instance._action(action) dict
   endif
 endfunction
 
-function! s:instance.yank() dict
+function! s:instance.yank() dict abort
   let message = get(self.current_contents(), 'title', get(self.current_contents(), 'summary', ''))
   call calendar#util#yank(message)
 endfunction
 
-function! s:instance.action(action) dict
+function! s:instance.action(action) dict abort
   return self._action(a:action)
 endfunction
 

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/setting.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/12 11:27:59.
+" Last Change: 2015/03/29 06:31:33.
 " =============================================================================
 
 scriptencoding utf-8
@@ -19,100 +19,100 @@ set cpo&vim
 " file. Lastly, returns the default setting. All the default settings are
 " defined in this file. Conversely, all the variables defined in this file can
 " be configured by users from their vimrc file.
-function! calendar#setting#get(name)
+function! calendar#setting#get(name) abort
   return get(get(b:, '_calendar', {}), a:name, get(g:, 'calendar_' . a:name, s:{a:name}()))
 endfunction
 
-function! calendar#setting#get_default(name)
+function! calendar#setting#get_default(name) abort
   return s:{a:name}()
 endfunction
 
-function! s:locale()
+function! s:locale() abort
   return substitute(v:lang, '[.-]', '_', 'g')
 endfunction
 
-function! s:calendar()
+function! s:calendar() abort
   return 'default'
 endfunction
 
-function! s:first_day()
+function! s:first_day() abort
   return v:lang =~# '\%(US\|CA\|JP\|IL\)\|^\%(ja\)' ? 'sunday' : 'monday'
 endfunction
 
-function! s:date_endian()
+function! s:date_endian() abort
   return v:lang =~# '\%(JP\|KR\|HU\|LT\|IR\|MN\)\|^\%(ja\|zh\)' ? 'big'
      \ : v:lang =~# 'US' ? 'middle'
      \ : 'little'
 endfunction
 
-function! s:date_separator()
+function! s:date_separator() abort
   return v:lang =~# '\%(AM\|AT\|AZ\|BY\|BG\|HR\|CZ\|EE\|FI\|GE\|DE\|HU\|IS\|KZ\|KG\|LV\|MN\|NO\|RO\|RU\|SK\|CH\|TM\|UA\)' ? '.'
      \ : v:lang =~# '\%(BD\|CN\|DK\|FR\|IN\|IE\|LT\|NL\|SE\|TW\)' ? '-'
      \ : '/'
 endfunction
 
-function! s:date_month_name()
+function! s:date_month_name() abort
   return 0
 endfunction
 
-function! s:date_full_month_name()
+function! s:date_full_month_name() abort
   return 0
 endfunction
 
-function! s:task()
+function! s:task() abort
   return 0
 endfunction
 
-function! s:event_start_time()
+function! s:event_start_time() abort
   return 1
 endfunction
 
-function! s:event_start_time_minwidth()
+function! s:event_start_time_minwidth() abort
   return 16
 endfunction
 
-function! s:week_number()
+function! s:week_number() abort
   return 0
 endfunction
 
-function! s:clock_12hour()
+function! s:clock_12hour() abort
   return 0
 endfunction
 
 let s:c = expand('~/.cache/calendar.vim/')
-function! s:cache_directory()
+function! s:cache_directory() abort
   return s:c
 endfunction
 
-function! s:google_calendar()
+function! s:google_calendar() abort
   return 0
 endfunction
 
-function! s:google_task()
+function! s:google_task() abort
   return 0
 endfunction
 
-function! s:updatetime()
+function! s:updatetime() abort
   return 200
 endfunction
 
-function! s:view()
+function! s:view() abort
   return 'month'
 endfunction
 
-function! s:views()
+function! s:views() abort
   return ['year', 'month', 'week', 'day_4', 'day', 'clock']
 endfunction
 
-function! s:cyclic_view()
+function! s:cyclic_view() abort
   return 0
 endfunction
 
-function! s:yank_deleting()
+function! s:yank_deleting() abort
   return 1
 endfunction
 
-function! s:view_source()
+function! s:view_source() abort
   return [
         \ { 'type': 'ymd'
         \ , 'top': '1'
@@ -157,7 +157,7 @@ function! s:view_source()
         \ ]
 endfunction
 
-function! calendar#setting#frame()
+function! calendar#setting#frame() abort
   let n = calendar#setting#get('frame')
   if has_key(s:f, n) | return s:f[n] | endif
   let s:f[n] = calendar#setting#get('frame_' . n)
@@ -165,17 +165,17 @@ function! calendar#setting#frame()
 endfunction
 let s:f = {}
 
-function! s:frame()
+function! s:frame() abort
   return &enc ==# 'utf-8' && &fenc ==# 'utf-8' ? 'unicode' : 'default'
 endfunction
 
-function! s:frame_default()
+function! s:frame_default() abort
   return { 'type': 'default', 'vertical': '|', 'horizontal': '-', 'junction': '+',
          \ 'left': '+', 'right': '+', 'top': '+', 'bottom': '+',
          \ 'topleft': '+', 'topright': '+', 'bottomleft': '+', 'bottomright': '+' }
 endfunction
 
-function! s:frame_unicode()
+function! s:frame_unicode() abort
   if &enc ==# 'utf-8' && &fenc ==# 'utf-8'
     return { 'type': 'unicode', 'vertical': "\u2502", 'horizontal': "\u2500", 'junction': "\u253C",
            \ 'left': "\u251C", 'right': "\u2524", 'top': "\u252C", 'bottom': "\u2534",
@@ -185,7 +185,7 @@ function! s:frame_unicode()
   endif
 endfunction
 
-function! s:frame_unicode_bold()
+function! s:frame_unicode_bold() abort
   if &enc ==# 'utf-8' && &fenc ==# 'utf-8'
     return { 'type': 'unicode_bold', 'vertical': "\u2503", 'horizontal': "\u2501", 'junction': "\u254B",
            \ 'left': "\u2523", 'right': "\u252B", 'top': "\u2533", 'bottom': "\u253B",
@@ -195,7 +195,7 @@ function! s:frame_unicode_bold()
   endif
 endfunction
 
-function! s:frame_unicode_round()
+function! s:frame_unicode_round() abort
   if &enc ==# 'utf-8' && &fenc ==# 'utf-8'
     return extend(s:frame_unicode_bold(), {
           \ 'type': 'unicode_round', 'topleft': "\u256D", 'topright': "\u256E",
@@ -205,7 +205,7 @@ function! s:frame_unicode_round()
   endif
 endfunction
 
-function! s:frame_unicode_double()
+function! s:frame_unicode_double() abort
   if &enc ==# 'utf-8' && &fenc ==# 'utf-8'
     return { 'type': 'unicode_double', 'vertical': "\u2551", 'horizontal': "\u2550", 'junction': "\u256C",
            \ 'left': "\u2560", 'right': "\u2563", 'top': "\u2566", 'bottom': "\u2569",
@@ -215,13 +215,13 @@ function! s:frame_unicode_double()
   endif
 endfunction
 
-function! s:frame_space()
+function! s:frame_space() abort
   return { 'type': 'space', 'vertical': ' ', 'horizontal': ' ', 'junction': ' ',
          \ 'left': ' ', 'right': ' ', 'top': ' ', 'bottom': ' ',
          \ 'topleft': ' ', 'topright': ' ', 'bottomleft': ' ', 'bottomright': ' ' }
 endfunction
 
-function! s:google_client()
+function! s:google_client() abort
   if has_key(s:, 'g')
     return s:g
   endif
@@ -234,11 +234,11 @@ function! s:google_client()
   return s:g
 endfunction
 
-function! s:message_prefix()
+function! s:message_prefix() abort
   return '[calendar] '
 endfunction
 
-function! s:debug()
+function! s:debug() abort
   return 0
 endfunction
 

@@ -2,13 +2,13 @@
 " Filename: autoload/calendar/view/month_1x3.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2013/11/23 12:08:09.
+" Last Change: 2015/03/29 06:33:29.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! calendar#view#month_1x3#new(source)
+function! calendar#view#month_1x3#new(source) abort
   return s:constructor.new(a:source)
 endfunction
 
