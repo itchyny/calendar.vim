@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/time.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:32:16.
+" Last Change: 2015/04/05 21:56:17.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -28,6 +28,138 @@ endif
 
 function! calendar#time#hour12(h) abort
   return a:h == 0 ? 12 : a:h < 13 ? a:h : a:h - 12
+endfunction
+
+let s:time_zone_cache = {}
+function! calendar#time#time_zone() abort
+  let time_zone = calendar#setting#get('time_zone')
+  let str = time_zone
+  if has_key(s:time_zone_cache, time_zone)
+    return s:time_zone_cache[time_zone]
+  endif
+  if !len(str)
+    return calendar#time#new(0, 0, 0)
+  endif
+  let sign_str = str[0] ==# '-' ? '-' : str[0] ==# '+' ? '+' : ''
+  let str = str[len(sign_str):]
+  let d = matchstr(str, '^\d\+')
+  let str = str[len(d):]
+  let [ h, m, s ] = [ 0, 0, 0 ]
+  let onlyhour = 0
+  if len(d) == 1 ||  len(d) == 2
+    let h = d + 0
+    lt onlyhour = 1
+  elseif len(d) == 3
+    let h = d[0] + 0
+    let m = d[1:] + 0
+  elseif len(d) == 4
+    let h = d[:1] + 0
+    let m = d[2:] + 0
+  elseif len(d) >= 5
+    let h = d[:1] + 0
+    let m = d[2:] + 0
+    let s = d[4:] + 0
+  endif
+  let str = substitute(str, '^[^[:digit:]]\+', '', 'g')
+  let d = matchstr(str, '^\d\+')
+  let str = str[len(d):]
+  if len(d) == 1 || len(d) == 2
+    if onlyhour
+      let m = d + 0
+    else
+      let s = d + 0
+    endif
+  elseif len(d) == 3
+    if onlyhour
+      let m = d[0] + 0
+      let s = d[1:] + 0
+    else
+      let s = d + 0
+    endif
+  elseif len(d) == 4
+    if onlyhour
+      let m = d[:1] + 0
+      let s = d[2:] + 0
+    else
+      let s = d + 0
+    endif
+  endif
+  let str = substitute(str, '^[^[:digit:]]\+', '', 'g')
+  let d = matchstr(str, '^\d\+')
+  if len(d)
+    let s = d + 0
+  endif
+  let s:time_zone_cache[time_zone] = ((h * 60) + m) * 60 + s
+  return s:time_zone_cache[time_zone]
+endfunction
+
+let s:time_cache = {}
+function! calendar#time#parse(str) abort
+  if a:str ==# ''
+    return 0
+  endif
+  if has_key(s:time_cache, a:str)
+    return s:time_cache[a:str]
+  endif
+  let [ h, m, s ] = [ 0, 0, 0 ]
+  let timestr = matchstr(a:str, '^\d\+:\d\+\%(:\d\+\)\?')
+  let str = a:str[len(timestr):]
+  let hms = map(split(timestr, ':'), 'v:val + 0')
+  if len(hms) == 3
+    let [ h, m, s ] = hms
+  elseif len(hms) == 2
+    let [ h, m ] = hms
+  endif
+  let time = ((h * 60) + m) * 60 + s
+  if str ==? 'Z'
+    let s:time_cache[a:str] = time
+    return s:time_cache[a:str]
+  endif
+  if str ==# ''
+    let s:time_cache[a:str] = time - calendar#time#time_zone()
+    return s:time_cache[a:str]
+  endif
+  if has_key(s:time_cache, str)
+    let [ dh, dm, ds ] = s:time_cache[str]
+  else
+    let [ dh, dm, ds ] = [ 0, 0, 0 ]
+    let timestr = matchstr(str, '-\?\d\+:\d\+\%(:\d\+\)\?')
+    let hms = map(split(timestr, ':'), 'v:val + 0')
+    if len(hms) == 3
+      let [ dh, dm, ds ] = hms
+    elseif len(hms) == 2
+      let [ dh, dm ] = hms
+    endif
+    let s:time_cache[str] = [ dh, dm, ds ]
+  endif
+  let s:time_cache[a:str] = time - (((dh * 60) + dm) * 60 + ds)
+  return s:time_cache[a:str]
+endfunction
+
+let s:datetime_cache = {}
+function! calendar#time#datetime(str) abort
+  let time_zone = calendar#time#time_zone()
+  let key = a:str . ',' . time_zone
+  if has_key(s:datetime_cache, key)
+    return s:datetime_cache[key]
+  endif
+  let time = calendar#time#parse(matchstr(a:str, 'T\zs.*')) + time_zone
+  let ymd = map(split(matchstr(a:str, '\d\+-\d\+-\d\+'), '-'), 'v:val + 0')
+  if len(ymd) != 3
+    return []
+  endif
+  let [ y, m, d ] = ymd
+  let min = s:div(time, 60)
+  let sec = time - 60 * min
+  let hour = s:div(min, 60)
+  let min -= 60 * hour
+  let day = s:div(hour, 24)
+  let hour -= 24 * day
+  if day != 0
+    let [ y, m, d ] = calendar#day#new(y, m, d).add(day).get_ymd()
+  endif
+  let s:datetime_cache[key] = [ y, m, d, hour, min, sec ]
+  return s:datetime_cache[key]
 endfunction
 
 let s:self = {}
@@ -91,6 +223,14 @@ endfunction
 
 function! s:self.seconds() dict abort
   return (self.hour() * 60 + self.minute()) * 60 + self.second()
+endfunction
+
+function! s:self.add(time) dict abort
+  return self.add_second(a:time.seconds())
+endfunction
+
+function! s:self.subtract(time) dict abort
+  return self.add_second(-a:time.seconds())
 endfunction
 
 function! s:self.sub(time) dict abort

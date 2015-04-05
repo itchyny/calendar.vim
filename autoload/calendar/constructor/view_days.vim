@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_days.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:27:20.
+" Last Change: 2015/04/05 19:04:52.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -195,22 +195,16 @@ function! s:get_timeevts(events, blockmin) abort
   let time_events = {}
   let r = range(len(a:events))
   for i in r
-    if has_key(a:events[i], 'start') && has_key(a:events[i].start, 'dateTime')
-          \ && has_key(a:events[i], 'end') && has_key(a:events[i].end, 'dateTime')
-      let hourstr = matchstr(a:events[i].start.dateTime, 'T\@<=\d\+')
-      let minstr = matchstr(a:events[i].start.dateTime, '\%(T\d\+:\)\@<=\d\+')
-      let endhourstr = matchstr(a:events[i].end.dateTime, 'T\@<=\d\+')
-      let endminstr = matchstr(a:events[i].end.dateTime, '\%(T\d\+:\)\@<=\d\+')
-      if a:events[i].ymd == a:events[i].endymd && len(hourstr) && len(minstr) && len(endhourstr) && len(endminstr)
-        let hour = hourstr * 1
-        let min = minstr * 1
-        let endhour = endhourstr * 1
-        let endmin = endminstr * 1
-        let min = minstr * 1 / a:blockmin * a:blockmin
+    if get(a:events[i], 'isTimeEvent') && has_key(a:events[i], 'hms') && has_key(a:events[i], 'endhms')
+      if a:events[i].ymd == a:events[i].endymd
+        let hour = a:events[i].hms[0]
+        let min = a:events[i].hms[1] / a:blockmin * a:blockmin
+        let endhour = a:events[i].endhms[0]
+        let endmin = a:events[i].endhms[1]
         let flg = 0
         let prev = []
         while (hour < endhour || hour == endhour && min < endmin) && hour <= 24
-          let timestr = printf('%d:%d', hour, min)
+          let timestr = hour . ':' . min
           if !has_key(time_events, timestr)
             let time_events[timestr] = []
           endif
@@ -226,7 +220,7 @@ function! s:get_timeevts(events, blockmin) abort
         if len(prev) > 1 && prev[1]
           let prev[1] = 2
         endif
-        if prev[1] == 0
+        if len(prev) && prev[1] == 0
           let prev[1] = 4
         endif
       endif
@@ -239,7 +233,7 @@ function! s:get_timeevts(events, blockmin) abort
   let prevret = {}
   let ret = {}
   while hour <= 24
-    let timestr = printf('%d:%d', hour, min)
+    let timestr = hour . ':' . min
     if has_key(time_events, timestr)
       let maxnum = max([maxnum, len(time_events[timestr])])
       let new = {}
@@ -385,8 +379,7 @@ function! s:instance.set_contents() dict abort
             let trailing = ''
           endif
           let starttime = event_start_time && self.view.width >= event_start_time_minwidth
-                \ && has_key(evts.events[z], 'start') && has_key(evts.events[z].start, 'dateTime')
-                \ ? substitute(substitute(evts.events[z].start.dateTime, '^\d\+-\d\+-\d\+T\|[-+]\d\+:\d\+$\|Z$', '', 'g'), ':00$', '', '') . ' ' : ''
+                \ && get(evts.events[z], 'isTimeEvent') ? evts.events[z].starttime . ' ' : ''
           let eventtext = calendar#string#truncate(starttime . evts.events[z].summary . trailing, v.inner_width)
           if has_key(evts.events[z], 'syntax')
             let l = len(eventtext)
@@ -408,7 +401,7 @@ function! s:instance.set_contents() dict abort
         if (k + 1) % v.hourheight
           let hour = self.min_hour + k / v.hourheight
           let min = (k % v.hourheight) * v.blockmin
-          let timestr = printf('%d:%d', hour, min)
+          let timestr = hour . ':' . min
           if has_key(time_events, timestr) && len(time_events[timestr])
             let maxnum = get(time_events[timestr][0], 3, 1)
             let tevts = map(deepcopy(time_events[timestr]), 'v:val[0] >= 0 ? evts.events[v:val[0]] : {}')
@@ -535,7 +528,7 @@ function! s:instance.contents() dict abort
         let y = v.offset + v.dayheight + v.hourheight * (hour - self.min_hour) + h
         let x = len(calendar#string#truncate(self.days[y].s, v.width * i + f.width))
         let z = len(calendar#string#truncate(self.days[y].s, v.width * (i + 1)))
-        let timestr = printf('%d:%d', hour, v.blockmin * h)
+        let timestr = hour . ':' . (v.blockmin * h)
         if has_key(self.timeevent_syntax[i], timestr)
           for time_event in self.timeevent_syntax[i][timestr]
             if len(time_event) == 8

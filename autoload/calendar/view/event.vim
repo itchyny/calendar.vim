@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:33:05.
+" Last Change: 2015/04/05 19:02:55.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -30,8 +30,8 @@ function! s:self.get_raw_contents() dict abort
     if !has_key(e, 'summary')
       continue
     endif
-    let starttime = has_key(e, 'start') && has_key(e.start, 'dateTime') ? substitute(substitute(e.start.dateTime, '^\d\+-\d\+-\d\+T\|[-+]\d\+:\d\+$\|Z$', '', 'g'), ':00$', '', '') : ''
-    let endtime = has_key(e, 'end') && has_key(e.end, 'dateTime') ? substitute(substitute(e.end.dateTime, '^\d\+-\d\+-\d\+T\|[-+]\d\+:\d\+$\|Z$', '', 'g'), ':00$', '', '') : ''
+    let starttime = get(e, 'isTimeEvent') && has_key(e, 'starttime') ? e.starttime : ''
+    let endtime = get(e, 'isTimeEvent') && has_key(e, 'endtime') ? e.endtime : ''
     let sameyear = e.ymd[0] == e.endymd[0]
     let samedate = e.ymd == e.endymd
     if sameyear
