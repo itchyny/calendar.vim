@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/04/05 19:15:13.
+" Last Change: 2015/04/05 23:49:31.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -43,6 +43,8 @@ function! calendar#google#calendar#getCalendarList_response(id, response) abort
     let cnt = calendar#webapi#decode(a:response.content)
     let content = type(cnt) == type({}) ? cnt : {}
     if has_key(content, 'items') && type(content.items) == type([])
+      let content.items = filter(deepcopy(content.items), 'get(v:val, "accessRole", "") ==# "owner"')
+            \           + filter(deepcopy(content.items), 'get(v:val, "accessRole", "") !=# "owner"')
       silent! call s:cache.save('calendarList', content)
       let g:calendar_google_event_downloading_list = 0
       let g:calendar_google_event_download = 3
