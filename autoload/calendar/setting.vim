@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/setting.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:31:33.
+" Last Change: 2015/04/05 11:34:51.
 " =============================================================================
 
 scriptencoding utf-8
@@ -37,6 +37,11 @@ endfunction
 
 function! s:first_day() abort
   return v:lang =~# '\%(US\|CA\|JP\|IL\)\|^\%(ja\)' ? 'sunday' : 'monday'
+endfunction
+
+let s:t = strftime('%z')
+function! s:time_zone() abort
+  return s:t
 endfunction
 
 function! s:date_endian() abort

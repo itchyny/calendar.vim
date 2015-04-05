@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/argument.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:25:16.
+" Last Change: 2015/04/05 11:49:14.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -20,6 +20,7 @@ let s:all_value_options = {
       \ '-locale': [ 'default', 'en', 'ja' ],
       \ '-calendar': ['default', 'gregorian', 'julian'] + sort(s:calendars),
       \ '-first_day': [ 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday' ],
+      \ '-time_zone': map(range(-12, 12), 'printf("%+03d00", v:val)'),
       \ '-date_endian': [ 'little', 'big', 'middle' ],
       \ '-date_separator': [ '/', '-', '.', '" "' ],
       \ '-event_start_time_minwidth': [],

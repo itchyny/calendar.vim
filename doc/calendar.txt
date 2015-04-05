@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2015/03/12 11:28:09.
+Last Change: 2015/04/05 11:38:15.
 
 CONTENTS					*calendar-contents*
 
@@ -206,6 +206,13 @@ The following options change the appearance of the calendar.
 		The default value is based on |v:lang|.
 			"sunday": United States, Canada, Japan, Israel
 			"monday": Other countries
+
+						*calendar-options-time_zone*
+						*g:calendar_time_zone*
+		-time_zone={+hhmm}
+		let g:calendar_time_zone = "{+hhmm}"
+		Specify the time zone.
+		The default value is strftime('%z').
 
 						*calendar-options-date_endian*
 						*g:calendar_date_endian*
