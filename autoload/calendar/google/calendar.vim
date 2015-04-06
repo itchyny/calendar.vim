@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/04/06 08:47:26.
+" Last Change: 2015/04/06 09:52:27.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -28,11 +28,8 @@ function! calendar#google#calendar#getCalendarList() abort
     call calendar#google#client#get_async(s:newid(['calendarList', 0]),
           \ 'calendar#google#calendar#getCalendarList_response',
           \ calendar#google#calendar#get_url('users/me/calendarList'))
-    let content = type(calendarList) == type({}) ? calendarList : {}
-  else
-    let content = calendarList
   endif
-  return content
+  return type(calendarList) == type({}) ? calendarList : {}
 endfunction
 
 function! calendar#google#calendar#getCalendarList_response(id, response) abort
