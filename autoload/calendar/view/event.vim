@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/04/05 19:02:55.
+" Last Change: 2015/04/07 22:06:31.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -61,12 +61,11 @@ function! s:self.get_raw_contents() dict abort
   return cnt
 endfunction
 
-function! calendar#view#event#sorter(l, r) abort
-  let l = get(a:l, 'title', get(a:l, 'summary', ''))
-  let r = get(a:r, 'title', get(a:l, 'summary', ''))
-  return l =~# '^\d' && r !~# '^\d' ? 1 :
-       \ l !~# '^\d' && r =~# '^\d' ? -1 :
-       \ l > r ? 1 : -1
+function! calendar#view#event#sorter(x, y) abort
+  return a:x.calendarId ==# a:y.calendarId
+        \ ? (a:x.sec == a:y.sec
+        \   ? (get(a:x, 'summary', '') > get(a:y, 'summary', '') ? 1 : -1)
+        \ : a:x.sec > a:y.sec ? 1 : -1) : 0
 endfunction
 
 function! s:self.action(action) dict abort
