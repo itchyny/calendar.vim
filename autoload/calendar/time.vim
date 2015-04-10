@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/time.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/04/10 12:30:26.
+" Last Change: 2015/04/10 12:59:23.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -89,7 +89,7 @@ function! calendar#time#time_zone() abort
   if len(d)
     let s = d + 0
   endif
-  let s:time_zone_cache[time_zone] = (sign_str ==# '-' ? -1 : 1) * ((h * 60) + m) * 60 + s
+  let s:time_zone_cache[time_zone] = (sign_str ==# '-' ? -1 : 1) * (((h * 60) + m) * 60 + s)
   return s:time_zone_cache[time_zone]
 endfunction
 
