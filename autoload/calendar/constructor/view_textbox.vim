@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_textbox.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:27:47.
+" Last Change: 2015/04/20 13:53:52.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -72,7 +72,7 @@ function! s:instance.contents() dict abort
   call add(texts, calendar#text#new(' ' . bottom . ' ', 0, len(s), ''))
   let selsyn = ''
   for [i, syn] in self.syntax
-    if self.min_index <= i && i < self.min_index + sizey
+    if self.min_index <= i && i + 1 < self.min_index + sizey
       let len = len(s[i - self.min_index]) + 2
       call add(texts, calendar#text#new(len, 1 + flen, 1 + i - self.min_index, syn))
       if i == self.select
