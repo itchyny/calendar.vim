@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/string.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:31:41.
+" Last Change: 2015/04/26 19:22:06.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -105,9 +105,9 @@ fu! s:T(s, w) abort
   let t = split(a:s, '\zs')
   let w = s:S(a:s)
   let l = len(t)
-  let i = l / 2
+  let i = (l + 1) / 2
   let r = l - 1
-  wh w > a:w && i > 0
+  wh w > a:w
     let l = max([r - i + 1, 0])
     let n = s:S(join(t[(l):(r)], ''))
     if w - n >= a:w || i <= 1
@@ -128,10 +128,10 @@ fu! s:R(s, w) abort
   let t = split(a:s, '\zs')
   let w = s:S(a:s)
   let s = len(t)
-  let i = s / 2
+  let i = (s + 1) / 2
   let l = 0
   let r = -1
-  wh w > a:w && i > 0
+  wh w > a:w
     let r = min([l + i, s]) - 1
     let n = s:S(join(t[(l):(r)], ''))
     if w - n >= a:w || i <= 1
