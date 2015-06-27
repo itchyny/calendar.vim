@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:32:01.
+" Last Change: 2015/06/27 14:40:14.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -69,6 +69,11 @@ endfunction
 function! s:self.clear_completed(listid) dict abort
   let self._updated = 1
   call self.task_source.clear_completed(a:listid)
+endfunction
+
+function! s:self.delete(listid, taskid) dict abort
+  let self._updated = 1
+  call self.task_source.delete(a:listid, a:taskid)
 endfunction
 
 let &cpo = s:save_cpo

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:30:30.
+" Last Change: 2015/06/27 14:57:57.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -348,6 +348,30 @@ function! calendar#google#task#uncomplete_response(id, response) abort
             \ calendar#google#task#get_url('lists/' . id . '/tasks/' . taskid),
             \ { 'tasklist': id, 'task': taskid },
             \ { 'id': taskid, 'status': 'needsAction' })
+    endif
+  endif
+endfunction
+
+function! calendar#google#task#delete(id, taskid) abort
+  call calendar#google#client#delete_async(s:newid(['delete', 0, a:id, a:taskid]),
+        \ 'calendar#google#task#delete_response',
+        \ calendar#google#task#get_url('lists/' . a:id . '/tasks/' . a:taskid),
+        \ { 'tasklist': a:id, 'task': a:taskid },
+        \ { 'id': a:taskid })
+endfunction
+
+function! calendar#google#task#delete_response(id, response) abort
+  let [_delete, err, id, taskid; rest] = s:getdata(a:id)
+  if a:response.status =~# '^2'
+    call calendar#google#task#downloadTasks(1, id)
+  elseif a:response.status == 401
+    if err == 0
+      call calendar#google#client#refresh_token()
+      call calendar#google#client#delete_async(s:newid(['delete', 1, id, taskid]),
+            \ 'calendar#google#task#delete_response',
+            \ calendar#google#task#get_url('lists/' . id . '/tasks/' . taskid),
+            \ { 'tasklist': id, 'task': taskid },
+            \ { 'id': taskid })
     endif
   endif
 endfunction

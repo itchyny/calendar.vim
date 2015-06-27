@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/task/google.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:31:47.
+" Last Change: 2015/06/27 14:50:57.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -44,6 +44,10 @@ endfunction
 
 function! s:self.clear_completed(listid) dict abort
   call calendar#google#task#clear_completed(a:listid)
+endfunction
+
+function! s:self.delete(listid, taskid) dict abort
+  call calendar#google#task#delete(a:listid, a:taskid)
 endfunction
 
 let &cpo = s:save_cpo

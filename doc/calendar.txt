@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2015/04/05 11:38:15.
+Last Change: 2015/06/27 15:02:13.
 
 CONTENTS					*calendar-contents*
 
@@ -421,6 +421,14 @@ Other miscellaneous options.
 		If the value is 1 or the argument is given, the application
 		yanks the text when you delete an event or a task.
 		The default value is 1.
+
+						*calendar-options-task_delete*
+						*g:calendar_task_delete*
+		-task_delete[!]
+		let g:calendar_task_delete = {0/1}
+		If the value is 1 or the argument is given, the application
+		deletes the selected task directly without completing.
+		The default value is 0.
 
 						*calendar-options-cache_directory*
 						*g:calendar_cache_directory*

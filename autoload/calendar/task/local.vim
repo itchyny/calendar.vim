@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/task/local.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:31:55.
+" Last Change: 2015/06/27 14:49:22.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -124,6 +124,17 @@ function! s:self.clear_completed(listid) dict abort
       call filter(task.items, 'get(v:val, "status", "") !=# "completed"')
     endfor
     silent! call self.save()
+  endif
+endfunction
+
+function! s:self.delete(listid, taskid) dict abort
+  let k = self.get_tasklist_index(a:listid)
+  if k >= 0
+    let j = self.get_index(k, a:taskid)
+    if j >= 0
+      call remove(self.localtask[0].items, j)
+      silent! call self.save()
+    endif
   endif
 endfunction
 
