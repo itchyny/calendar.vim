@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/setting.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/06/27 14:59:59.
+" Last Change: 2015/06/27 20:47:57.
 " =============================================================================
 
 scriptencoding utf-8
@@ -160,7 +160,7 @@ function! s:view_source() abort
         \ { 'type': 'calendar'
         \ , 'top': 'b:calendar.view.get_calendar_views() =~# "clock\\|event\\|agenda" ? 0 : 3'
         \ , 'align': 'center'
-        \ , 'maxwidth': 'b:calendar.view.task_visible() ? calendar#util#winwidth() * 5 / 6  : calendar#util#winwidth() - 1'
+        \ , 'maxwidth': 'b:calendar.view.task_visible() ? calendar#util#winwidth() * 5 / 6 - 3  : calendar#util#winwidth() - 1'
         \ , 'maxheight': 'calendar#util#winheight() - (b:calendar.view.get_calendar_views() =~# "clock\\|event\\|agenda" ? 0 : 3)'
         \ },
         \ ]
