@@ -23,7 +23,8 @@ endfunction
 function! s:self.get_raw_contents() dict abort
   let [year, month, day] = b:calendar.day().get_ymd()
   let key = join([year, month, day], '-')
-  let events = deepcopy(get(get(b:calendar.event.get_events_one_month(year, month), key, {}), 'events', []))
+  let agenda = get(self.source, 'agenda', 0)
+  let events = agenda ? s:get_agenda_events() : deepcopy(get(get(b:calendar.event.get_events_one_month(year, month), key, {}), 'events', []))
   let cnt = []
   let ev = {}
   for e in events
@@ -48,17 +49,49 @@ function! s:self.get_raw_contents() dict abort
         let e.title = startdate . ' - ' . enddate . ' ' . e.summary
       endif
     endif
-    if !has_key(ev, e.calendarId)
-      call add(cnt, { 'title': e.calendarSummary, 'items': [] })
-      let ev[e.calendarId] = len(cnt) - 1
+    let key = agenda ? e.ymdnum : e.calendarId
+    if !has_key(ev, key)
+      call add(cnt, { 'title': agenda ? calendar#day#join_date(e.ymd) : e.calendarSummary, 'items': [], 'ymdnum': e.ymdnum })
+      let ev[key] = len(cnt) - 1
     endif
-    let i = ev[e.calendarId]
+    let i = ev[key]
     call add(cnt[i].items, e)
   endfor
-  for c in cnt
-    call sort(c.items, 'calendar#view#event#sorter')
-  endfor
+  if agenda
+    call sort(cnt, 'calendar#view#event#agenda_group_sorter')
+    for c in cnt
+      call sort(c.items, 'calendar#view#event#agenda_sorter')
+    endfor
+  else
+    for c in cnt
+      call sort(c.items, 'calendar#view#event#sorter')
+    endfor
+  endif
   return cnt
+endfunction
+
+function! s:get_agenda_events() abort
+  let [year, month, day] = b:calendar.day().get_ymd()
+  let current_ymdnum = ((year * 100 + month) * 100) + day
+  let [eyear, emonth, eday] = b:calendar.day().add(7).get_ymd()
+  let end_ymdnum = ((eyear * 100 + emonth) * 100) + eday
+  let current_sec = calendar#time#now().seconds()
+  let events = []
+  let event_source = b:calendar.event.get_events_one_month(year, month)
+  for key in keys(event_source)
+    let event = get(get(event_source[key], 'events', []), 0, {})
+    let ymdnum = get(event, 'ymdnum', 0)
+    if current_ymdnum == ymdnum
+      for event in event_source[key].events
+        if current_sec <= get(event, 'sec', 0)
+          call extend(events, [event])
+        endif
+      endfor
+    elseif current_ymdnum < ymdnum && ymdnum < end_ymdnum
+      call extend(events, event_source[key].events)
+    endif
+  endfor
+  return events
 endfunction
 
 function! calendar#view#event#sorter(x, y) abort
@@ -66,6 +99,17 @@ function! calendar#view#event#sorter(x, y) abort
         \ ? (a:x.sec == a:y.sec
         \   ? (get(a:x, 'summary', '') > get(a:y, 'summary', '') ? 1 : -1)
         \ : a:x.sec > a:y.sec ? 1 : -1) : 0
+endfunction
+
+function! calendar#view#event#agenda_sorter(x, y) abort
+  return a:x.ymdnum == a:y.ymdnum ? (a:x.sec == a:y.sec
+        \   ? (get(a:x, 'summary', '') > get(a:y, 'summary', '') ? 1 : -1)
+        \ : a:x.sec > a:y.sec ? 1 : -1)
+        \ : a:x.ymdnum > a:y.ymdnum ? 1 : -1
+endfunction
+
+function! calendar#view#event#agenda_group_sorter(x, y) abort
+  return a:x.ymdnum > a:y.ymdnum ? 1 : -1
 endfunction
 
 function! s:self.action(action) dict abort

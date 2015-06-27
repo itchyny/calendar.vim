@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/04/17 08:30:18.
+" Last Change: 2015/06/27 16:14:31.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -163,6 +163,7 @@ function! calendar#google#calendar#getEvents(year, month, ...) abort
                         \ , 'isWeekNum': isWeekNum
                         \ , 'starttime': starttime
                         \ , 'endtime': endtime
+                        \ , 'ymdnum': (((ymd[0] * 100 + ymd[1]) * 100) + ymd[2])
                         \ , 'hms': ymd[3:]
                         \ , 'sec': ((ymd[3] * 60) + ymd[4]) * 60 + ymd[5]
                         \ , 'ymd': ymd[:2]

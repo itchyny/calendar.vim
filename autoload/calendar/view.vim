@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:34:20.
+" Last Change: 2015/06/27 17:06:14.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -31,7 +31,7 @@ let s:self._help_order = []
 let s:self._event_order = []
 
 function! s:self.set_calendar_views(views) dict abort
-  let views = [ 'year', 'month', 'week', 'weekday', 'day_7', 'day_6', 'day_5', 'day_4', 'day_3', 'day_2', 'day_1', 'day', 'clock' ]
+  let views = [ 'year', 'month', 'week', 'weekday', 'day_7', 'day_6', 'day_5', 'day_4', 'day_3', 'day_2', 'day_1', 'day', 'clock', 'event', 'agenda' ]
   let calendar_views = filter(a:views, 'index(views, v:val) >= 0')
   if len(calendar_views) > 0
     let self.calendar_views = calendar_views

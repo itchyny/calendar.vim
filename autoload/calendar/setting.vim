@@ -127,7 +127,7 @@ function! s:view_source() abort
         \ , 'top': '1'
         \ , 'align': 'center'
         \ , 'maxwidth': 'b:calendar.view.task_visible() ? calendar#util#winwidth() * 5 / 6 : calendar#util#winwidth() - 1'
-        \ , 'visible': 'b:calendar.view.get_calendar_views() !=# "clock"'
+        \ , 'visible': 'b:calendar.view.get_calendar_views() !~# "clock\\|event\\|agenda"'
         \ } ,
         \ { 'type': 'event'
         \ , 'left': '(calendar#util#winwidth() - self.width()) / 2'
@@ -136,7 +136,7 @@ function! s:view_source() abort
         \ , 'position': 'absolute'
         \ , 'maxwidth': 'max([calendar#util#winwidth() / 3, 15])'
         \ , 'maxheight': 'max([calendar#util#winheight() / 2, 3])'
-        \ , 'visible': 'b:calendar.view._event && b:calendar.view.get_calendar_views() !=# "clock"'
+        \ , 'visible': 'b:calendar.view._event && b:calendar.view.get_calendar_views() !~# "clock\\|event\\|agenda"'
         \ },
         \ { 'type': 'task'
         \ , 'align': 'right'
@@ -158,10 +158,10 @@ function! s:view_source() abort
         \ , 'visible': 'b:calendar.view._help'
         \ },
         \ { 'type': 'calendar'
-        \ , 'top': 'b:calendar.view.get_calendar_views() ==# "clock" ? 0 : 3'
+        \ , 'top': 'b:calendar.view.get_calendar_views() =~# "clock\\|event\\|agenda" ? 0 : 3'
         \ , 'align': 'center'
         \ , 'maxwidth': 'b:calendar.view.task_visible() ? calendar#util#winwidth() * 5 / 6  : calendar#util#winwidth() - 1'
-        \ , 'maxheight': 'calendar#util#winheight() - (b:calendar.view.get_calendar_views() ==# "clock" ? 0 : 3)'
+        \ , 'maxheight': 'calendar#util#winheight() - (b:calendar.view.get_calendar_views() =~# "clock\\|event\\|agenda" ? 0 : 3)'
         \ },
         \ ]
 endfunction

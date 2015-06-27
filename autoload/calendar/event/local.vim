@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/event/local.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/04/07 21:55:04.
+" Last Change: 2015/06/27 16:11:44.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -56,6 +56,7 @@ function! s:self.get_events_one_month(year, month, ...) dict abort
                   \ , 'isWeekNum': 0
                   \ , 'starttime': starttime
                   \ , 'endtime': endtime
+                  \ , 'ymdhms': ((((((ymd[0] * 100 + ymd[1]) * 100) + ymd[2]) * 100) + ymd[3]) * 100 + ymd[4]) * 100 + ymd[5]
                   \ , 'hms': ymd[3:]
                   \ , 'sec': ((ymd[3] * 60) + ymd[4]) * 60 + ymd[5]
                   \ , 'ymd': ymd[:2]
