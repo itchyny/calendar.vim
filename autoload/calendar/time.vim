@@ -143,7 +143,7 @@ function! calendar#time#datetime(str) abort
   if has_key(s:datetime_cache, key)
     return s:datetime_cache[key]
   endif
-  let time = calendar#time#parse(matchstr(a:str, 'T\zs.*')) + time_zone
+  let time = a:str =~# 'T' ? calendar#time#parse(matchstr(a:str, 'T\zs.*')) + time_zone : 0
   let ymd = map(split(matchstr(a:str, '\d\+-\d\+-\d\+'), '-'), 'v:val + 0')
   if len(ymd) != 3
     return []
