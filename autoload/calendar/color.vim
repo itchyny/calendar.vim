@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/color.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/31 11:48:01.
+" Last Change: 2015/09/26 13:33:38.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -35,7 +35,7 @@ function! calendar#color#new_syntax(id, fg, bg) abort
       return name
     endif
     let flg = 0
-    if &bg ==# 'dark' && a:fg ==# '#000000' || &bg ==# 'light' && a:fg ==# '#ffffff'
+    if &bg ==# 'dark' && s:is_dark_color(a:fg) || &bg ==# 'light' && s:is_light_color(a:fg)
       let flg = 1
       let [fg, bg] = [a:bg, '']
     else
@@ -140,6 +140,16 @@ endfunction
 
 function! s:nr(x) abort
   return a:x < 0x2f ? 0 : a:x < 0x73 ? 1 : a:x < 0x9b ? 2 : a:x < 0xc7 ? 3 : a:x < 0xef ? 4 : 5
+endfunction
+
+function! s:is_dark_color(rgb) abort
+  let rgb = map(matchlist(a:rgb, '#\(..\)\(..\)\(..\)')[1:3], '0 + ("0x".v:val)')
+  return len(rgb) == 3 && rgb[0] < 0x2f && rgb[1] < 0x2f && rgb[2] < 0x2f
+endfunction
+
+function! s:is_light_color(rgb) abort
+  let rgb = map(matchlist(a:rgb, '#\(..\)\(..\)\(..\)')[1:3], '0 + ("0x".v:val)')
+  return len(rgb) == 3 && rgb[0] > 0xd0 && rgb[1] > 0xd0 && rgb[2] > 0xd0
 endfunction
 
 function! calendar#color#gui_color() abort

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/06/27 16:14:31.
+" Last Change: 2015/09/26 13:37:11.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -62,6 +62,29 @@ function! calendar#google#calendar#getMyCalendarList() abort
   return filter(validCalendar, 'get(v:val, "selected") && (get(v:val, "accessRole", "") ==# "owner" || (get(v:val, "summary", "") !=# "Phases of the Moon") && get(v:val, "id", "") !~# "holiday@")')
 endfunction
 
+function! calendar#google#calendar#getColors() abort
+  let colors = s:cache.get('colors')
+  if calendar#timestamp#update('google_calendarcolor', 7 * 24 * 60 * 60)
+    call calendar#google#client#get_async(s:newid(['calendarColor', 0]),
+          \ 'calendar#google#calendar#getColors_response',
+          \ calendar#google#calendar#get_url('colors'))
+  endif
+  return type(colors) == type({}) ? colors : {}
+endfunction
+
+function! calendar#google#calendar#getColors_response(id, response) abort
+  let [_calendarlist, err; rest] = s:getdata(a:id)
+  let colors = s:cache.get('colors')
+  if a:response.status =~# '^2'
+    let cnt = calendar#webapi#decode(a:response.content)
+    let content = type(cnt) == type({}) ? cnt : {}
+    if has_key(content, 'event') && type(content.event) == type({})
+      silent! call s:cache.save('colors', content)
+      silent! call b:calendar.update()
+    endif
+  endif
+endfunction
+
 function! calendar#google#calendar#getEventSummary(year, month) abort
   let calendarList = calendar#google#calendar#getCalendarList()
   let events = []
@@ -109,6 +132,7 @@ endfunction
 function! calendar#google#calendar#getEvents(year, month, ...) abort
   let s:is_dark = &background ==# 'dark'
   let calendarList = calendar#google#calendar#getCalendarList()
+  let colors = get(calendar#google#calendar#getColors(), 'event', {})
   let events = {}
   let key = join([a:year, a:month], '/')
   if a:0 && a:1
@@ -124,7 +148,7 @@ function! calendar#google#calendar#getEvents(year, month, ...) abort
       let isMoon = item.summary ==# 'Phases of the Moon' && &enc ==# 'utf-8' && &fenc ==# 'utf-8'
       let isDayNum = item.summary ==# 'Day of the Year'
       let isWeekNum = item.summary ==# 'Week Numbers'
-      let syn = calendar#color#new_syntax(get(item, 'id', ''), get(item, 'foregroundColor', ''), get(item, 'backgroundColor'))
+      let calendarsyn = calendar#color#new_syntax(get(item, 'id', ''), get(item, 'foregroundColor', ''), get(item, 'backgroundColor', ''))
       unlet! cnt
       let cnt = s:event_cache.new(item.id).new(y).new(m).get('information')
       if type(cnt) == type({}) && has_key(cnt, 'summary')
@@ -138,6 +162,13 @@ function! calendar#google#calendar#getEvents(year, month, ...) abort
             for itm in c.items
               if has_key(itm, 'start') && (has_key(itm.start, 'date') || has_key(itm.start, 'dateTime'))
                     \ && has_key(itm, 'end') && (has_key(itm.end, 'date') || has_key(itm.end, 'dateTime'))
+                if has_key(itm, 'colorId')
+                  let foregroundColor = get(get(colors, itm.colorId, {}), 'foreground', get(item, 'foregroundColor', ''))
+                  let backgroundColor = get(get(colors, itm.colorId, {}), 'background', get(item, 'backgroundColor', ''))
+                  let syn = calendar#color#new_syntax(get(itm, 'id', ''), foregroundColor, backgroundColor)
+                else
+                  let syn = calendarsyn
+                endif
                 let ymd = calendar#time#datetime(has_key(itm.start, 'date') ? itm.start.date : has_key(itm.start, 'dateTime') ? itm.start.dateTime : '')
                 let endymd = calendar#time#datetime(has_key(itm.end, 'date') ? itm.end.date : has_key(itm.end, 'dateTime') ? itm.end.dateTime : '')
                 let isTimeEvent = (!has_key(itm.start, 'date')) && has_key(itm.start, 'dateTime') && (!has_key(itm.end, 'date')) && has_key(itm.end, 'dateTime')
