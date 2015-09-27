@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2015/06/27 18:15:36.
+Last Change: 2015/09/26 13:54:07.
 
 CONTENTS					*calendar-contents*
 
@@ -585,6 +585,7 @@ Insert mode
 <Plug>(calendar_start_insert_last)		*<Plug>(calendar_start_insert_last)*
 <Plug>(calendar_start_insert_prev_line)		*<Plug>(calendar_start_insert_prev_line)*
 <Plug>(calendar_start_insert_next_line)		*<Plug>(calendar_start_insert_next_line)*
+<Plug>(calendar_start_insert_quick)		*<Plug>(calendar_start_insert_quick)*
 
 Visual mode
 <Plug>(calendar_visual)				*<Plug>(calendar_visual)*

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/04/07 22:06:31.
+" Last Change: 2015/09/26 14:00:17.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -145,7 +145,7 @@ function! s:self.action(action) dict abort
     else
       return self.action('start_insert_next_line')
     endif
-  elseif index(['start_insert_next_line', 'start_insert_prev_line'], a:action) >= 0
+  elseif index(['start_insert_next_line', 'start_insert_prev_line', 'start_insert_quick'], a:action) >= 0
     call self.insert_new_event(a:action)
   else
     return self._action(a:action)
@@ -176,7 +176,10 @@ function! s:self.insert_new_event(action, ...) dict abort
         endif
       endif
     endif
-    if len(calendars) > 1
+    if a:action ==# 'start_insert_quick'
+      let primaryCalendarId = get(get(filter(deepcopy(calendars), 'get(v:val, "primary")'), 0, {}), 'id', '')
+      let idx = index(map(deepcopy(calendars), 'get(v:val, "id", "")'), primaryCalendarId)
+    elseif len(calendars) > 1
       let msg = []
       let idx = 0
       let _idx = -1

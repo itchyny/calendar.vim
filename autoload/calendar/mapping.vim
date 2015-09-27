@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/mapping.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:30:33.
+" Last Change: 2015/09/26 13:58:37.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -49,7 +49,7 @@ function! calendar#mapping#new() abort
         \ 'today', 'enter', 'view_left',  'view_right', 'redraw', 'clear', 'help', 'hide', 'exit',
         \ 'visual', 'visual_line', 'visual_block', 'exit_visual',
         \ 'start_insert', 'start_insert_append', 'start_insert_head', 'start_insert_last',
-        \ 'start_insert_prev_line', 'start_insert_next_line',
+        \ 'start_insert_prev_line', 'start_insert_next_line', 'start_insert_quick',
         \ ]
   for action in actions
     exec printf("nnoremap <buffer><silent> <Plug>(calendar_%s) :<C-u>call b:calendar.action('%s')<CR>", action, action)
