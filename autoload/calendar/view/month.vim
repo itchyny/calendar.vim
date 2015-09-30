@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/month.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/04/05 19:02:28.
+" Last Change: 2015/09/27 17:24:07.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -173,7 +173,7 @@ function! s:self.set_contents() dict abort
     let syn = othermonth ? so : is_today ? st : d.is_sunday() || get(evts, 'hasHoliday') ? su : d.is_saturday() ? sa : ''
     if syn !=# ''
       let l = is_today || othermonth ? self.length[key][0][1] - self.length[key][0][0] : 2
-      let syn2 = !is_today ? '' : d.is_sunday() || get(evts, 'hasHoliday') ? tsu : d.is_saturday() ? tsa : ''
+      let syn2 = !is_today || othermonth ? '' : d.is_sunday() || get(evts, 'hasHoliday') ? tsu : d.is_saturday() ? tsa : ''
       let x = self.length[key][0][0]
       if syn2 !=# ''
         let x += 2
