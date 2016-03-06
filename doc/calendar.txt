@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2015/09/26 13:54:07.
+Last Change: 2016/03/06 20:01:34.
 
 CONTENTS					*calendar-contents*
 
@@ -209,9 +209,9 @@ The following options change the appearance of the calendar.
 
 						*calendar-options-time_zone*
 						*g:calendar_time_zone*
-		-time_zone={+hhmm}
-		let g:calendar_time_zone = "{+hhmm}"
-		Specify the time zone.
+		-time_zone={[-+]hhmm}
+		let g:calendar_time_zone = "{[-+]hhmm}"
+		Specify the time zone from UTC.
 		The default value is strftime('%z').
 
 						*calendar-options-date_endian*
