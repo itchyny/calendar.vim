@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/09/26 13:37:11.
+" Last Change: 2016/04/10 11:21:49.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -528,16 +528,11 @@ function! calendar#google#calendar#delete_response(id, response) abort
 endfunction
 
 function! s:set_timezone(calendarId, obj) abort
-  let calendars = filter(calendar#google#calendar#getMyCalendarList(), 'v:val.id ==# a:calendarId')
-  let timezone = get(get(calendars, 0, get(calendar#google#calendar#getMyCalendarList(), 0, {})), 'timeZone', 'Z')
-  if timezone ==# 'Z'
-    if has_key(a:obj, 'dateTime')
-      let a:obj.dateTime .= timezone
-    endif
+  let timezone = calendar#setting#get('time_zone')
+  if has_key(a:obj, 'dateTime')
+    let a:obj.dateTime .= timezone
   else
-    if has_key(a:obj, 'dateTime')
-      let a:obj.timeZone = timezone
-    endif
+    let a:obj.timeZone = timezone
   endif
   if has_key(a:obj, 'dateTime')
     let a:obj.date = function('calendar#webapi#null')
