@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/message/en.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:30:39.
+" Last Change: 2016/05/09 08:07:17.
 " =============================================================================
 
 scriptencoding utf-8
@@ -37,6 +37,10 @@ let s:message.cache_write_fail = 'Could not write the cache file'
 let s:message.access_url_input_code = 'Access %s and paste the code'
 
 let s:message.google_access_token_fail = 'Fail in authorization to Google'
+
+let s:message.delete_event = 'Delete the event? (cannot be undone) y/N: '
+
+let s:message.delete_task = 'Delete the task? (cannot be undone) y/N: '
 
 let s:message.clear_completed_task = 'Clear all the completed tasks? (cannot be undone) y/N: '
 

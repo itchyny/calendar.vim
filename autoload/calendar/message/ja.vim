@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/message/ja.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:30:40.
+" Last Change: 2016/05/09 08:06:55.
 " =============================================================================
 
 scriptencoding utf-8
@@ -37,6 +37,10 @@ let s:message.cache_write_fail = 'キャッシュファイルの書き込みに�
 let s:message.access_url_input_code = '%s にアクセスして、コードを入力して下さい'
 
 let s:message.google_access_token_fail = 'Googleへの認証に失敗しました'
+
+let s:message.delete_event = 'イベントを削除しますか？ (この操作は元に戻せません) y/N: '
+
+let s:message.delete_task = 'タスクを削除しますか？ (この操作は元に戻せません) y/N: '
 
 let s:message.clear_completed_task = '完了したタスクを全て削除しますか？ (この操作は元に戻せません) y/N: '
 
