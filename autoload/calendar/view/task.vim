@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/05/09 08:07:42.
+" Last Change: 2016/05/09 08:14:00.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -78,8 +78,7 @@ function! s:self.action(action) dict abort
       call b:calendar.task.insert(self.current_group_id(), next ? taskid : prevtaskid, title, duedate ==# '' ? {} : { 'due': duedate })
     endif
   elseif a:action ==# 'clear'
-    let title = input(calendar#message#get('clear_completed_task'))
-    if title =~# '^[yY]\%[es]$'
+    if input(calendar#message#get('clear_completed_task')) =~# '^\cy\%[es]$'
       call b:calendar.task.clear_completed(self.current_group_id())
     endif
   else
