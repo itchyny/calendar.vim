@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/04/10 11:21:49.
+" Last Change: 2016/07/04 00:59:14.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -122,7 +122,7 @@ function! calendar#google#calendar#getEventsInitial(year, month) abort
   let key = join([a:year, a:month], '/')
   if !get(s:initial_download, key)
     let s:initial_download[key] = 1
-    if len(myCalendarList) && calendar#timestamp#update(printf('google_calendar_%04d%02d', a:year, a:month), 3 * 60 * 60)
+    if len(myCalendarList) && calendar#timestamp#update(printf('google_calendar_%04d%02d', a:year, a:month), 30 * 60)
       call calendar#async#new(printf('calendar#google#calendar#initialDownload(%d, %d, 0)', a:year, a:month))
     endif
   endif
