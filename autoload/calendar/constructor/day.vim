@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/day.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:26:11.
+" Last Change: 2016/07/04 02:12:05.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -66,7 +66,7 @@ function! s:instance.sub(day) dict abort
 endfunction
 
 function! s:instance.week() dict abort
-  return self.mjd.week()
+  return self.mjd.week
 endfunction
 
 function! s:instance.today() dict abort
