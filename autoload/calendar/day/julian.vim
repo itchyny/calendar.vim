@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/day/julian.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:29:06.
+" Last Change: 2016/07/04 01:54:46.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -39,8 +39,8 @@ endfunction
 let s:_ = {}
 function! s:self.get_ymd() dict abort
   if has_key(self, 'ymd') | return self.ymd | endif
-  if has_key(s:_, self.mjd.get()) | return s:_[self.mjd.get()] | endif
-  let c = self.mjd.get() + 678883
+  if has_key(s:_, self.mjd.mjd) | return s:_[self.mjd.mjd] | endif
+  let c = self.mjd.mjd + 678883
   let d = s:div(4 * c + 3, 1461)
   let e = c - s:div(1461 * d, 4)
   let m = (5 * e + 2) / 153
@@ -48,7 +48,7 @@ function! s:self.get_ymd() dict abort
   let month = m + 3 - 12 * (m / 10)
   let year = d + m / 10
   let self.ymd = [year, month, day]
-  let s:_[self.mjd.get()] = self.ymd
+  let s:_[self.mjd.mjd] = self.ymd
   return self.ymd
 endfunction
 

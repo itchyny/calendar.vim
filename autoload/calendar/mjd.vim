@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/mjd.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:30:49.
+" Last Change: 2016/07/04 01:55:25.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -17,24 +17,32 @@ endfunction
 
 let s:self = {}
 
-function! s:self.new(mjd) dict abort
-  return calendar#mjd#new(a:mjd)
-endfunction
-
-function! s:self.get() dict abort
-  return self.mjd
-endfunction
-
 function! s:self.add(diff) dict abort
-  return self.new(self.mjd + a:diff)
+  return calendar#mjd#new(self.mjd + a:diff)
 endfunction
 
 function! s:self.sub(mjd) dict abort
-  return self.get() - a:mjd.get()
+  return self.mjd - a:mjd.mjd
 endfunction
 
 function! s:self.eq(mjd) dict abort
-  return self.get() == a:mjd.get()
+  return self.mjd == a:mjd.mjd
+endfunction
+
+function! s:self.is_after(mjd) dict abort
+  return self.mjd > a:mjd.mjd
+endfunction
+
+function! s:self.is_after_or_eq(mjd) dict abort
+  return self.mjd >= a:mjd.mjd
+endfunction
+
+function! s:self.is_before(mjd) dict abort
+  return self.mjd < a:mjd.mjd
+endfunction
+
+function! s:self.is_before_or_eq(mjd) dict abort
+  return self.mjd <= a:mjd.mjd
 endfunction
 
 function! s:self.week() dict abort
