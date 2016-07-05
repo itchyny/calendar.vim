@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:34:57.
+" Last Change: 2016/07/05 21:45:02.
 " =============================================================================
 
 " Web interface.
@@ -48,7 +48,7 @@ endfunction
 
 function! s:execute(command) abort
   let res = calendar#util#system(a:command)
-  while res =~ '^HTTP/1.\d 3' || res =~ '^HTTP/1\.\d 200 Connection established' || res =~ '^HTTP/1\.\d 100 Continue'
+  while res =~# '^HTTP/[12]\%(\.\d\)\? 3' || res =~# '^HTTP/[12]\%(\.\d\)\? 200 Connection established' || res =~# '^HTTP/[12]\%(\.\d\)\? 100 Continue'
     let pos = stridx(res, "\r\n\r\n")
     if pos != -1
       let res = strpart(res, pos+4)
@@ -65,7 +65,7 @@ function! s:execute(command) abort
     let content = strpart(res, pos+2)
   endif
   let header = split(res[:pos-1], '\r\?\n')
-  let matched = matchlist(get(header, 0), '^HTTP/1\.\d\s\+\(\d\+\)\s\+\(.*\)')
+  let matched = matchlist(get(header, 0), '^HTTP/[12]\%(\.\d\)\?\s\+\(\d\+\)\s\+\(.*\)')
   if !empty(matched)
     let [status, message] = matched[1 : 2]
     call remove(header, 0)
@@ -212,7 +212,7 @@ function! calendar#webapi#callback(id, cb) abort
     endif
     if len(data)
       let i = 0
-      while i < len(data) && (data[i] =~ '^HTTP/1.\d 3' || data[i] =~ '^HTTP/1\.\d 200 Connection established' || data[i] =~ '^HTTP/1\.\d 100 Continue')
+      while i < len(data) && (data[i] =~# '^HTTP/[12]\%(\.\d\)\? 3' || data[i] =~# '^HTTP/[12]\%(\.\d\)\? 200 Connection established' || data[i] =~# '^HTTP/[12]\%(\.\d\)\? 100 Continue')
         while i < len(data) && data[i] !~# '^\r\?$'
           let i += 1
         endwhile
@@ -223,7 +223,7 @@ function! calendar#webapi#callback(id, cb) abort
       endwhile
       let header = data[:i]
       let content = join(data[(i):], "\n")
-      let matched = matchlist(get(header, 0), '^HTTP/1\.\d\s\+\(\d\+\)\s\+\(.*\)')
+      let matched = matchlist(get(header, 0), '^HTTP/[12]\%(\.\d\)\?\s\+\(\d\+\)\s\+\(.*\)')
       if !empty(matched)
         let [status, message] = matched[1 : 2]
         call remove(header, 0)
