@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/07/05 21:45:02.
+" Last Change: 2016/07/05 22:19:25.
 " =============================================================================
 
 " Web interface.
@@ -65,7 +65,7 @@ function! s:execute(command) abort
     let content = strpart(res, pos+2)
   endif
   let header = split(res[:pos-1], '\r\?\n')
-  let matched = matchlist(get(header, 0), '^HTTP/[12]\%(\.\d\)\?\s\+\(\d\+\)\s\+\(.*\)')
+  let matched = matchlist(get(header, 0), '^HTTP/[12]\%(\.\d\)\?\s\+\(\d\+\)\s*\(.*\)')
   if !empty(matched)
     let [status, message] = matched[1 : 2]
     call remove(header, 0)
@@ -223,7 +223,7 @@ function! calendar#webapi#callback(id, cb) abort
       endwhile
       let header = data[:i]
       let content = join(data[(i):], "\n")
-      let matched = matchlist(get(header, 0), '^HTTP/[12]\%(\.\d\)\?\s\+\(\d\+\)\s\+\(.*\)')
+      let matched = matchlist(get(header, 0), '^HTTP/[12]\%(\.\d\)\?\s\+\(\d\+\)\s*\(.*\)')
       if !empty(matched)
         let [status, message] = matched[1 : 2]
         call remove(header, 0)
