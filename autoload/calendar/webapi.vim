@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/07/06 01:23:11.
+" Last Change: 2016/07/06 01:33:34.
 " =============================================================================
 
 " Web interface.
@@ -266,8 +266,8 @@ endfunction
 function! calendar#webapi#decode(json) abort
   let json = iconv(a:json, 'utf-8', &encoding)
   let json = substitute(json, '[\r\n]', '', 'g')
-  let json = substitute(json, '\\u34;', '\\"', 'g')
-  if v:version >= 703 && has('patch780')
+  let json = substitute(json, '\\x22\|\\u0022', '\\"', 'g')
+  if v:version > 703 || v:version == 703 && has('patch780')
     let json = substitute(json, '\\u\(\x\x\x\x\)', '\=iconv(nr2char(str2nr(submatch(1), 16), 1), "utf-8", &encoding)', 'g')
   else
     let json = substitute(json, '\\u\(\x\x\x\x\)', '\=s:nr2enc_char("0x".submatch(1))', 'g')
