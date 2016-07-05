@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/07/06 00:55:26.
+" Last Change: 2016/07/06 01:21:59.
 " =============================================================================
 
 " Web interface.
@@ -216,41 +216,11 @@ function! calendar#webapi#callback(id, cb) abort
     if len(data) == 0 || len(data) != prevdatalen
       return 1
     endif
-    if len(data)
-      let i = 0
-      while i < len(data) && (data[i] =~# '^HTTP/[12]\%(\.\d\)\? 3' || data[i] =~# '^HTTP/[12]\%(\.\d\)\? 200 Connection established' || data[i] =~# '^HTTP/[12]\%(\.\d\)\? 100 Continue')
-        while i < len(data) && data[i] !~# '^\r\?$'
-          let i += 1
-        endwhile
-        let i += 1
-      endwhile
-      while i < len(data) && data[i] !~# '^\r\?$'
-        let i += 1
-      endwhile
-      let header = data[:i]
-      let content = join(data[(i):], "\n")
-      let matched = matchlist(get(header, 0), '^HTTP/[12]\%(\.\d\)\?\s\+\(\d\+\)\s*\(.*\)')
-      if !empty(matched)
-        let [status, message] = matched[1 : 2]
-        call remove(header, 0)
-      else
-        if len(matched)
-          let [status, message] = ['500', "Couldn't connect to host"]
-        else
-          let [status, message] = ['200', 'OK']
-        endif
-      endif
-      let response = {
-            \ "status" : status,
-            \ "message" : message,
-            \ "header" : header,
-            \ "content" : content
-            \ }
-      if a:cb !=# ''
-        exec 'call ' . a:cb . '(a:id, response)'
-      endif
-    else
+    let response = calendar#webapi#parse(data)
+    if empty(response)
       return 1
+    elseif a:cb !=# ''
+      execute 'call ' . a:cb . '(a:id, response)'
     endif
     if !calendar#setting#get('debug')
       call s:cache.delete(a:id)
