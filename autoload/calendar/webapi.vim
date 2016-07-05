@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/07/06 01:21:59.
+" Last Change: 2016/07/06 01:22:20.
 " =============================================================================
 
 " Web interface.
@@ -54,40 +54,7 @@ endfunction
 
 function! s:execute(command) abort
   let res = calendar#util#system(a:command)
-  while res =~# '^HTTP/[12]\%(\.\d\)\? 3' || res =~# '^HTTP/[12]\%(\.\d\)\? 200 Connection established' || res =~# '^HTTP/[12]\%(\.\d\)\? 100 Continue'
-    let pos = stridx(res, "\r\n\r\n")
-    if pos != -1
-      let res = strpart(res, pos+4)
-    else
-      let pos = stridx(res, "\n\n")
-      let res = strpart(res, pos+2)
-    endif
-  endwhile
-  let pos = stridx(res, "\r\n\r\n")
-  if pos != -1
-    let content = strpart(res, pos+4)
-  else
-    let pos = stridx(res, "\n\n")
-    let content = strpart(res, pos+2)
-  endif
-  let header = split(res[:pos-1], '\r\?\n')
-  let matched = matchlist(get(header, 0), '^HTTP/[12]\%(\.\d\)\?\s\+\(\d\+\)\s*\(.*\)')
-  if !empty(matched)
-    let [status, message] = matched[1 : 2]
-    call remove(header, 0)
-  else
-    if v:shell_error || len(matched)
-      let [status, message] = ['500', "Couldn't connect to host"]
-    else
-      let [status, message] = ['200', 'OK']
-    endif
-  endif
-  return {
-        \ "status" : status,
-        \ "message" : message,
-        \ "header" : header,
-        \ "content" : content
-        \}
+  return calendar#webapi#parse(split(res, "\n"))
 endfunction
 
 function! calendar#webapi#get(url, ...) abort
