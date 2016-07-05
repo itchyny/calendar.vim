@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/07/05 22:19:25.
+" Last Change: 2016/07/05 23:12:11.
 " =============================================================================
 
 " Web interface.
@@ -30,8 +30,14 @@ function! s:nr2byte(nr) abort
     return nr2char(a:nr)
   elseif a:nr < 0x800
     return nr2char(a:nr/64+192).nr2char(a:nr%64+128)
-  else
+  elseif a:nr < 0x10000
     return nr2char(a:nr/4096%16+224).nr2char(a:nr/64%64+128).nr2char(a:nr%64+128)
+  elseif a:nr < 0x200000
+    return nr2char(a:nr/262144%16+240).nr2char(a:nr/4096/16+128).nr2char(a:nr/64%64+128).nr2char(a:nr%64+128)
+  elseif a:nr < 0x4000000
+    return nr2char(a:nr/16777216%16+248).nr2char(a:nr/262144%16+128).nr2char(a:nr/4096/16+128).nr2char(a:nr/64%64+128).nr2char(a:nr%64+128)
+  else
+    return nr2char(a:nr/1073741824%16+252).nr2char(a:nr/16777216%16+128).nr2char(a:nr/262144%16+128).nr2char(a:nr/4096/16+128).nr2char(a:nr/64%64+128).nr2char(a:nr%64+128)
   endif
 endfunction
 
