@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/07/06 07:20:35.
+" Last Change: 2016/07/06 07:28:01.
 " =============================================================================
 
 " Web interface.
@@ -100,20 +100,17 @@ function! calendar#webapi#post_nojson_async(id, cb, url, ...) abort
   return s:request(0, { 'id': a:id, 'cb': a:cb }, a:url, get(a:000, 0, {}), get(a:000, 1, {}), get(a:000, 2, 'POST'))
 endfunction
 
-function! s:request(json, async, url, ...) abort
+function! s:request(json, async, url, param, postdata, method) abort
   let url = a:url
-  let param = a:0 > 0 ? a:000[0] : {}
-  let postdata = a:0 > 1 ? a:000[1] : {}
-  let method = a:0 > 2 ? a:000[2] : 'POST'
-  let paramstr = calendar#webapi#encodeURI(param)
-  let withbody = method !=# 'GET' && method !=# 'DELETE'
+  let paramstr = calendar#webapi#encodeURI(a:param)
+  let withbody = a:method !=# 'GET' && a:method !=# 'DELETE'
   let headdata = {}
   if paramstr !=# ''
     let url .= '?' . paramstr
   endif
   let quote = s:_quote()
   if withbody
-    let postdatastr = a:json ? calendar#webapi#encode(postdata) : join(s:postdata(postdata), "\n")
+    let postdatastr = a:json ? calendar#webapi#encode(a:postdata) : join(s:postdata(a:postdata), "\n")
     let file = tempname()
     let headdata['Content-Length'] = len(postdatastr)
     if a:json
@@ -121,7 +118,7 @@ function! s:request(json, async, url, ...) abort
     endif
   endif
   if executable('curl')
-    let command = printf('curl -s -k -i -N -X %s', method)
+    let command = printf('curl -s -k -i -N -X %s', a:method)
     let command .= s:make_header_args(headdata, '-H ', quote)
     if withbody
       let command .= ' --data-binary @' . quote . file . quote
@@ -132,7 +129,7 @@ function! s:request(json, async, url, ...) abort
     let command .= ' ' . quote . url . quote
   elseif executable('wget')
     let command = 'wget -O- --save-headers --server-response -q'
-    let headdata['X-HTTP-Method-Override'] = method
+    let headdata['X-HTTP-Method-Override'] = a:method
     let command .= s:make_header_args(headdata, '--header=', quote)
     if withbody
       let command .= ' --post-data @' . quote . file . quote
