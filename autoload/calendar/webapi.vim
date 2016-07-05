@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/07/06 07:08:52.
+" Last Change: 2016/07/06 07:20:35.
 " =============================================================================
 
 " Web interface.
@@ -173,24 +173,25 @@ endfunction
 let s:callback_datalen = {}
 function! calendar#webapi#callback(id, cb) abort
   let data = s:cache.get_raw(a:id)
-  if type(data) == type([])
-    let prevdatalen = get(s:callback_datalen, a:id)
-    let s:callback_datalen[a:id] = len(data)
-    if len(data) == 0 || len(data) != prevdatalen
-      return 1
-    endif
-    let response = calendar#webapi#parse(data)
-    if empty(response)
-      return 1
-    elseif a:cb !=# ''
-      execute 'call ' . a:cb . '(a:id, response)'
-    endif
-    if !calendar#setting#get('debug')
-      call s:cache.delete(a:id)
-    endif
-    return 0
+  if type(data) != type([])
+    return 1
   endif
-  return 1
+  let prevdatalen = get(s:callback_datalen, a:id)
+  let s:callback_datalen[a:id] = len(data)
+  if len(data) == 0 || len(data) != prevdatalen
+    return 1
+  endif
+  let response = calendar#webapi#parse(data)
+  if empty(response)
+    return 1
+  elseif a:cb !=# ''
+    call call(a:cb, [a:id, response])
+  endif
+  if !calendar#setting#get('debug')
+    call s:cache.delete(a:id)
+  endif
+  unlet s:callback_datalen[a:id]
+  return 0
 endfunction
 
 function! calendar#webapi#parse(data) abort
