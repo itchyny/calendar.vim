@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/07/06 01:33:34.
+" Last Change: 2016/07/06 07:08:52.
 " =============================================================================
 
 " Web interface.
@@ -50,11 +50,6 @@ function! s:nr2enc_char(charcode) abort
     let char = strtrans(iconv(char, 'utf-8', &encoding))
   endif
   return char
-endfunction
-
-function! s:execute(command) abort
-  let res = calendar#util#system(a:command)
-  return calendar#webapi#parse(split(res, "\n"))
 endfunction
 
 function! calendar#webapi#get(url, ...) abort
@@ -166,11 +161,12 @@ function! s:request(json, async, url, ...) abort
       call calendar#util#system(command)
     endif
   else
-    let ret = s:execute(command)
+    let data = calendar#util#system(command)
+    let response = calendar#webapi#parse(split(data, "\n"))
     if withbody
       call delete(file)
     endif
-    return ret
+    return response
   endif
 endfunction
 
@@ -199,7 +195,7 @@ endfunction
 
 function! calendar#webapi#parse(data) abort
   if len(a:data) == 0
-    return {}
+    return { 'status': '0', 'message': '', 'header': '', 'content': '' }
   endif
   let i = 0
   while i < len(a:data) && a:data[i] =~# '\v^HTTP/[12]%(\.\d)? 3'
