@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/07/06 09:09:45.
+" Last Change: 2016/07/06 20:07:08.
 " =============================================================================
 
 " Web interface.
@@ -204,7 +204,9 @@ function! calendar#webapi#parse(data) abort
     return { 'status': '0', 'message': '', 'header': '', 'content': '' }
   endif
   let i = 0
-  while i < len(a:data) && a:data[i] =~# '\v^HTTP/[12]%(\.\d)? 3'
+  while i < len(a:data) && (a:data[i] =~# '\v^HTTP/[12]%(\.\d)? 3' ||
+        \ (i + 2 < len(a:data) && a:data[i] =~# '\v^HTTP/1\.\d \d{3}' &&
+        \ a:data[i + 1] =~# '\v^\r?$' && a:data[i + 2] =~# '\v^HTTP/1\.\d \d{3}'))
     while i < len(a:data) && a:data[i] !~# '\v^\r?$'
       let i += 1
     endwhile
