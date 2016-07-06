@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/07/06 07:28:01.
+" Last Change: 2016/07/06 09:09:45.
 " =============================================================================
 
 " Web interface.
@@ -104,49 +104,33 @@ function! s:request(json, async, url, param, postdata, method) abort
   let url = a:url
   let paramstr = calendar#webapi#encodeURI(a:param)
   let withbody = a:method !=# 'GET' && a:method !=# 'DELETE'
-  let headdata = {}
+  let header = {}
   if paramstr !=# ''
     let url .= '?' . paramstr
   endif
-  let quote = s:_quote()
+  let postfile = ''
   if withbody
     let postdatastr = a:json ? calendar#webapi#encode(a:postdata) : join(s:postdata(a:postdata), "\n")
-    let file = tempname()
-    let headdata['Content-Length'] = len(postdatastr)
+    let postfile = tempname()
+    call writefile(split(postdatastr, "\n"), postfile, 'b')
+    let header['Content-Length'] = len(postdatastr)
     if a:json
-      let headdata['Content-Type'] = 'application/json'
+      let header['Content-Type'] = 'application/json'
     endif
   endif
-  if executable('curl')
-    let command = printf('curl -s -k -i -N -X %s', a:method)
-    let command .= s:make_header_args(headdata, '-H ', quote)
-    if withbody
-      let command .= ' --data-binary @' . quote . file . quote
-    endif
-    if a:async != {}
-      let command .= ' -o ' . quote . s:cache.path(a:async.id) . quote
-    endif
-    let command .= ' ' . quote . url . quote
-  elseif executable('wget')
-    let command = 'wget -O- --save-headers --server-response -q'
-    let headdata['X-HTTP-Method-Override'] = a:method
-    let command .= s:make_header_args(headdata, '--header=', quote)
-    if withbody
-      let command .= ' --post-data @' . quote . file . quote
-    endif
-    if a:async != {}
-      let command .= ' -O ' . quote . s:cache.path(a:async.id) . quote
-    endif
-    let command .= ' ' . quote . url . quote
-  else
-    call calendar#echo#error_message('curl_wget_not_found')
-    return 1
-  endif
-  if withbody
-    call writefile(split(postdatastr, "\n"), file, 'b')
+  let command = s:command(url, a:method, header, postfile, a:async == {} ? '' : s:cache.path(a:async.id))
+  if type(command) != type('')
+    return { 'status': '0', 'message': '', 'header': '', 'content': '' }
   endif
   call s:cache.check_dir(1)
-  if a:async != {}
+  if a:async == {}
+    let data = calendar#util#system(command)
+    let response = calendar#webapi#parse(split(data, "\n"))
+    if withbody
+      call delete(postfile)
+    endif
+    return response
+  else
     if !calendar#setting#get('debug')
       call s:cache.delete(a:async.id)
     endif
@@ -157,13 +141,37 @@ function! s:request(json, async, url, param, postdata, method) abort
       let command .= ' &'
       call calendar#util#system(command)
     endif
-  else
-    let data = calendar#util#system(command)
-    let response = calendar#webapi#parse(split(data, "\n"))
-    if withbody
-      call delete(file)
+  endif
+endfunction
+
+function! s:command(url, method, header, postfile, output) abort
+  let quote = s:_quote()
+  if executable('curl')
+    let command = 'curl -s -k -i -N -X ' . a:method
+    let command .= s:make_header_args(a:header, '-H ', quote)
+    if a:postfile !=# ''
+      let command .= ' --data-binary @' . quote . a:postfile . quote
     endif
-    return response
+    if a:output !=# ''
+      let command .= ' -o ' . quote . a:output . quote
+    endif
+    let command .= ' ' . quote . a:url . quote
+    return command
+  elseif executable('wget')
+    let command = 'wget -O- --save-headers --server-response -q'
+    let a:header['X-HTTP-Method-Override'] = a:method
+    let command .= s:make_header_args(a:header, '--header=', quote)
+    if a:postfile !=# ''
+      let command .= ' --post-file=' . quote . a:postfile . quote
+    endif
+    if a:output !=# ''
+      let command .= ' -O ' . quote . a:output . quote
+    endif
+    let command .= ' ' . quote . a:url . quote
+    return command
+  else
+    call calendar#echo#error_message('curl_wget_not_found')
+    return 1
   endif
 endfunction
 
