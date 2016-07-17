@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/event/google.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:29:28.
+" Last Change: 2016/07/18 02:28:42.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -43,6 +43,10 @@ endfunction
 
 function! s:self.insert(calendarId, title, start, end, year, month, ...) dict abort
   call calendar#google#calendar#insert(a:calendarId, a:title, a:start, a:end, a:year, a:month, a:0 ? a:1 : {})
+endfunction
+
+function! s:self.move(calendarId, eventId, destination, year, month) dict abort
+  call calendar#google#calendar#move(a:calendarId, a:eventId, a:destination, a:year, a:month)
 endfunction
 
 function! s:self.delete(calendarId, eventId, year, month) dict abort

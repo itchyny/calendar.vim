@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/07/18 02:33:36.
+" Last Change: 2016/07/18 02:48:06.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -496,6 +496,33 @@ function! calendar#google#calendar#insert_response(id, response) abort
             \ calendar#google#calendar#get_url('calendars/' . s:event_cache.escape(calendarId) . '/events'),
             \ { 'calendarId': calendarId },
             \ extend({ 'summary': title, 'start': start, 'end': end, 'transparency': 'transparent'  }, opt))
+    endif
+  else
+    call calendar#webapi#echo_error(a:response)
+  endif
+endfunction
+
+function! calendar#google#calendar#move(calendarId, eventId, destination, year, month) abort
+  call calendar#google#client#post_async(s:newid(['move', 0, a:year, a:month, a:calendarId, a:eventId, a:destination]),
+        \ 'calendar#google#calendar#move_response',
+        \ calendar#google#calendar#get_url('calendars/' . s:event_cache.escape(a:calendarId) . '/events/' . a:eventId . '/move'),
+        \ { 'destination': a:destination }, {})
+endfunction
+
+function! calendar#google#calendar#move_response(id, response) abort
+  let [_move, err, year, month, calendarId, eventId, destination; rest] = s:getdata(a:id)
+  if a:response.status =~# '^2'
+    call calendar#google#calendar#downloadEvents(year, month, calendarId)
+    call calendar#google#calendar#downloadEvents(year, month, destination)
+  elseif a:response.status == 401
+    if err == 0
+      call calendar#google#client#refresh_token()
+      call calendar#google#client#patch_async(s:newid(['move', 1, year, month, calendarId, eventId, destination]),
+            \ 'calendar#google#calendar#move_response',
+            \ calendar#google#calendar#get_url('calendars/' . s:event_cache.escape(calendarId) . '/events/' . eventId . '/move'),
+            \ { 'destination': destination }, {})
+    else
+      call calendar#webapi#echo_error(a:response)
     endif
   else
     call calendar#webapi#echo_error(a:response)

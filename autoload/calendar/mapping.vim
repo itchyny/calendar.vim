@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/mapping.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/09/26 13:58:37.
+" Last Change: 2016/07/18 02:25:56.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -37,7 +37,7 @@ function! calendar#mapping#new() abort
   endif
 
   " normal mode mapping
-  let actions = ['left', 'right', 'down', 'up', 'prev', 'next', 'move_down', 'move_up',
+  let actions = ['left', 'right', 'down', 'up', 'prev', 'next', 'move_down', 'move_up', 'move_event',
         \ 'down_big', 'up_big', 'down_large', 'up_large',
         \ 'line_head', 'line_middle', 'line_last', 'bar',
         \ 'first_line', 'last_line', 'first_line_head', 'last_line_last', 'space',
@@ -106,6 +106,7 @@ function! calendar#mapping#new() abort
   nmap <buffer> <C-k> <Plug>(calendar_move_up)
   nmap <buffer> <C-S-Down> <Plug>(calendar_move_down)
   nmap <buffer> <C-S-Up> <Plug>(calendar_move_up)
+  nmap <buffer> M <Plug>(calendar_move_event)
   nmap <buffer> w <Plug>(calendar_next)
   nmap <buffer> W w
   nmap <buffer> e w
@@ -204,7 +205,6 @@ function! calendar#mapping#new() abort
 
   " nop
   nmap <buffer> H <Nop>
-  nmap <buffer> M <Nop>
   nmap <buffer> J <Nop>
   nmap <buffer> p <Nop>
   nmap <buffer> P <Nop>

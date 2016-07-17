@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/05/09 08:05:36.
+" Last Change: 2016/07/18 02:27:05.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -147,6 +147,8 @@ function! s:self.action(action) dict abort
     endif
   elseif index(['start_insert_next_line', 'start_insert_prev_line', 'start_insert_quick'], a:action) >= 0
     call self.insert_new_event(a:action)
+  elseif a:action ==# 'move_event'
+    call self.move_event()
   else
     return self._action(a:action)
   endif
@@ -212,6 +214,56 @@ function! s:self.insert_new_event(action, ...) dict abort
     let calendarId = get(get(calendars, idx, get(calendars, 0, {})), 'id', '')
     call b:calendar.event.insert(calendarId, title, startdate, enddate, year, month, recurrence)
   endif
+endfunction
+
+function! s:self.move_event() dict abort
+  let event = self.current_contents()
+  let calendarId = get(event, 'calendarId', '')
+  let [year, month, day] = b:calendar.day().get_ymd()
+  let calendars = b:calendar.event.calendarList()
+  if len(calendars) == 0
+    if calendar#setting#get('google_calendar')
+      return
+    else
+      call b:calendar.event.createCalendar()
+      let calendars = b:calendar.event.calendarList()
+      if len(calendars) == 0
+        return
+      endif
+    endif
+  endif
+  if len(calendars) > 1
+    let msg = []
+    let idx = 0
+    let _idx = -1
+    let i = 0
+    call add(msg, 'index title')
+    for cal in calendars
+      if cal.id ==# calendarId
+        let _idx = i
+        call add(msg, printf('[%2d]  %s', i, cal.summary))
+      else
+        call add(msg, printf(' %2d   %s', i, cal.summary))
+      endif
+      let i += 1
+    endfor
+    if _idx < 0
+      let cal = calendars[0]
+      let msg[1] = printf('[%2d]  %s', 0, cal.summary)
+      let _idx = 0
+    endif
+    call calendar#echo#message_raw(join(msg, "\n"))
+    let idx = input(calendar#message#get('input_calendar_index'))
+    if idx ==# ''
+      let idx = _idx
+    else
+      let idx = min([max([idx, 0]), len(calendars)])
+    endif
+  else
+    let idx = 0
+  endif
+  let destination = get(get(calendars, idx, get(calendars, 0, {})), 'id', '')
+  call b:calendar.event.move(calendarId, event.id, destination, year, month)
 endfunction
 
 function! s:parse_title(title, ...) abort

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/event/local.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/06/28 00:50:40.
+" Last Change: 2016/07/18 02:34:52.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -108,6 +108,40 @@ function! s:self.insert(calendarId, title, start, end, year, month, ...) dict ab
             \ , 'summary': a:title
             \ , 'start': a:start =~# 'T\d\+' ? { 'dateTime': a:start } : { 'date': a:start }
             \ , 'end': a:end =~# 'T\d\+' ? { 'dateTime': a:end } : { 'date': a:end }
+            \ })
+      silent! call s:event_cache.new(calendar.id).new(y).new(m).save('0', cnt)
+      return
+    endif
+  endfor
+endfunction
+
+function! s:self.move(calendarId, eventId, destination, year, month) dict abort
+  let calendarList = self.calendarList()
+  let [y, m] = [printf('%04d', a:year), printf('%02d', a:month)]
+  let event = {}
+  for calendar in calendarList
+    if calendar.id ==# a:calendarId
+      let c = s:event_cache.new(calendar.id).new(y).new(m).get('0')
+      let cnt = type(c) == type({}) && has_key(c, 'items') && type(c.items) == type([]) ? c : { 'items': [] }
+      for i in range(len(cnt.items))
+        if cnt.items[i].id ==# a:eventId
+          let event = deepcopy(cnt.items[i])
+          call remove(cnt.items, i)
+          silent! call s:event_cache.new(calendar.id).new(y).new(m).save('0', cnt)
+          break
+        endif
+      endfor
+    endif
+  endfor
+  for calendar in calendarList
+    if calendar.id ==# a:destination
+      let c = s:event_cache.new(calendar.id).new(y).new(m).get('0')
+      let cnt = type(c) == type({}) && has_key(c, 'items') && type(c.items) == type([]) ? c : { 'items': [] }
+      call add(cnt.items,
+            \ { 'id': calendar#util#id()
+            \ , 'summary': event.summary
+            \ , 'start': event.start
+            \ , 'end': event.end
             \ })
       silent! call s:event_cache.new(calendar.id).new(y).new(m).save('0', cnt)
       return

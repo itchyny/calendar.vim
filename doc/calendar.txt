@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2016/03/06 20:01:34.
+Last Change: 2016/07/18 02:36:58.
 
 CONTENTS					*calendar-contents*
 
@@ -522,6 +522,7 @@ Mappings for moving around.
 <Plug>(calendar_next)				*<Plug>(calendar_next)*
 <Plug>(calendar_move_down)			*<Plug>(calendar_move_down)*
 <Plug>(calendar_move_up)			*<Plug>(calendar_move_up)*
+<Plug>(calendar_move_event)			*<Plug>(calendar_move_event)*
 <Plug>(calendar_down_big)			*<Plug>(calendar_down_big)*
 <Plug>(calendar_up_big)				*<Plug>(calendar_up_big)*
 <Plug>(calendar_down_large)			*<Plug>(calendar_down_large)*
@@ -620,6 +621,7 @@ g<Up>		same as <Up>
 <C-k>		|<Plug>(calendar_move_up)|
 <C-S-Down>	|<Plug>(calendar_move_down)|
 <C-S-Up>	|<Plug>(calendar_move_up)|
+M		|<Plug>(calendar_move_event)|
 w		|<Plug>(calendar_next)|
 W		same as w
 e		same as w
