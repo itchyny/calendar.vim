@@ -2,15 +2,13 @@
 " Filename: autoload/calendar/google/client.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:30:14.
+" Last Change: 2016/07/21 08:53:21.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
 let s:cache = calendar#cache#new('google')
-
-let s:shortener = calendar#google#url_shortener#new()
 
 let s:auth_url = 'https://accounts.google.com/o/oauth2/auth'
 
@@ -67,11 +65,6 @@ endfunction
 function! calendar#google#client#access_token_async() abort
   let client = s:client()
   let url = s:get_url()
-  let _url = url
-  let short_url = s:shortener.shorten(url)
-  if type(short_url) == type('')
-    let url = short_url
-  endif
   call calendar#webapi#open_url(url)
   try
     let code = input(printf(calendar#message#get('access_url_input_code'), url) . "\n" . calendar#message#get('input_code'))
