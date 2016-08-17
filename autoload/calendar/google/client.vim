@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/client.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/07/21 08:53:21.
+" Last Change: 2016/08/18 08:57:21.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -27,23 +27,6 @@ function! s:get_url() abort
     endif
   endfor
   return s:auth_url . '?' . calendar#webapi#encodeURI(param)
-endfunction
-
-function! calendar#google#client#access_token_response(response, content) abort
-  if a:response.status == 200
-    if !has_key(a:content, 'access_token')
-      call calendar#echo#error_message('google_access_token_fail')
-      return 1
-    else
-      silent! call s:cache.save('access_token', a:content)
-      if has_key(a:content, 'refresh_token') && type(a:content.refresh_token) == type('')
-        silent! call s:cache.save('refresh_token', { 'refresh_token': a:content.refresh_token })
-      endif
-    endif
-  else
-    call calendar#echo#error_message('google_access_token_fail')
-    return 1
-  endif
 endfunction
 
 let s:access_token_check = 0
@@ -91,6 +74,42 @@ function! calendar#google#client#access_token_async() abort
   silent! call b:calendar.update()
 endfunction
 
+function! calendar#google#client#refresh_token() abort
+  let client = s:client()
+  let cache = s:cache.get('refresh_token')
+  if type(cache) == type({}) && has_key(cache, 'refresh_token') && type(cache.refresh_token) == type('')
+    let response = calendar#webapi#post_nojson(s:token_url, {}, {
+          \ 'client_id': client.client_id,
+          \ 'client_secret': client.client_secret,
+          \ 'refresh_token': cache.refresh_token,
+          \ 'grant_type': 'refresh_token'})
+    let content = calendar#webapi#decode(response.content)
+    if calendar#google#client#access_token_response(response, content)
+      return 1
+    endif
+    return content.access_token
+  else
+    return 1
+  endif
+endfunction
+
+function! calendar#google#client#access_token_response(response, content) abort
+  if a:response.status == 200
+    if !has_key(a:content, 'access_token')
+      call calendar#echo#error_message('google_access_token_fail')
+      return 1
+    else
+      silent! call s:cache.save('access_token', a:content)
+      if has_key(a:content, 'refresh_token') && type(a:content.refresh_token) == type('')
+        silent! call s:cache.save('refresh_token', { 'refresh_token': a:content.refresh_token })
+      endif
+    endif
+  else
+    call calendar#echo#error_message('google_access_token_fail')
+    return 1
+  endif
+endfunction
+
 function! calendar#google#client#get(url, ...) abort
   return s:request('get', a:url, a:0 ? a:1 : {}, a:0 > 1 ? a:2 : {})
 endfunction
@@ -118,41 +137,19 @@ function! s:request(method, url, param, body) abort
   if response.status == 200
     return calendar#webapi#decode(response.content)
   elseif response.status == 401
-    let cache = s:cache.get('refresh_token')
-    if has_key(cache, 'refresh_token') && type(cache.refresh_token) == type('')
-      let response = calendar#webapi#post_nojson(s:token_url, {}, {
-            \ 'client_id': client.client_id,
-            \ 'client_secret': client.client_secret,
-            \ 'refresh_token': cache.refresh_token,
-            \ 'grant_type': 'refresh_token'})
-      let content = calendar#webapi#decode(response.content)
-      if calendar#google#client#access_token_response(response, content)
-        return 1
-      endif
-      let param = extend(param, { 'oauth_token': content.access_token })
-      let response = calendar#webapi#{a:method}(a:url, param, a:body)
-      if response.status == 200
-        return calendar#webapi#decode(response.content)
-      endif
-    endif
-  else
-    return 1
-  endif
-endfunction
-
-function! calendar#google#client#refresh_token() abort
-  let client = s:client()
-  let cache = s:cache.get('refresh_token')
-  if type(cache) == type({}) && has_key(cache, 'refresh_token') && type(cache.refresh_token) == type('')
-    let response = calendar#webapi#post_nojson(s:token_url, {}, {
-          \ 'client_id': client.client_id,
-          \ 'client_secret': client.client_secret,
-          \ 'refresh_token': cache.refresh_token,
-          \ 'grant_type': 'refresh_token'})
-    let content = calendar#webapi#decode(response.content)
-    if calendar#google#client#access_token_response(response, content)
+    unlet! access_token
+    let access_token = calendar#google#client#refresh_token()
+    if type(access_token) != type('')
       return 1
     endif
+    let param = extend(a:param, { 'oauth_token': access_token })
+    let response = calendar#webapi#{a:method}(a:url, param, a:body)
+    if response.status == 200
+      return calendar#webapi#decode(response.content)
+    endif
+  endif
+  else
+    return 1
   endif
 endfunction
 
