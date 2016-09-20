@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/autocmd.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:25:24.
+" Last Change: 2016/09/20 22:09:40.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -49,7 +49,7 @@ function! calendar#autocmd#new() abort
     " When the cursor is moved, update the cursor appropriately.
     " In mapping.vim, 'gg' is mapped to '<Plug>(calendar_first_line)' on default.
     " However, if we press 'g' and 'g' slowly, '<Plug>(calendar_first_line)' will
-    " not be triggerd. Pressing 'g' and '$' slowly also causes the same situation.
+    " not be triggered. Pressing 'g' and '$' slowly also causes the same situation.
     " To avoid this, check the cursor position on CursorMoved and move the cursor
     " to the proper position.
     autocmd CursorMoved <buffer>
@@ -59,7 +59,7 @@ function! calendar#autocmd#new() abort
 
 endfunction
 
-" Seach the calendar buffer and updates.
+" Search the calendar buffer and updates.
 function! s:update_visible(bufnr, is_colorscheme) abort
   try
     let nr = -1
