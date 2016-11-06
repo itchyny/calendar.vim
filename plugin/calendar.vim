@@ -2,10 +2,10 @@
 " Filename: plugin/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2014/12/19 07:24:36.
+" Last Change: 2016/11/06 12:00:00.
 " =============================================================================
 
-if exists('g:loaded_calendar') || v:version < 700
+if exists('g:loaded_calendar') || v:version < 703
   finish
 endif
 let g:loaded_calendar = 1
