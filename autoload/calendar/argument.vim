@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/argument.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/06/27 18:16:06.
+" Last Change: 2016/12/06 21:16:07.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -295,7 +295,7 @@ function! calendar#argument#day(day, default) abort
   return calendar#day#new(y, m, d)
 endfunction
 
-" Desicion of the buffer name.
+" Decision of the buffer name.
 function! calendar#argument#buffername(name) abort
   let buflist = []
   for i in range(tabpagenr('$'))
