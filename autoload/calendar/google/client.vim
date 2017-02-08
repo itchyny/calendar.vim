@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/client.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/08/18 08:57:21.
+" Last Change: 2017/02/09 00:40:49.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -35,9 +35,13 @@ function! calendar#google#client#access_token() abort
   if type(cache) != type({}) || type(cache) == type({}) && !has_key(cache, 'access_token')
     if !s:access_token_check
       let s:access_token_check = 1
-      call calendar#async#new('calendar#google#client#access_token_async()')
+      call calendar#google#client#initialize_access_token()
+      let cache = s:cache.get('access_token')
+      if type(cache) != type({}) || type(cache) == type({}) && !has_key(cache, 'access_token')
+        return 1
+      endif
+      let content = cache
     endif
-    return 1
   else
     let content = cache
   endif
@@ -45,7 +49,7 @@ function! calendar#google#client#access_token() abort
   return content.access_token
 endfunction
 
-function! calendar#google#client#access_token_async() abort
+function! calendar#google#client#initialize_access_token() abort
   let client = s:client()
   let url = s:get_url()
   call calendar#webapi#open_url(url)
@@ -71,7 +75,6 @@ function! calendar#google#client#access_token_async() abort
   let g:calendar_google_event_downloading_list = 0
   let g:calendar_google_event_download = 3
   silent! let b:calendar.event._updated = 3
-  silent! call b:calendar.update()
 endfunction
 
 function! calendar#google#client#refresh_token() abort
