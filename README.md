@@ -74,27 +74,7 @@ itchyny (https://github.com/itchyny)
 This software is released under the MIT License, see LICENSE.
 
 ## Installation
-### Manually
-1. Put all the files under $VIM/
-
-### pathogen-vim (https://github.com/tpope/vim-pathogen)
-1. Execute the following command.
-
-        git clone https://github.com/itchyny/calendar.vim ~/.vim/bundle/calendar.vim
-
-### Vundle (https://github.com/gmarik/Vundle.vim)
-1. Add the following configuration to your vimrc.
-
-        Plugin 'itchyny/calendar.vim'
-
-2. Install with `:PluginInstall`.
-
-### NeoBundle (https://github.com/Shougo/neobundle.vim)
-1. Add the following configuration to your vimrc.
-
-        NeoBundle 'itchyny/calendar.vim'
-
-2. Install with `:NeoBundleInstall`.
+Install with your favorite plugin manager.
 
 ## Google Calendar and Google Task
 In order to view and edit calendars on Google Calendar, or task on Google Task,
