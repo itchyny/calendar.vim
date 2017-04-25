@@ -21,6 +21,9 @@ let s:select_color = calendar#color#gen_color(s:fg_color, s:bg_color, 1, 4)
 let s:is_win32cui = (has('win32') || has('win64')) && !has('gui_running')
 let s:is_dark = &background ==# 'dark'
 
+let s:fg_color = get(g:, 'calendar_fg_color', s:fg_color)
+let s:bg_color = get(g:, 'calendar_bg_color', s:bg_color)
+
 if !has('gui_running')
   if s:is_win32cui
     if s:is_dark
@@ -73,11 +76,8 @@ if !s:is_win32cui
   let s:saturday_title_fg_color = calendar#color#gen_color(s:saturday_fg_color, s:saturday_bg_color, 3, 1)
 endif
 
-let s:fg_color = get(g:, 'calendar_fg_color', s:fg_color)
-let s:bg_color = get(g:, 'calendar_bg_color', s:bg_color)
 let s:comment_fg_color = get(g:, 'calendar_comment_fg_color', s:comment_fg_color)
 let s:select_color = get(g:, 'calendar_select_color', s:select_color)
-
 let s:sunday_fg_color = get(g:, 'calendar_sunday_fg_color', s:sunday_fg_color)
 let s:saturday_fg_color = get(g:, 'calendar_saturday_fg_color', s:saturday_fg_color)
 let s:sunday_bg_color = get(g:, 'calendar_sunday_bg_color', s:sunday_bg_color)

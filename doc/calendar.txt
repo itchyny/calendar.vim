@@ -14,6 +14,7 @@ Vim application				|calendar-vim-application|
 Commands				|calendar-commands|
 Options					|calendar-options|
 View					|calendar-view|
+Colors					|calendar-colors|
 Key Mappings				|calendar-key-mappings|
 Marks					|calendar-marks|
 Input Format				|calendar-input-format|
@@ -495,6 +496,63 @@ This application has some different views. You can switch views with |>| and
 7. Event view					*calendar-view-event*
 	This view shows a event list. There are two available event views:
 	'event' and 'agenda'.
+
+------------------------------------------------------------------------------
+COLORS						*calendar-colors*
+
+In some cases default colors looks unreadable. So the application provides
+several variables to set your custom colors.
+
+1. Text color of work days and clock		*g:calendar_fg_color*
+	This variable allows to control color of clock and labels of work days
+	in the calendar.
+	For changing default color, declare this variable in your vimrc:
+	let g:calendar_fg_color = {color_code}
+
+2. Background color of work days labels		*g:calendar_bg_color*
+	This variable allows to control color of background of work days label.
+	For changing default color, declare this variable in your vimrc:
+	let g:calendar_bg_color = {color_code}
+
+3. Text color of comments			*g:calendar_comment_fg_color*
+	This variable allows to control text color of comments.
+	For changing default color, declare this variable in your vimrc:
+	let g:calendar_comment_fg_color = {color_code}
+
+4. Color of selection				*g:calendar_select_color*
+	This variable allows to control color of selection.
+	For changing default color, declare this variable in your vimrc:
+	let g:calendar_select_color = {color_code}
+
+5. Text color of Sunday				*g:calendar_sunday_fg_color*
+	This variable allows to control text color of Sunday label.
+	For changing default color, declare this variable in your vimrc:
+	let g:calendar_sunday_fg_color = {color_code}
+
+6. Text color of Saturday			*g:calendar_saturday_fg_color*
+	This variable allows to control text color of Saturday label.
+	For changing default color, declare this variable in your vimrc:
+	let g:calendar_saturday_fg_color = {color_code}
+
+7. Background color of Sunday			*g:calendar_sunday_bg_color*
+	This variable allows to control background color of Sunday label.
+	For changing default color, declare this variable in your vimrc:
+	let g:calendar_sunday_bg_color = {color_code}
+
+8. Background color of Saturday			*g:calendar_saturday_bg_color*
+	This variable allows to control background color of Saturday label.
+	For changing default color, declare this variable in your vimrc:
+	let g:calendar_saturday_bg_color = {color_code}
+
+9. Text color of today				*g:calendar_today_fg_color*
+	This variable allows to control text color of today.
+	For changing default color, declare this variable in your vimrc:
+	let g:calendar_today_fg_color = {color_code}
+
+10. Background color of today			*g:calendar_today_color*
+	This variable allows to control background color of today.
+	For changing default color, declare this variable in your vimrc:
+	let g:calendar_today_color = {color_code}
 
 ------------------------------------------------------------------------------
 KEY MAPPINGS					*calendar-key-mappings*
