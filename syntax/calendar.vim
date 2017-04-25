@@ -73,6 +73,18 @@ if !s:is_win32cui
   let s:saturday_title_fg_color = calendar#color#gen_color(s:saturday_fg_color, s:saturday_bg_color, 3, 1)
 endif
 
+let s:fg_color = get(g:, 'calendar_fg_color', s:fg_color)
+let s:bg_color = get(g:, 'calendar_bg_color', s:bg_color)
+let s:comment_fg_color = get(g:, 'calendar_comment_fg_color', s:comment_fg_color)
+let s:select_color = get(g:, 'calendar_select_color', s:select_color)
+
+let s:sunday_fg_color = get(g:, 'calendar_sunday_fg_color', s:sunday_fg_color)
+let s:saturday_fg_color = get(g:, 'calendar_saturday_fg_color', s:saturday_fg_color)
+let s:sunday_bg_color = get(g:, 'calendar_sunday_bg_color', s:sunday_bg_color)
+let s:saturday_bg_color = get(g:, 'calendar_saturday_bg_color', s:saturday_bg_color)
+let s:today_fg_color = get(g:, 'calendar_today_fg_color', s:today_fg_color)
+let s:today_color = get(g:, 'calendar_today_color', s:today_color)
+
 call calendar#color#syntax('Select', '', s:select_color, '')
 call calendar#color#syntax('Sunday', s:sunday_fg_color, s:sunday_bg_color, '')
 call calendar#color#syntax('Saturday', s:saturday_fg_color, s:saturday_bg_color, '')
