@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/color.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/09/26 13:33:38.
+" Last Change: 2017/04/26 22:36:20.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -12,9 +12,49 @@ set cpo&vim
 
 let s:is_gui = has('gui_running')
 let s:is_cterm = !s:is_gui
-let s:is_win32cui = (has('win32') || has('win64')) && !has('gui_running')
-let s:term = has('gui_running') ? 'gui' : 'cterm'
-let s:is_dark = &background ==# 'dark'
+let s:is_win32cui = (has('win32') || has('win64')) && !s:is_gui
+let s:term = s:is_gui ? 'gui' : 'cterm'
+let s:is_dark = -1 " &background ==# 'dark'
+let s:colors_name = ''
+let s:background = ''
+
+" &background is not useful on non-GUI environment when colorscheme executes :highlight Normal ctermbg=23X.
+"   ref: syntax.c /set_option_value
+function! calendar#color#is_dark() abort
+  if s:is_dark >= 0 && s:colors_name ==# g:colors_name && s:background ==# &background
+    return s:is_dark
+  endif
+  let s:colors_name = g:colors_name
+  let s:background = &background
+  if s:is_gui
+    let s:is_dark = &background ==# 'dark'
+    return s:is_dark
+  endif
+  let bg_color = synIDattr(synIDtrans(hlID('Normal')), 'bg', s:term)
+  if bg_color !=# ''
+    let [r, g, b] = calendar#color#nr_rgb(bg_color)
+    let s:is_dark = r + g + b < 7 || 232 <= bg_color && bg_color <= 243
+    return s:is_dark
+  endif
+  let fg_color = synIDattr(synIDtrans(hlID('Normal')), 'fg', s:term)
+  if fg_color !=# ''
+    let [r, g, b] = calendar#color#nr_rgb(fg_color)
+    let s:is_dark = r + g + b > 8 || 244 <= fg_color
+    return s:is_dark
+  endif
+  let bg_color = synIDattr(synIDtrans(hlID('Normal')), 'bg', 'gui')
+  if bg_color =~# '^#......$'
+    let s:is_dark = s:is_dark_color(bg_color)
+    return s:is_dark
+  endif
+  let fg_color = synIDattr(synIDtrans(hlID('Normal')), 'fg', 'gui')
+  if fg_color =~# '^#......$'
+    let s:is_dark = s:is_light_color(fg_color)
+    return s:is_dark
+  endif
+  let s:is_dark = &background ==# 'dark'
+  return s:is_dark
+endfunction
 
 function! calendar#color#new_syntax(id, fg, bg) abort
   if has_key(b:, 'calendar')
@@ -35,7 +75,8 @@ function! calendar#color#new_syntax(id, fg, bg) abort
       return name
     endif
     let flg = 0
-    if &bg ==# 'dark' && s:is_dark_color(a:fg) || &bg ==# 'light' && s:is_light_color(a:fg)
+    let is_dark = calendar#color#is_dark()
+    if is_dark && s:is_dark_color(a:fg) || !is_dark && s:is_light_color(a:fg)
       let flg = 1
       let [fg, bg] = [a:bg, '']
     else
@@ -232,10 +273,6 @@ function! calendar#color#bg_color(syntax_name) abort
   return s:is_gui ? color : calendar#color#to_256color((len(color) == 0 ? -1 : color) + 0, 0)
 endfunction
 
-function! calendar#color#is_dark() abort
-  return &background ==# 'dark'
-endfunction
-
 function! calendar#color#normal_fg_color() abort
   if s:is_win32cui
     if calendar#color#is_dark()
@@ -425,7 +462,7 @@ endfunction
 
 let s:_select_color = {}
 function! s:select_color() abort
-  let key = get(g:, 'colors_name', '') . &bg
+  let key = get(g:, 'colors_name', '') . &background
   if has_key(s:_select_color, key)
     return s:_select_color[key]
   endif

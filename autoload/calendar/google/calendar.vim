@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/07/18 02:48:06.
+" Last Change: 2017/04/26 22:14:53.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -130,7 +130,7 @@ endfunction
 
 " The optional argument: Forcing initial download. s:initial_download is used to check.
 function! calendar#google#calendar#getEvents(year, month, ...) abort
-  let s:is_dark = &background ==# 'dark'
+  let s:is_dark = calendar#color#is_dark()
   let calendarList = calendar#google#calendar#getCalendarList()
   let colors = get(calendar#google#calendar#getColors(), 'event', {})
   let events = {}
