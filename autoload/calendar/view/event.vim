@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/07/18 02:27:05.
+" Last Change: 2017/04/30 15:55:08.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -310,12 +310,15 @@ function! s:parse_title(title, ...) abort
         endif
       endif
     endif
-  elseif title =~# '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?'
-    let time = matchstr(title, '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?')
+  elseif title =~# '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?\s*-\s*\%(\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\)\?\d\+:\d\+\%(:\d\+\)\?'
+    let time = matchstr(title, '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?\s*-\s*\%(\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\)\?\d\+:\d\+\%(:\d\+\)\?')
     let starttime = matchstr(time, '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?\s*')
-    let endtime = matchstr(time[len(starttime):], '\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?')
+    let endtime = matchstr(time[len(starttime):], '\%(\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\)\?\d\+:\d\+\%(:\d\+\)\?')
     let starttime = substitute(starttime, '^\s*\|\s*$', '', 'g')
     let endtime = substitute(endtime, '^\s*\|\s*$', '', 'g')
+    if endtime !~# '^\d+[-/]\d\+\%([-/]\d\+\)\?'
+      let endtime = matchstr(starttime, '^\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+') . endtime
+    endif
     let title = substitute(title[len(time):], '^\s*', '', '')
     let [startdate, enddate] = [s:format_time(starttime), s:format_time(endtime)]
   elseif !a:0 || !a:1
