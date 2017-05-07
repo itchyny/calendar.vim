@@ -1,4 +1,4 @@
-let s:suite = themis#suite('mjd')
+let s:suite = themis#suite('cipher')
 let s:assert = themis#helper('assert')
 
 function! s:suite.cipher_string()

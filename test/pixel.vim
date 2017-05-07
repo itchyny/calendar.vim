@@ -1,4 +1,4 @@
-let s:suite = themis#suite('mjd')
+let s:suite = themis#suite('pixel')
 let s:assert = themis#helper('assert')
 
 function! s:suite.pixel_get()
