@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/week.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:33:45.
+" Last Change: 2017/05/07 23:06:40.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -18,7 +18,7 @@ let s:self.stopend = 1
 
 function! s:self.get_min_day() dict abort
   let day = b:calendar.day()
-  return day.add(-calendar#week#week_number(day))
+  return day.add(-calendar#week#week_index(day))
 endfunction
 
 let s:constructor = calendar#constructor#view_days#new(s:self)

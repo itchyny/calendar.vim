@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/month.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2017/05/07 20:06:24.
+" Last Change: 2017/05/07 23:07:35.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -149,7 +149,7 @@ function! s:self.set_contents() dict abort
   let days = month.get_days()
   let prev_days = calendar#week#is_first_day(days[0]) ? [] : month.add(-1).get_days()
   let next_days = calendar#week#is_last_day(days[-1]) ? [] : month.add(1).get_days()
-  let wn = calendar#week#week_number(days[0])
+  let wn = calendar#week#week_index(days[0])
   let ld = wn + len(days)
   let events = b:calendar.event.get_events(day.get_year(), day.get_month())
   let longevt = []
@@ -309,7 +309,7 @@ function! s:self.set_contents() dict abort
       let p = 7 * (i + 1) - 1
       let d = p < wn ? prev_days[-wn + p] : p < ld ? days[p - wn] : days[-1]
       call self.add_syntax(len(s[y]), y, 2, 'Comment')
-      let s[y] .= calendar#week#week_number_year(d)
+      let s[y] .= calendar#week#week_number(d)
     endif
   endfor
   let self._month = month.get_ym()
@@ -368,7 +368,7 @@ endfunction
 
 function! s:self.select_index() dict abort
   let head = b:calendar.month().head_day()
-  let wn = calendar#week#week_number(head)
+  let wn = calendar#week#week_index(head)
   let lastij = b:calendar.day().sub(head) + wn
   let [lasti, lastj] = [lastij % 7, lastij / 7]
   if !b:calendar.visual_mode()
@@ -415,8 +415,8 @@ function! s:self.timerange() dict abort
   let y = b:calendar.day()
   let x = b:calendar.visual_start_day()
   let recurrence = ''
-  let xn = calendar#week#week_number(x)
-  let yn = calendar#week#week_number(y)
+  let xn = calendar#week#week_index(x)
+  let yn = calendar#week#week_index(y)
   if b:calendar.is_line_visual()
     if x.sub(y) >= 0
       let y = y.add(-yn)
@@ -457,9 +457,9 @@ function! s:self.action(action) dict abort
   let month = b:calendar.month()
   let hday = month.head_day()
   let lday = month.last_day()
-  let wnum = calendar#week#week_number(d)
-  let hwnum = calendar#week#week_number(hday)
-  let lwnum = calendar#week#week_number(lday)
+  let wnum = calendar#week#week_index(d)
+  let hwnum = calendar#week#week_index(hday)
+  let lwnum = calendar#week#week_index(lday)
   if a:action ==# 'left'
     call b:calendar.move_day(max([-v:count1, -wnum]))
   elseif a:action ==# 'right'

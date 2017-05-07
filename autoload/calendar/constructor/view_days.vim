@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_days.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2017/05/07 20:12:54.
+" Last Change: 2017/05/07 23:06:06.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -140,7 +140,7 @@ endfunction
 function! s:instance.set_day_name() dict abort
   let [h, w, ww] = [self.view.dayheight, self.view.width, self.view.realwidth]
   let key = h . ',' . w . ',' . ww . ',' . calendar#setting#get('frame') . ','
-        \ . calendar#setting#get('locale') . ',' . calendar#week#week_number(self.get_min_day()) . ',' . calendar#setting#get('first_day')
+        \ . calendar#setting#get('locale') . ',' . calendar#week#week_index(self.get_min_day()) . ',' . calendar#setting#get('first_day')
   if !has_key(self, 'day_name_cache')
     let self.day_name_cache = {}
   endif
@@ -311,7 +311,7 @@ function! s:instance.set_contents() dict abort
   let days = month.get_days()
   let prev_days = month.add(-1).get_days()
   let next_days = month.add(1).get_days()
-  let wn = calendar#week#week_number(days[0])
+  let wn = calendar#week#week_index(days[0])
   let sub = day.sub(wn ? prev_days[-wn] : days[0])
   let wnum = sub / 7
   let ld = wn + len(days)
