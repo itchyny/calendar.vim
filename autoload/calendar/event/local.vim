@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/event/local.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/07/18 02:34:52.
+" Last Change: 2017/05/08 07:53:14.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -28,44 +28,47 @@ function! s:self.get_events_one_month(year, month, ...) dict abort
     let syn = calendar#color#new_syntax(get(calendar, 'id', ''), get(calendar, 'foregroundColor', ''), get(calendar, 'backgroundColor'))
     unlet! c
     let c = s:event_cache.new(calendar.id).new(y).new(m).get('0')
-    if type(c) == type({}) && has_key(c, 'items') && type(c.items) == type([])
-      for itm in c.items
-        if has_key(itm, 'start') && (has_key(itm.start, 'date') || has_key(itm.start, 'dateTime'))
-              \ && has_key(itm, 'end') && (has_key(itm.end, 'date') || has_key(itm.end, 'dateTime'))
-          let isTimeEvent = (!has_key(itm.start, 'date')) && has_key(itm.start, 'dateTime') && (!has_key(itm.end, 'date')) && has_key(itm.end, 'dateTime')
-          let ymd = calendar#time#datetime(has_key(itm.start, 'date') ? itm.start.date : has_key(itm.start, 'dateTime') ? itm.start.dateTime : '')
-          let endymd = calendar#time#datetime(has_key(itm.end, 'date') ? itm.end.date : has_key(itm.end, 'dateTime') ? itm.end.dateTime : '')
-          if len(ymd) == 6 && len(endymd) == 6
-            let date = join(ymd[:2], '-')
-            if has_key(itm.end, 'date')
-              let endymd = ymd[:2] == [endymd[0], endymd[1], endymd[2] - 1] ? ymd : calendar#day#new(endymd[0], endymd[1], endymd[2]).add(-1).get_ymd() + endymd[3:]
-            endif
-            let starttime = ymd[5] ? printf('%d:%02d:%02d', ymd[3], ymd[4], ymd[5]) : printf('%d:%02d', ymd[3], ymd[4])
-            let endtime = endymd[5] ? printf('%d:%02d:%02d', endymd[3], endymd[4], endymd[5]) : printf('%d:%02d', endymd[3], endymd[4])
-            if !has_key(events, date)
-              let events[date] = { 'events': [] }
-            endif
-            call add(events[date].events, extend(deepcopy(itm),
-                  \ { 'calendarId': calendar.id
-                  \ , 'calendarSummary': calendar.summary
-                  \ , 'syntax': syn
-                  \ , 'isTimeEvent': isTimeEvent
-                  \ , 'isHoliday': 0
-                  \ , 'isMoon': 0
-                  \ , 'isDayNum': 0
-                  \ , 'isWeekNum': 0
-                  \ , 'starttime': starttime
-                  \ , 'endtime': endtime
-                  \ , 'ymdnum': (((ymd[0] * 100 + ymd[1]) * 100) + ymd[2])
-                  \ , 'hms': ymd[3:]
-                  \ , 'sec': ((ymd[3] * 60) + ymd[4]) * 60 + ymd[5]
-                  \ , 'ymd': ymd[:2]
-                  \ , 'endhms': endymd[3:]
-                  \ , 'endymd': endymd[:2] }))
-          endif
-        endif
-      endfor
+    if type(c) != type({}) || type(get(c, 'items')) != type([])
+      continue
     endif
+    for itm in c.items
+      if !(has_key(itm, 'start') && (has_key(itm.start, 'date') || has_key(itm.start, 'dateTime'))
+            \ && has_key(itm, 'end') && (has_key(itm.end, 'date') || has_key(itm.end, 'dateTime')))
+        continue
+      endif
+      let isTimeEvent = (!has_key(itm.start, 'date')) && has_key(itm.start, 'dateTime') && (!has_key(itm.end, 'date')) && has_key(itm.end, 'dateTime')
+      let ymd = calendar#time#datetime(get(itm.start, 'date', get(itm.start, 'dateTime', '')))
+      let endymd = calendar#time#datetime(get(itm.end, 'date', get(itm.end, 'dateTime', '')))
+      if len(ymd) != 6 || len(endymd) != 6
+        continue
+      endif
+      let date = join(ymd[:2], '-')
+      if has_key(itm.end, 'date')
+        let endymd = ymd[:2] == [endymd[0], endymd[1], endymd[2] - 1] ? ymd : calendar#day#new(endymd[0], endymd[1], endymd[2]).add(-1).get_ymd() + endymd[3:]
+      endif
+      let starttime = ymd[5] ? printf('%d:%02d:%02d', ymd[3], ymd[4], ymd[5]) : printf('%d:%02d', ymd[3], ymd[4])
+      let endtime = endymd[5] ? printf('%d:%02d:%02d', endymd[3], endymd[4], endymd[5]) : printf('%d:%02d', endymd[3], endymd[4])
+      if !has_key(events, date)
+        let events[date] = { 'events': [] }
+      endif
+      call add(events[date].events, extend(deepcopy(itm),
+            \ { 'calendarId': calendar.id
+            \ , 'calendarSummary': calendar.summary
+            \ , 'syntax': syn
+            \ , 'isTimeEvent': isTimeEvent
+            \ , 'isHoliday': 0
+            \ , 'isMoon': 0
+            \ , 'isDayNum': 0
+            \ , 'isWeekNum': 0
+            \ , 'starttime': starttime
+            \ , 'endtime': endtime
+            \ , 'ymdnum': (((ymd[0] * 100 + ymd[1]) * 100) + ymd[2])
+            \ , 'hms': ymd[3:]
+            \ , 'sec': ((ymd[3] * 60) + ymd[4]) * 60 + ymd[5]
+            \ , 'ymd': ymd[:2]
+            \ , 'endhms': endymd[3:]
+            \ , 'endymd': endymd[:2] }))
+    endfor
   endfor
   return events
 endfunction

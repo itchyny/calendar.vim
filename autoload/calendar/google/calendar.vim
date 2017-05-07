@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2017/04/26 22:14:53.
+" Last Change: 2017/05/08 08:08:48.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -138,94 +138,99 @@ function! calendar#google#calendar#getEvents(year, month, ...) abort
   if a:0 && a:1
     call calendar#google#calendar#getEventsInitial(a:year, a:month)
   endif
-  if has_key(calendarList, 'items') && type(calendarList.items) == type([]) && len(calendarList.items)
-    let [y, m] = [printf('%04d', a:year), printf('%02d', a:month)]
-    for item in calendarList.items
-      if !get(item, 'selected')
-        continue
-      endif
-      let isHoliday = item.id =~# 'holiday@group.v.calendar.google.com'
-      let isMoon = item.summary ==# 'Phases of the Moon' && &enc ==# 'utf-8' && &fenc ==# 'utf-8'
-      let isDayNum = item.summary ==# 'Day of the Year'
-      let isWeekNum = item.summary ==# 'Week Numbers'
-      let calendarsyn = calendar#color#new_syntax(get(item, 'id', ''), get(item, 'foregroundColor', ''), get(item, 'backgroundColor', ''))
-      unlet! cnt
-      let cnt = s:event_cache.new(item.id).new(y).new(m).get('information')
-      if type(cnt) == type({}) && has_key(cnt, 'summary')
-        unlet! c
-        let c = {}
-        let index = 0
-        while type(c) == type({})
-          unlet! c
-          let c = s:event_cache.new(item.id).new(y).new(m).get(index)
-          if type(c) == type({}) && has_key(c, 'items') && type(c.items) == type([])
-            for itm in c.items
-              if has_key(itm, 'start') && (has_key(itm.start, 'date') || has_key(itm.start, 'dateTime'))
-                    \ && has_key(itm, 'end') && (has_key(itm.end, 'date') || has_key(itm.end, 'dateTime'))
-                if has_key(itm, 'colorId')
-                  let foregroundColor = get(get(colors, itm.colorId, {}), 'foreground', get(item, 'foregroundColor', ''))
-                  let backgroundColor = get(get(colors, itm.colorId, {}), 'background', get(item, 'backgroundColor', ''))
-                  let syn = calendar#color#new_syntax(get(itm, 'id', ''), foregroundColor, backgroundColor)
-                else
-                  let syn = calendarsyn
-                endif
-                let ymd = calendar#time#datetime(has_key(itm.start, 'date') ? itm.start.date : has_key(itm.start, 'dateTime') ? itm.start.dateTime : '')
-                let endymd = calendar#time#datetime(has_key(itm.end, 'date') ? itm.end.date : has_key(itm.end, 'dateTime') ? itm.end.dateTime : '')
-                let isTimeEvent = (!has_key(itm.start, 'date')) && has_key(itm.start, 'dateTime') && (!has_key(itm.end, 'date')) && has_key(itm.end, 'dateTime')
-                if len(ymd) == 6 && len(endymd) == 6 && [a:year, a:month] == [ymd[0], ymd[1]]
-                  let date = join(ymd[:2], '-')
-                  if has_key(itm.end, 'date')
-                    let endymd = ymd[:2] == [endymd[0], endymd[1], endymd[2] - 1] ? ymd : calendar#day#new(endymd[0], endymd[1], endymd[2]).add(-1).get_ymd() + endymd[3:]
-                  endif
-                  let starttime = ymd[5] ? printf('%d:%02d:%02d', ymd[3], ymd[4], ymd[5]) : printf('%d:%02d', ymd[3], ymd[4])
-                  let endtime = endymd[5] ? printf('%d:%02d:%02d', endymd[3], endymd[4], endymd[5]) : printf('%d:%02d', endymd[3], endymd[4])
-                  if !has_key(events, date)
-                    let events[date] = { 'events': [] }
-                  endif
-                  call add(events[date].events,
-                        \ extend(deepcopy(itm),
-                        \ { 'calendarId': item.id
-                        \ , 'calendarSummary': item.summary
-                        \ , 'syntax': syn
-                        \ , 'isTimeEvent': isTimeEvent
-                        \ , 'isHoliday': isHoliday
-                        \ , 'isMoon': isMoon
-                        \ , 'isDayNum': isDayNum
-                        \ , 'isWeekNum': isWeekNum
-                        \ , 'starttime': starttime
-                        \ , 'endtime': endtime
-                        \ , 'ymdnum': (((ymd[0] * 100 + ymd[1]) * 100) + ymd[2])
-                        \ , 'hms': ymd[3:]
-                        \ , 'sec': ((ymd[3] * 60) + ymd[4]) * 60 + ymd[5]
-                        \ , 'ymd': ymd[:2]
-                        \ , 'endhms': endymd[3:]
-                        \ , 'endymd': endymd[:2] }))
-                  if isHoliday
-                    let events[date].holiday = events[date].events[-1].summary
-                    let events[date].hasHoliday = 1
-                  endif
-                  if isMoon
-                    call s:moon_event(events[date])
-                  endif
-                  if isDayNum
-                    let events[date].daynum = matchstr(events[date].events[-1].summary, '\d\+')
-                  endif
-                  if isWeekNum
-                    let events[date].weeknum = matchstr(events[date].events[-1].summary, '\d\+')
-                  endif
-                endif
-              endif
-            endfor
-          endif
-          let index += 1
-        endwhile
-      elseif !get(s:event_download, key)
-        let s:event_download[key] = 1
-        call calendar#google#calendar#downloadEvents(a:year, a:month)
-        break
-      endif
-    endfor
+  if type(get(calendarList, 'items')) != type([])
+    return events
   endif
+  let [y, m] = [printf('%04d', a:year), printf('%02d', a:month)]
+  for item in calendarList.items
+    if !get(item, 'selected')
+      continue
+    endif
+    let isHoliday = item.id =~# 'holiday@group.v.calendar.google.com'
+    let isMoon = item.summary ==# 'Phases of the Moon' && &enc ==# 'utf-8' && &fenc ==# 'utf-8'
+    let isDayNum = item.summary ==# 'Day of the Year'
+    let isWeekNum = item.summary ==# 'Week Numbers'
+    let calendarsyn = calendar#color#new_syntax(get(item, 'id', ''), get(item, 'foregroundColor', ''), get(item, 'backgroundColor', ''))
+    unlet! cnt
+    let cnt = s:event_cache.new(item.id).new(y).new(m).get('information')
+    if type(cnt) == type({}) && has_key(cnt, 'summary')
+      let index = 0
+      while 1
+        let c = s:event_cache.new(item.id).new(y).new(m).get(index)
+        if type(c) != type({})
+          unlet! c
+          break
+        endif
+        let index += 1
+        if type(get(c, 'items')) != type([])
+          continue
+        endif
+        for itm in c.items
+          if !(has_key(itm, 'start') && (has_key(itm.start, 'date') || has_key(itm.start, 'dateTime'))
+                \ && has_key(itm, 'end') && (has_key(itm.end, 'date') || has_key(itm.end, 'dateTime')))
+            continue
+          endif
+          if has_key(itm, 'colorId')
+            let foregroundColor = get(get(colors, itm.colorId, {}), 'foreground', get(item, 'foregroundColor', ''))
+            let backgroundColor = get(get(colors, itm.colorId, {}), 'background', get(item, 'backgroundColor', ''))
+            let syn = calendar#color#new_syntax(get(itm, 'id', ''), foregroundColor, backgroundColor)
+          else
+            let syn = calendarsyn
+          endif
+          let ymd = calendar#time#datetime(get(itm.start, 'date', get(itm.start, 'dateTime', '')))
+          let endymd = calendar#time#datetime(get(itm.end, 'date', get(itm.end, 'dateTime', '')))
+          let isTimeEvent = (!has_key(itm.start, 'date')) && has_key(itm.start, 'dateTime') && (!has_key(itm.end, 'date')) && has_key(itm.end, 'dateTime')
+          if len(ymd) != 6 || len(endymd) != 6 || [a:year, a:month] != [ymd[0], ymd[1]]
+            continue
+          endif
+          let date = join(ymd[:2], '-')
+          if has_key(itm.end, 'date')
+            let endymd = ymd[:2] == [endymd[0], endymd[1], endymd[2] - 1] ? ymd : calendar#day#new(endymd[0], endymd[1], endymd[2]).add(-1).get_ymd() + endymd[3:]
+          endif
+          let starttime = ymd[5] ? printf('%d:%02d:%02d', ymd[3], ymd[4], ymd[5]) : printf('%d:%02d', ymd[3], ymd[4])
+          let endtime = endymd[5] ? printf('%d:%02d:%02d', endymd[3], endymd[4], endymd[5]) : printf('%d:%02d', endymd[3], endymd[4])
+          if !has_key(events, date)
+            let events[date] = { 'events': [] }
+          endif
+          call add(events[date].events,
+                \ extend(deepcopy(itm),
+                \ { 'calendarId': item.id
+                \ , 'calendarSummary': item.summary
+                \ , 'syntax': syn
+                \ , 'isTimeEvent': isTimeEvent
+                \ , 'isHoliday': isHoliday
+                \ , 'isMoon': isMoon
+                \ , 'isDayNum': isDayNum
+                \ , 'isWeekNum': isWeekNum
+                \ , 'starttime': starttime
+                \ , 'endtime': endtime
+                \ , 'ymdnum': (((ymd[0] * 100 + ymd[1]) * 100) + ymd[2])
+                \ , 'hms': ymd[3:]
+                \ , 'sec': ((ymd[3] * 60) + ymd[4]) * 60 + ymd[5]
+                \ , 'ymd': ymd[:2]
+                \ , 'endhms': endymd[3:]
+                \ , 'endymd': endymd[:2] }))
+          if isHoliday
+            let events[date].holiday = events[date].events[-1].summary
+            let events[date].hasHoliday = 1
+          endif
+          if isMoon
+            call s:moon_event(events[date])
+          endif
+          if isDayNum
+            let events[date].daynum = matchstr(events[date].events[-1].summary, '\d\+')
+          endif
+          if isWeekNum
+            let events[date].weeknum = matchstr(events[date].events[-1].summary, '\d\+')
+          endif
+        endfor
+      endwhile
+    elseif !get(s:event_download, key)
+      let s:event_download[key] = 1
+      call calendar#google#calendar#downloadEvents(a:year, a:month)
+      break
+    endif
+  endfor
   for date in keys(events)
     call sort(events[date].events, function('calendar#google#calendar#sorter'))
   endfor
@@ -256,65 +261,69 @@ function! calendar#google#calendar#getHolidays(year, month) abort
   let _calendarList = s:cache.get('calendarList')
   let calendarList = type(_calendarList) == type({}) ? _calendarList : {}
   let events = {}
-  if has_key(calendarList, 'items') && type(calendarList.items) == type([]) && len(calendarList.items)
-    let [y, m] = [printf('%04d', a:year), printf('%02d', a:month)]
-    for item in calendarList.items
-      if !get(item, 'selected') || item.id !~# 'holiday@group.v.calendar.google.com'
+  if type(get(calendarList, 'items')) != type([])
+    return events
+  endif
+  let [y, m] = [printf('%04d', a:year), printf('%02d', a:month)]
+  for item in calendarList.items
+    if !get(item, 'selected') || item.id !~# 'holiday@group.v.calendar.google.com'
+      continue
+    endif
+    unlet! cnt
+    let cnt = s:event_cache.new(item.id).new(y).new(m).get('information')
+    if type(cnt) != type({}) || !has_key(cnt, 'summary')
+      continue
+    endif
+    let index = 0
+    while 1
+      let c = s:event_cache.new(item.id).new(y).new(m).get(index)
+      if type(c) != type({})
+        unlet! c
+        break
+      endif
+      let index += 1
+      if type(get(c, 'items')) != type([])
         continue
       endif
-      if item.id =~# 'holiday@group.v.calendar.google.com'
-        unlet! cnt
-        let cnt = s:event_cache.new(item.id).new(y).new(m).get('information')
-        if type(cnt) == type({}) && has_key(cnt, 'summary')
-          unlet! c
-          let c = {}
-          let index = 0
-          while type(c) == type({})
-            unlet! c
-            let c = s:event_cache.new(item.id).new(y).new(m).get(index)
-            if type(c) == type({}) && has_key(c, 'items') && type(c.items) == type([])
-              for itm in c.items
-                if has_key(itm, 'start') && (has_key(itm.start, 'date') || has_key(itm.start, 'dateTime'))
-                  let date = has_key(itm.start, 'date') ? itm.start.date
-                        \  : has_key(itm.start, 'dateTime') ? matchstr(itm.start.dateTime, '\d\+-\d\+-\d\+') : ''
-                  let ymd = map(split(date, '-'), 'v:val + 0')
-                  let enddate = has_key(itm.end, 'date') ? itm.end.date : has_key(itm.end, 'dateTime') ? matchstr(itm.end.dateTime, '\d\+-\d\+-\d\+') : ''
-                  let endymd = map(split(enddate, '-'), 'v:val + 0')
-                  if date !=# '' && len(ymd) == 3 && len(endymd) == 3
-                    let date = join(ymd, '-')
-                    if has_key(itm.end, 'date')
-                      let endymd = calendar#day#new(endymd[0], endymd[1], endymd[2]).add(-1).get_ymd()
-                    endif
-                    if !has_key(events, date)
-                      let events[date] = { 'events': [], 'hasHoliday': 1 }
-                    endif
-                    call add(events[date].events,
-                          \ extend(deepcopy(itm),
-                          \ { 'calendarId': item.id
-                          \ , 'calendarSummary': item.summary
-                          \ , 'holiday': get(itm, 'summary', '')
-                          \ , 'isHoliday': 1
-                          \ , 'isMoon': 0
-                          \ , 'isDayNum': 0
-                          \ , 'isWeekNum': 0
-                          \ , 'starttime': ''
-                          \ , 'endtime': ''
-                          \ , 'ymdnum': (((ymd[0] * 100 + ymd[1]) * 100) + ymd[2])
-                          \ , 'hms': [ 0, 0, 0 ]
-                          \ , 'ymd': ymd
-                          \ , 'endhms': [ 0, 0, 0 ]
-                          \ , 'endymd': endymd }))
-                  endif
-                endif
-              endfor
-            endif
-            let index += 1
-          endwhile
-          break
+      for itm in c.items
+        if !(has_key(itm, 'start') && (has_key(itm.start, 'date') || has_key(itm.start, 'dateTime'))
+              \ && has_key(itm, 'end') && (has_key(itm.end, 'date') || has_key(itm.end, 'dateTime')))
+          continue
         endif
-      endif
-    endfor
-  endif
+        let date = has_key(itm.start, 'date') ? itm.start.date
+              \  : has_key(itm.start, 'dateTime') ? matchstr(itm.start.dateTime, '\d\+-\d\+-\d\+') : ''
+        let ymd = map(split(date, '-'), 'v:val + 0')
+        let enddate = has_key(itm.end, 'date') ? itm.end.date : has_key(itm.end, 'dateTime') ? matchstr(itm.end.dateTime, '\d\+-\d\+-\d\+') : ''
+        let endymd = map(split(enddate, '-'), 'v:val + 0')
+        if len(ymd) != 3 || len(endymd) != 3
+          continue
+        endif
+        let date = join(ymd, '-')
+        if has_key(itm.end, 'date')
+          let endymd = calendar#day#new(endymd[0], endymd[1], endymd[2]).add(-1).get_ymd()
+        endif
+        if !has_key(events, date)
+          let events[date] = { 'events': [], 'hasHoliday': 1 }
+        endif
+        call add(events[date].events,
+              \ extend(deepcopy(itm),
+              \ { 'calendarId': item.id
+              \ , 'calendarSummary': item.summary
+              \ , 'holiday': get(itm, 'summary', '')
+              \ , 'isHoliday': 1
+              \ , 'isMoon': 0
+              \ , 'isDayNum': 0
+              \ , 'isWeekNum': 0
+              \ , 'starttime': ''
+              \ , 'endtime': ''
+              \ , 'ymdnum': (((ymd[0] * 100 + ymd[1]) * 100) + ymd[2])
+              \ , 'hms': [ 0, 0, 0 ]
+              \ , 'ymd': ymd
+              \ , 'endhms': [ 0, 0, 0 ]
+              \ , 'endymd': endymd }))
+      endfor
+    endwhile
+  endfor
   return events
 endfunction
 
