@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_days.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/04/05 19:04:52.
+" Last Change: 2017/05/07 20:12:54.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -196,10 +196,15 @@ function! s:get_timeevts(events, blockmin) abort
   let r = range(len(a:events))
   for i in r
     if get(a:events[i], 'isTimeEvent') && has_key(a:events[i], 'hms') && has_key(a:events[i], 'endhms')
-      if a:events[i].ymd == a:events[i].endymd
+      if a:events[i].ymd == a:events[i].endymd ||
+            \  (a:events[i].endhms == [0, 0, 0] &&
+            \   calendar#day#new(a:events[i].endymd[0], a:events[i].endymd[1], a:events[i].endymd[2]).sub(
+            \     calendar#day#new(a:events[i].ymd[0], a:events[i].ymd[1], a:events[i].ymd[2])
+            \   ) == 1
+            \  )
         let hour = a:events[i].hms[0]
         let min = a:events[i].hms[1] / a:blockmin * a:blockmin
-        let endhour = a:events[i].endhms[0]
+        let endhour = a:events[i].ymd == a:events[i].endymd ? a:events[i].endhms[0] : 24
         let endmin = a:events[i].endhms[1]
         let flg = 0
         let prev = []
@@ -354,7 +359,11 @@ function! s:instance.set_contents() dict abort
     let longevtIndex = 0
     for x in hh
       if longevtIndex < len(longevt) && longevt[longevtIndex].viewoffset == x
-        let lastday = d.get_day() == longevt[longevtIndex].endymd[2]
+        let lastday = d.get_day() == longevt[longevtIndex].endymd[2] ||
+              \ (get(longevt[longevtIndex], 'isTimeEvent') &&
+              \  longevt[longevtIndex].endhms == [0, 0, 0] &&
+              \  calendar#day#new(longevt[longevtIndex].endymd[0], longevt[longevtIndex].endymd[1], longevt[longevtIndex].endymd[2]).sub(d) == 1
+              \ )
         let eventtext = repeat('=', v.inner_width - lastday) . (lastday ? ']' : '')
         let splitter = i ? repeat('=', f.width) : f.vertical
         let s[y + x] .= splitter . eventtext
@@ -372,7 +381,14 @@ function! s:instance.set_contents() dict abort
           let z += 1
         endwhile
         if z < len(evts.events)
-          if evts.events[z].ymd != evts.events[z].endymd
+          let is_long_event = evts.events[z].ymd != evts.events[z].endymd &&
+                \ (!get(evts.events[z], 'isTimeEvent') ||
+                \   evts.events[z].endhms != [0, 0, 0] ||
+                \   calendar#day#new(evts.events[z].endymd[0], evts.events[z].endymd[1], evts.events[z].endymd[2]).sub(
+                \     calendar#day#new(evts.events[z].ymd[0], evts.events[z].ymd[1], evts.events[z].ymd[2])
+                \   ) > 1
+                \ )
+          if is_long_event
             let trailing = ' ' . repeat('=', v.inner_width)
             call add(longevt, extend(evts.events[z], { 'viewoffset': x }))
           else
@@ -394,7 +410,7 @@ function! s:instance.set_contents() dict abort
         endif
       endif
     endfor
-    call sort(filter(longevt, 'calendar#day#new(v:val.endymd[0], v:val.endymd[1], v:val.endymd[2]).sub(d) > 0 && has_key(v:val, "viewoffset")'), 'calendar#view#month#sorter')
+    call sort(filter(longevt, 'calendar#view#month#longevt_filter(v:val, d)'), 'calendar#view#month#sorter')
     let time_events = s:get_timeevts(evts.events, v.blockmin)
     for k in range(height)
       if k < height - bottompad

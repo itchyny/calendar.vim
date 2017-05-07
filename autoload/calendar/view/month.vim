@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/month.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/09/27 17:24:07.
+" Last Change: 2017/05/07 20:06:24.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -191,7 +191,11 @@ function! s:self.set_contents() dict abort
     let hh = 1 <= h - 2 ? range(1, h - 2 - (v.heightincr && j == 5)) : []
     for x in hh
       if longevtIndex < len(longevt) && longevt[longevtIndex].viewoffset == x
-        let lastday = d.get_day() == longevt[longevtIndex].endymd[2]
+        let lastday = d.get_day() == longevt[longevtIndex].endymd[2] ||
+              \ (get(longevt[longevtIndex], 'isTimeEvent') &&
+              \  longevt[longevtIndex].endhms == [0, 0, 0] &&
+              \  calendar#day#new(longevt[longevtIndex].endymd[0], longevt[longevtIndex].endymd[1], longevt[longevtIndex].endymd[2]).sub(d) == 1
+              \ )
         let nextweek = i == 6 && d.get_day() < longevt[longevtIndex].endymd[2]
         if len(longevt[longevtIndex].rest) || i == 0
           let eventorigtext = i ? longevt[longevtIndex].rest : ('«=' . longevt[longevtIndex].summary)
@@ -232,7 +236,14 @@ function! s:self.set_contents() dict abort
           let z += 1
         endwhile
         if z < len(evts.events)
-          if evts.events[z].ymd != evts.events[z].endymd
+          let is_long_event = evts.events[z].ymd != evts.events[z].endymd &&
+                \ (!get(evts.events[z], 'isTimeEvent') ||
+                \   evts.events[z].endhms != [0, 0, 0] ||
+                \   calendar#day#new(evts.events[z].endymd[0], evts.events[z].endymd[1], evts.events[z].endymd[2]).sub(
+                \     calendar#day#new(evts.events[z].ymd[0], evts.events[z].ymd[1], evts.events[z].ymd[2])
+                \   ) > 1
+                \ )
+          if is_long_event
             let trailing = ' ' . repeat('=', v.inner_width)
             call add(longevt, extend(evts.events[z], { 'viewoffset': x }))
             let nextweek = i == 6
@@ -245,7 +256,7 @@ function! s:self.set_contents() dict abort
           let eventorigtext = starttime . evts.events[z].summary
           let strpart = calendar#string#strwidthpart(eventorigtext, v.inner_width - nextweek * 2)
           let eventtext = calendar#string#truncate(strpart . trailing, v.inner_width - nextweek * 2) . (nextweek ? '=»' : '')
-          if evts.events[z].ymd != evts.events[z].endymd
+          if is_long_event
             let longevt[-1].rest = eventorigtext[len(strpart):]
             if strpart !=# eventtext && longevt[-1].rest !=# ''
                   \ && calendar#string#strdisplaywidth(matchstr(strpart, '.$')) == 2
@@ -277,7 +288,7 @@ function! s:self.set_contents() dict abort
         endif
       endif
     endfor
-    call sort(filter(longevt, 'calendar#day#new(v:val.endymd[0], v:val.endymd[1], v:val.endymd[2]).sub(d) > 0 && has_key(v:val, "viewoffset")'), 'calendar#view#month#sorter')
+    call sort(filter(longevt, 'calendar#view#month#longevt_filter(v:val, d)'), 'calendar#view#month#sorter')
     if h > 1
       let frame = i ? (j + 1 == v.week_count ? f.bottom : f.junction) : j + 1 == v.week_count ? f.bottomleft : f.left
       let s[y + h - 1 - (v.heightincr && j == 5)] .= frame . self.element.splitter
@@ -304,6 +315,13 @@ function! s:self.set_contents() dict abort
   let self._month = month.get_ym()
   let self._today = today.get_ymd()
   let self.days = map(range(len(s)), 'calendar#text#new(s[v:val], 0, v:val, "")')
+endfunction
+
+function! calendar#view#month#longevt_filter(evt, d) abort
+  let endday = calendar#day#new(a:evt.endymd[0], a:evt.endymd[1], a:evt.endymd[2])
+  return endday.sub(a:d) > 0 &&
+        \ has_key(a:evt, 'viewoffset') &&
+        \ (!get(a:evt, 'isTimeEvent') || a:evt.endhms != [0, 0, 0] || endday.sub(a:d) > 1)
 endfunction
 
 function! calendar#view#month#sorter(l, r) abort
