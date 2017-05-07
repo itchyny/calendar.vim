@@ -2,31 +2,24 @@
 " Filename: autoload/calendar/week.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/01/19 23:53:55.
+" Last Change: 2017/05/07 22:52:34.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-" Week object
-"   week: week string (one of s:weeks)
-"   default: week string (one of s:weeks), the default value which is used when
-"            the first argument is not found in s:weeks.
-function! calendar#week#new(week, default) abort
-  let self = extend(copy(s:self), { '_week': a:week, '_default': a:default })
-  let self.week = self.get()
-  let self.index = index(s:weeks, self.week)
-  return self
-endfunction
-
+let s:cache = {}
 function! calendar#week#first_day_index() abort
-  let w = calendar#setting#get('first_day')
-  return calendar#week#new(w, 'sunday').index
+  let first_day = calendar#setting#get('first_day')
+  if has_key(s:cache, first_day)
+    return s:cache[first_day]
+  endif
+  let s:cache[first_day] = s:get_index(first_day, 0)
+  return s:cache[first_day]
 endfunction
 
 function! calendar#week#last_day_index() abort
-  let w = calendar#setting#get('first_day')
-  return calendar#week#new(w, 'sunday').add(6).index
+  return (calendar#week#first_day_index() + 6) % 7
 endfunction
 
 function! calendar#week#is_first_day(day) abort
@@ -46,7 +39,7 @@ function! calendar#week#week_count(month) abort
 endfunction
 
 function! calendar#week#week_number_year(day) abort
-  if calendar#setting#get('first_day') == 'monday'
+  if calendar#setting#get('first_day') =~? 'monday'
     let d = a:day.year().head_day().add(3)
     let diff = a:day.sub(d) + calendar#week#week_number(d)
     if diff >= 0
@@ -62,34 +55,17 @@ function! calendar#week#week_number_year(day) abort
   endif
 endfunction
 
-let s:self = {}
-
 let s:weeks = [ 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday' ]
 
-function! s:self.new(week, default) dict abort
-  return calendar#week#new(a:week, a:default)
-endfunction
-
-function! s:self.new_index(index) dict abort
-  let index = a:index % 7 + 7 * ((a:index < 0) && (a:index % 7))
-  return calendar#week#new(s:weeks[index], s:weeks[index])
-endfunction
-
-function! s:self.get() dict abort
-  if has_key(self, 'week') | return self.week | endif
-  let flg = 0
+function! s:get_index(week, default) abort
+  let found = 0
   for index in range(len(s:weeks))
-    if self._week =~? s:weeks[index]
-      let flg = 1
+    if a:week =~? s:weeks[index]
+      let found = 1
       break
     endif
   endfor
-  let self.week = flg ? s:weeks[index] : self._default
-  return self.week
-endfunction
-
-function! s:self.add(diff) dict abort
-  return self.new_index(self.index + a:diff)
+  return found ? index : a:default
 endfunction
 
 let &cpo = s:save_cpo
