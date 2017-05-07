@@ -2,11 +2,13 @@
 " Filename: autoload/calendar/week.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2017/05/07 22:52:34.
+" Last Change: 2017/05/07 23:01:03.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
+
+let s:weeks = [ 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday' ]
 
 let s:cache = {}
 function! calendar#week#first_day_index() abort
@@ -14,7 +16,8 @@ function! calendar#week#first_day_index() abort
   if has_key(s:cache, first_day)
     return s:cache[first_day]
   endif
-  let s:cache[first_day] = s:get_index(first_day, 0)
+  let index = index(s:weeks, tolower(first_day))
+  let s:cache[first_day] = index >= 0 ? index : 0
   return s:cache[first_day]
 endfunction
 
@@ -53,19 +56,6 @@ function! calendar#week#week_number_year(day) abort
     let d = a:day.year().head_day()
     return (a:day.sub(d) + calendar#week#week_number(d) + 7) / 7
   endif
-endfunction
-
-let s:weeks = [ 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday' ]
-
-function! s:get_index(week, default) abort
-  let found = 0
-  for index in range(len(s:weeks))
-    if a:week =~? s:weeks[index]
-      let found = 1
-      break
-    endif
-  endfor
-  return found ? index : a:default
 endfunction
 
 let &cpo = s:save_cpo
