@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/time.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/04/10 12:59:23.
+" Last Change: 2017/05/08 07:45:01.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -33,13 +33,13 @@ endfunction
 let s:time_zone_cache = {}
 function! calendar#time#time_zone() abort
   let time_zone = calendar#setting#get('time_zone')
-  let str = time_zone
   if has_key(s:time_zone_cache, time_zone)
     return s:time_zone_cache[time_zone]
   endif
-  if !len(str)
-    return calendar#time#new(0, 0, 0)
+  if time_zone ==# ''
+    return 0
   endif
+  let str = time_zone
   let sign_str = str[0] ==# '-' ? '-' : str[0] ==# '+' ? '+' : ''
   let str = str[len(sign_str):]
   let d = matchstr(str, '^\d\+')
