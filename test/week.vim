@@ -59,3 +59,26 @@ function! s:suite.is_last_day()
   call s:assert.equals(calendar#week#is_last_day(calendar#day#new(2006, 1, 1)), 0)
   call s:assert.equals(calendar#week#is_last_day(calendar#day#new(2007, 1, 1)), 0)
 endfunction
+
+function! s:suite.week_index()
+  call s:assert.equals(calendar#week#week_index(calendar#day#new(2000, 1, 1)), 6)
+  call s:assert.equals(calendar#week#week_index(calendar#day#new(2001, 1, 1)), 1)
+  call s:assert.equals(calendar#week#week_index(calendar#day#new(2004, 1, 1)), 4)
+  call s:assert.equals(calendar#week#week_index(calendar#day#new(2005, 1, 1)), 6)
+  call s:assert.equals(calendar#week#week_index(calendar#day#new(2006, 1, 1)), 0)
+  call s:assert.equals(calendar#week#week_index(calendar#day#new(2007, 1, 1)), 1)
+  let g:calendar_first_day = 'monday'
+  call s:assert.equals(calendar#week#week_index(calendar#day#new(2000, 1, 1)), 5)
+  call s:assert.equals(calendar#week#week_index(calendar#day#new(2001, 1, 1)), 0)
+  call s:assert.equals(calendar#week#week_index(calendar#day#new(2004, 1, 1)), 3)
+  call s:assert.equals(calendar#week#week_index(calendar#day#new(2005, 1, 1)), 5)
+  call s:assert.equals(calendar#week#week_index(calendar#day#new(2006, 1, 1)), 6)
+  call s:assert.equals(calendar#week#week_index(calendar#day#new(2007, 1, 1)), 0)
+  let g:calendar_first_day = 'saturday'
+  call s:assert.equals(calendar#week#week_index(calendar#day#new(2000, 1, 1)), 0)
+  call s:assert.equals(calendar#week#week_index(calendar#day#new(2001, 1, 1)), 2)
+  call s:assert.equals(calendar#week#week_index(calendar#day#new(2004, 1, 1)), 5)
+  call s:assert.equals(calendar#week#week_index(calendar#day#new(2005, 1, 1)), 0)
+  call s:assert.equals(calendar#week#week_index(calendar#day#new(2006, 1, 1)), 1)
+  call s:assert.equals(calendar#week#week_index(calendar#day#new(2007, 1, 1)), 2)
+endfunction
