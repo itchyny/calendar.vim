@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/day_hybrid.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/07/04 01:54:05.
+" Last Change: 2017/05/07 22:07:20.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -20,9 +20,9 @@ let s:constructor = {}
 
 function! s:constructor.new(y, m, d) dict abort
   let mjd = calendar#day#gregorian#new(a:y, a:m, a:d).mjd
-  if mjd.is_before(self.switch_mjd)
+  if mjd < self.switch_mjd
     let mjd = calendar#day#julian#new(a:y, a:m, a:d).mjd
-    if mjd.is_after(self.switch_mjd)
+    if mjd > self.switch_mjd
       let mjd = deepcopy(self.switch_mjd)
     endif
   endif
@@ -60,7 +60,7 @@ function! s:instance.get_ymd() dict abort
 endfunction
 
 function! s:instance.is_gregorian() dict abort
-  return self.mjd.is_after_or_eq(self.switch_mjd)
+  return self.mjd >= self.switch_mjd
 endfunction
 
 function! s:instance.get_calendar() dict abort

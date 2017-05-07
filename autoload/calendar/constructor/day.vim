@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/day.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/07/04 02:12:05.
+" Last Change: 2017/05/07 22:22:26.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -21,6 +21,8 @@ function! s:constructor.new(y, m, d) dict abort
   return extend(self.instance.new(a:y, a:m, a:d), { 'constructor': self })
 endfunction
 
+" Modified Julian Day
+" Reference: http://en.wikipedia.org/wiki/Julian_day
 function! s:constructor.new_mjd(mjd) dict abort
   return extend(extend(copy(s:instance), self.instance), { 'mjd': a:mjd, 'constructor': self })
 endfunction
@@ -32,7 +34,7 @@ function! s:div(x, y) abort
 endfunction
 
 function! s:instance.add(diff) dict abort
-  return self.new_mjd(self.mjd.add(a:diff))
+  return self.new_mjd(self.mjd + a:diff)
 endfunction
 
 function! s:instance.add_month(diff) dict abort
@@ -62,11 +64,14 @@ function! s:instance.add_year(diff) dict abort
 endfunction
 
 function! s:instance.sub(day) dict abort
-  return self.mjd.sub(a:day.mjd)
+  return self.mjd - a:day.mjd
 endfunction
 
 function! s:instance.week() dict abort
-  return self.mjd.week
+  if has_key(self, '_week') | return self._week | endif
+  let m = self.mjd + 3
+  let self._week = m % 7 + 7 * ((m < 0) && (m % 7))
+  return self._week
 endfunction
 
 function! s:instance.today() dict abort
@@ -74,7 +79,7 @@ function! s:instance.today() dict abort
 endfunction
 
 function! s:instance.eq(day) dict abort
-  return self.mjd.eq(a:day.mjd)
+  return self.mjd == a:day.mjd
 endfunction
 
 function! s:instance.eq_month(day) dict abort
@@ -90,31 +95,31 @@ function! s:instance.eq_week(day) dict abort
 endfunction
 
 function! s:instance.is_sunday() dict abort
-  return self.mjd.is_sunday()
+  return self.week() == 0
 endfunction
 
 function! s:instance.is_monday() dict abort
-  return self.mjd.is_monday()
+  return self.week() == 1
 endfunction
 
 function! s:instance.is_tuesday() dict abort
-  return self.mjd.is_tuesday()
+  return self.week() == 2
 endfunction
 
 function! s:instance.is_wednesday() dict abort
-  return self.mjd.is_wednesday()
+  return self.week() == 3
 endfunction
 
 function! s:instance.is_thursday() dict abort
-  return self.mjd.is_thursday()
+  return self.week() == 4
 endfunction
 
 function! s:instance.is_friday() dict abort
-  return self.mjd.is_friday()
+  return self.week() == 5
 endfunction
 
 function! s:instance.is_saturday() dict abort
-  return self.mjd.is_saturday()
+  return self.week() == 6
 endfunction
 
 function! s:instance.is_valid() dict abort

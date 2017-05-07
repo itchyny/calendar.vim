@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/day/gregorian.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/07/04 01:54:18.
+" Last Change: 2017/05/07 22:04:31.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -29,7 +29,7 @@ let s:self = {}
 function! s:self.new(y, m, d) dict abort
   let y = a:y - (a:m < 3)
   let mjd = s:div(y*1461,4)+s:div(y,400)-s:div(y,100)+((a:m+12*(a:m<3)-3)*153+2)/5+a:d-678882
-  return extend(self.new_mjd(calendar#mjd#new(mjd)), { '_ymd': [a:y, a:m, a:d] })
+  return extend(self.new_mjd(mjd), { '_ymd': [a:y, a:m, a:d] })
 endfunction
 
 function! s:self.new_mjd(mjd) dict abort
@@ -40,7 +40,7 @@ let s:_ = {}
 let s:days = { '1': 31, '2': 28, '3': 31, '4': 30, '5': 31, '6': 30, '7': 31, '8': 31, '9': 30, '10': 31, '11': 30, '12': 31 }
 function! s:self.get_ymd() dict abort
   if has_key(self, 'ymd') | return self.ymd | endif
-  let _ = self.mjd.mjd
+  let _ = self.mjd
   if has_key(s:_, _) | return s:_[_] | endif
   if has_key(s:_, _ - 1) && s:_[_ - 1][2] < s:days[s:_[_ - 1][1]]
     let p = s:_[_ - 1]
