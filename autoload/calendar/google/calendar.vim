@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2017/05/08 08:08:48.
+" Last Change: 2017/05/09 22:37:21.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -156,9 +156,9 @@ function! calendar#google#calendar#getEvents(year, month, ...) abort
     if type(cnt) == type({}) && has_key(cnt, 'summary')
       let index = 0
       while 1
+        unlet! c
         let c = s:event_cache.new(item.id).new(y).new(m).get(index)
         if type(c) != type({})
-          unlet! c
           break
         endif
         let index += 1
@@ -276,9 +276,9 @@ function! calendar#google#calendar#getHolidays(year, month) abort
     endif
     let index = 0
     while 1
+      unlet! c
       let c = s:event_cache.new(item.id).new(y).new(m).get(index)
       if type(c) != type({})
-        unlet! c
         break
       endif
       let index += 1
