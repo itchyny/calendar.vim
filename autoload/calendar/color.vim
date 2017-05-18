@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/color.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2017/04/26 22:59:44.
+" Last Change: 2017/05/19 08:53:05.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -21,10 +21,10 @@ let s:background = ''
 " &background is not useful on non-GUI environment when colorscheme executes :highlight Normal ctermbg=23X.
 "   ref: syntax.c /set_option_value
 function! calendar#color#is_dark() abort
-  if s:is_dark >= 0 && s:colors_name ==# g:colors_name && s:background ==# &background
+  if s:is_dark >= 0 && s:colors_name ==# get(g:, 'colors_name', '') && s:background ==# &background
     return s:is_dark
   endif
-  let s:colors_name = g:colors_name
+  let s:colors_name = get(g:, 'colors_name', '')
   let s:background = &background
   if s:is_gui
     let s:is_dark = &background ==# 'dark'
