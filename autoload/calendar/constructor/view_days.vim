@@ -681,9 +681,9 @@ function! s:instance.action(action) dict abort
   let hour = b:calendar.time().hour()
   let wnum = d.sub(self.get_min_day())
   if a:action ==# 'left'
-    call b:calendar.move_day(get(self, 'stopend') ? max([-v:count1, -wnum]) : -v:count1)
+    call b:calendar.move_day(get(self, 'stopend') ? (-v:count1 % 7 < -wnum ? 7 - v:count1 % 7 : -v:count1 % 7) : -v:count1)
   elseif a:action ==# 'right'
-    call b:calendar.move_day(get(self, 'stopend') ? min([v:count1, -wnum + self.daynum - 1]) : v:count1)
+    call b:calendar.move_day(get(self, 'stopend') ? (v:count1 % 7 > -wnum + self.daynum -1 ? -7 + v:count1 % 7 : v:count1 % 7) : v:count1)
   elseif index(['prev', 'next', 'space', 'add', 'subtract'], a:action) >= 0
     call b:calendar.move_day(v:count1 * (index(['prev', 'subtract'], a:action) >= 0 ? -1 : 1))
   elseif index(['down', 'up'], a:action) >= 0
