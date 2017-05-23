@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2017/05/09 22:37:21.
+" Last Change: 2017/05/23 22:00:43.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -126,6 +126,13 @@ function! calendar#google#calendar#getEventsInitial(year, month) abort
       call calendar#async#new(printf('calendar#google#calendar#initialDownload(%d, %d, 0)', a:year, a:month))
     endif
   endif
+endfunction
+
+function! calendar#google#calendar#clearCache() abort
+  let s:initial_download = {}
+  let s:event_download = {}
+  unlet! g:calendar_google_event_download
+  call calendar#timestamp#clear()
 endfunction
 
 " The optional argument: Forcing initial download. s:initial_download is used to check.

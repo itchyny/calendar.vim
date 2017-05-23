@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/event/google.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/07/18 02:28:42.
+" Last Change: 2017/05/23 22:01:14.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -58,6 +58,10 @@ function! s:self.calendarList() dict abort
 endfunction
 
 function! s:self.createCalendar() dict abort
+endfunction
+
+function! s:self.clear_cache() dict abort
+  call calendar#google#calendar#clearCache()
 endfunction
 
 let &cpo = s:save_cpo

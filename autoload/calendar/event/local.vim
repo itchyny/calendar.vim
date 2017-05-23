@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/event/local.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2017/05/08 07:53:14.
+" Last Change: 2017/05/23 22:01:23.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -213,6 +213,9 @@ function! s:self.createCalendar() dict abort
       unlet! self._calendarList
     endif
   endif
+endfunction
+
+function! s:self.clear_cache() dict abort
 endfunction
 
 let &cpo = s:save_cpo
