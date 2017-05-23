@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/timestamp.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:32:17.
+" Last Change: 2017/05/23 21:52:29.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -32,6 +32,10 @@ function! calendar#timestamp#update(name, sec) abort
           \ , 'time': calendar#time#now().get_hms() })
   endif
   return refresh
+endfunction
+
+function! calendar#timestamp#clear() abort
+  call s:cache.clear()
 endfunction
 
 let &cpo = s:save_cpo
