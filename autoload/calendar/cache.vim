@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/cache.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:25:33.
+" Last Change: 2017/05/23 21:52:16.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -134,6 +134,10 @@ function! s:self.delete(key) dict abort
   endif
   let path = self.path(a:key)
   return delete(path)
+endfunction
+
+function! s:self.clear() dict abort
+  call calendar#util#rmdir(self.dir(), 'rf')
 endfunction
 
 " string() with making newlines and indents properly.
