@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/setting.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/06/27 20:47:57.
+" Last Change: 2017/07/02 08:25:13.
 " =============================================================================
 
 scriptencoding utf-8
@@ -36,7 +36,7 @@ function! s:calendar() abort
 endfunction
 
 function! s:first_day() abort
-  return v:lang =~# '\%(US\|CA\|JP\|IL\)\|^\%(ja\)' ? 'sunday' : 'monday'
+  return v:lang =~# '\v(US|CA|JP|IL)|^(ja)' ? 'sunday' : 'monday'
 endfunction
 
 let s:t = strftime('%z')
@@ -45,14 +45,14 @@ function! s:time_zone() abort
 endfunction
 
 function! s:date_endian() abort
-  return v:lang =~# '\%(JP\|KR\|HU\|LT\|IR\|MN\)\|^\%(ja\|zh\)' ? 'big'
+  return v:lang =~# '\v(JP|KR|HU|LT|IR|MN)|^(ja|zh)' ? 'big'
      \ : v:lang =~# 'US' ? 'middle'
      \ : 'little'
 endfunction
 
 function! s:date_separator() abort
-  return v:lang =~# '\%(AM\|AT\|AZ\|BY\|BG\|HR\|CZ\|EE\|FI\|GE\|DE\|HU\|IS\|KZ\|KG\|LV\|MN\|NO\|RO\|RU\|SK\|CH\|TM\|UA\)' ? '.'
-     \ : v:lang =~# '\%(BD\|CN\|DK\|FR\|IN\|IE\|LT\|NL\|SE\|TW\)' ? '-'
+  return v:lang =~# '\v(AM|AT|AZ|BY|BG|HR|CZ|EE|FI|GE|DE|HU|IS|KZ|KG|LV|MN|NO|RO|RU|SK|CH|TM|UA)' ? '.'
+     \ : v:lang =~# '\v(BD|CN|DK|FR|IN|IE|LT|NL|SE|TW)' ? '-'
      \ : '/'
 endfunction
 

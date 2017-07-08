@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2017/07/02 07:19:50.
+" Last Change: 2017/07/02 08:35:25.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -273,12 +273,12 @@ function! s:parse_title(title, ...) abort
   let date = join([year, month, day], '-')
   let ndate = join([nyear, nmonth, nday], '-')
   let [startdate, enddate] = ['', '']
-  if title =~# '^\s*\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+:\d\+\%(:\d\+\)\?'
-    let time = matchstr(title, '^\s*\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+:\d\+\%(:\d\+\)\?')
-    let starttime = matchstr(time, '^\s*\d\+:\d\+\%(:\d\+\)\?')
-    let endtime = matchstr(time[len(starttime):], '\d\+:\d\+\%(:\d\+\)\?')
-    if starttime =~# '^\s*2[4-9]:'
-      let hour = substitute(matchstr(starttime, '^\s*2[4-9]'), '\s*', '', '')
+  if title =~# '\v^\s*\d+:\d+(:\d+)?\s*-\s*\d+:\d+(:\d+)?'
+    let time = matchstr(title, '\v^\s*\d+:\d+(:\d+)?\s*-\s*\d+:\d+(:\d+)?')
+    let starttime = matchstr(time, '\v^\s*\d+:\d+(:\d+)?')
+    let endtime = matchstr(time[len(starttime):], '\v\d+:\d+(:\d+)?')
+    if starttime =~# '\v^\s*2[4-9]:'
+      let hour = substitute(matchstr(starttime, '\v^\s*2[4-9]'), '\v\s*', '', '')
       let starttime = (hour - 24) . starttime[len(hour):]
       let startday = ndate
     else
@@ -293,13 +293,13 @@ function! s:parse_title(title, ...) abort
     endif
     let title = substitute(title[len(time):], '^\s*', '', '')
     let [startdate, enddate] = [s:format_time(startday . 'T' . starttime), s:format_time(endday . 'T' . endtime)]
-  elseif title =~# '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s*-\s*\d\+[-/]\d\+\%([-/]\d\+\)\?'
-    let time = matchstr(title, '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s*-\s*\d\+[-/]\d\+\%([-/]\d\+\)\?')
-    let starttime = matchstr(time, len(split(time, '-')) == 2 ? '^\s*\d\+/\d\+\%(/\d\+\)\?\s*' : '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s*')
-    let endtime = matchstr(time[len(starttime):], '\d\+[-/]\d\+\%([-/]\d\+\)\?')
+  elseif title =~# '\v^\s*\d+[-/]\d+([-/]\d+)?\s*-\s*\d+[-/]\d+([-/]\d+)?'
+    let time = matchstr(title, '\v^\s*\d+[-/]\d+([-/]\d+)?\s*-\s*\d+[-/]\d+([-/]\d+)?')
+    let starttime = matchstr(time, len(split(time, '-')) == 2 ? '\v^\s*\d+/\d+(/\d+)?\s*' : '\v^\s*\d+[-/]\d+([-/]\d+)?\s*')
+    let endtime = matchstr(time[len(starttime):], '\v\d+[-/]\d+([-/]\d+)?')
     let title = substitute(title[len(time):], '^\s*', '', '')
     let [startdate, enddate] = [s:format_time(starttime), s:format_time_end(endtime)]
-    if startdate =~# '^\d\+-\d\+-\d\+$' && enddate =~# '^\d\+-\d\+-\d\+$'
+    if startdate =~# '\v^\d+-\d+-\d+$' && enddate =~# '\v^\d+-\d+-\d+$'
       let [sy, sm, sd] = map(split(startdate, '-'), 'v:val + 0')
       let [ey, em, ed] = map(split(enddate, '-'), 'v:val + 0')
       if sy == ey && sm > em
@@ -310,14 +310,14 @@ function! s:parse_title(title, ...) abort
         endif
       endif
     endif
-  elseif title =~# '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?\s*-\s*\%(\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\)\?\d\+:\d\+\%(:\d\+\)\?'
-    let time = matchstr(title, '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?\s*-\s*\%(\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\)\?\d\+:\d\+\%(:\d\+\)\?')
-    let starttime = matchstr(time, '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\d\+:\d\+\%(:\d\+\)\?\s*')
-    let endtime = matchstr(time[len(starttime):], '\%(\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+\)\?\d\+:\d\+\%(:\d\+\)\?')
-    let starttime = substitute(starttime, '^\s*\|\s*$', '', 'g')
-    let endtime = substitute(endtime, '^\s*\|\s*$', '', 'g')
-    if endtime !~# '^\d\+[-/]\d\+\%([-/]\d\+\)\?'
-      let endtime = matchstr(starttime, '^\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+') . endtime
+  elseif title =~# '\v^\s*\d+[-/]\d+([-/]\d+)?\s+\d+:\d+(:\d+)?\s*-\s*(\d+[-/]\d+([-/]\d+)?\s+)?\d+:\d+(:\d+)?'
+    let time = matchstr(title, '\v^\s*\d+[-/]\d+([-/]\d+)?\s+\d+:\d+(:\d+)?\s*-\s*(\d+[-/]\d+([-/]\d+)?\s+)?\d+:\d+(:\d+)?')
+    let starttime = matchstr(time, '\v^\s*\d+[-/]\d+([-/]\d+)?\s+\d+:\d+(:\d+)?\s*')
+    let endtime = matchstr(time[len(starttime):], '\v(\d+[-/]\d+([-/]\d+)?\s+)?\d+:\d+(:\d+)?')
+    let starttime = substitute(starttime, '\v^\s*|\s*$', '', 'g')
+    let endtime = substitute(endtime, '\v^\s*|\s*$', '', 'g')
+    if endtime !~# '\v^\d+[-/]\d+([-/]\d+)?'
+      let endtime = matchstr(starttime, '\v^\d+[-/]\d+([-/]\d+)?\s+') . endtime
     endif
     let title = substitute(title[len(time):], '^\s*', '', '')
     let [startdate, enddate] = [s:format_time(starttime), s:format_time(endtime)]
@@ -325,16 +325,16 @@ function! s:parse_title(title, ...) abort
     let [startdate, enddate] = [date, ndate]
   endif
   let recurrence = {}
-  if title =~# '^\s*\d\+\%(weeks\|days\)\s\+'
-    let rec = matchstr(title, '^\s*\d\+\%(weeks\|days\)\s\+')
+  if title =~# '\v^\s*\d+(weeks|days)\s+'
+    let rec = matchstr(title, '\v^\s*\d+(weeks|days)\s+')
     let title = substitute(title[len(rec):], '^\s*', '', '')
     let recurrence = {}
     let key = matchstr(rec, '\(week\|day\)')
     let recurrence[key] = matchstr(rec, '\d\+') + 0
-    if title =~# '^\s*\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+:\d\+\%(:\d\+\)\?' && startdate !~# 'T'
-      let time = matchstr(title, '^\s*\d\+:\d\+\%(:\d\+\)\?\s*-\s*\d\+:\d\+\%(:\d\+\)\?')
-      let starttime = matchstr(time, '^\s*\d\+:\d\+\%(:\d\+\)\?')
-      let endtime = matchstr(time[len(starttime):], '\d\+:\d\+\%(:\d\+\)\?')
+    if title =~# '\v^\s*\d+:\d+(:\d+)?\s*-\s*\d+:\d+(:\d+)?' && startdate !~# 'T'
+      let time = matchstr(title, '\v^\s*\d+:\d+(:\d+)?\s*-\s*\d+:\d+(:\d+)?')
+      let starttime = matchstr(time, '\v^\s*\d+:\d+(:\d+)?')
+      let endtime = matchstr(time[len(starttime):], '\v\d+:\d+(:\d+)?')
       let title = substitute(title[len(time):], '^\s*', '', '')
       let [startdate, enddate] = [s:format_time(startdate . 'T' . starttime), s:format_time(startdate . 'T' . endtime)]
     endif
@@ -343,11 +343,11 @@ function! s:parse_title(title, ...) abort
 endfunction
 
 function! s:format_time(time) abort
-  let time = substitute(a:time, '^\s\+\|\s\+$', '', 'g')
+  let time = substitute(a:time, '\v^\s+|\s+$', '', 'g')
   let endian = calendar#setting#get('date_endian')
-  if time =~# '^\d\+-\d\+-\d\+T\s*$'
+  if time =~# '\v^\d+-\d+-\d+T\s*$'
     return substitute(time, 'T\s*$', '', '')
-  elseif time =~# '^\d\+[-/]\d\+[-/]\d\+\s*$'
+  elseif time =~# '\v^\d+[-/]\d+[-/]\d+\s*$'
     let [y, m, d] = split(time, '[-/]')
     if d > 1000
       let [y, m, d] = endian ==# 'little' ? [d, m, y] : [d, y, m]
@@ -356,23 +356,23 @@ function! s:format_time(time) abort
       endif
     endif
     return join([y, m, d], '-')
-  elseif time =~# '^\d\+[-/]\d\+\s*$'
+  elseif time =~# '\v^\d+[-/]\d+\s*$'
     let [m, d] = split(time, '[-/]')
     if m > 12
       let [d, m] = [m, d]
     endif
     let y = b:calendar.day().get_year()
     return join([y, m, d], '-')
-  elseif time =~# '^\d\+[-/]\d\+\s\+\d\+:'
-    let [date, t] = split(time, '\s\+')
+  elseif time =~# '\v^\d+[-/]\d+\s+\d+:'
+    let [date, t] = split(time, '\v\s+')
     let [m, d] = split(date, '[-/]')
     if m > 12
       let [d, m] = [m, d]
     endif
     let y = b:calendar.day().get_year()
     return join([y, m, d], '-') . 'T' . s:format_time(t)
-  elseif time =~# '^\d\+[-/]\d\+[-/]\d\+\s\+\d\+:'
-    let [date, t] = split(time, '\s\+')
+  elseif time =~# '\v^\d+[-/]\d+[-/]\d+\s+\d+:'
+    let [date, t] = split(time, '\v\s+')
     let [y, m, d] = split(date, '[-/]')
     if d > 1000
       let [y, m, d] = endian ==# 'little' ? [d, m, y] : [d, y, m]
@@ -381,13 +381,13 @@ function! s:format_time(time) abort
       endif
     endif
     return join([y, m, d], '-') . 'T' . s:format_time(t)
-  elseif time =~# '^\d\+-\d\+-\d\+T\d\+$'
+  elseif time =~# '\v^\d+-\d+-\d+T\d+$'
     return time . ':00:00'
-  elseif time =~# '^\d\+-\d\+-\d\+T\d\+:\d\+$'
+  elseif time =~# '\v^\d+-\d+-\d+T\d+:\d+$'
     return time . ':00'
-  elseif time =~# '^\d\+-\d\+-\d\+T\d\+:\d\+:\d\+$'
+  elseif time =~# '\v^\d+-\d+-\d+T\d+:\d+:\d+$'
     return time
-  elseif time =~# '^\d\+:\d\+$'
+  elseif time =~# '\v^\d+:\d+$'
     return time . ':00'
   endif
   return time
@@ -395,8 +395,8 @@ endfunction
 
 function! s:format_time_end(time) abort
   let time = s:format_time(a:time)
-  if time =~# '^\d\+-\d\+-\d\+$'
-    let ymdstr = matchstr(time, '^\d\+-\d\+-\d\+$')
+  if time =~# '\v^\d+-\d+-\d+$'
+    let ymdstr = matchstr(time, '\v^\d+-\d+-\d+$')
     let ymd = map(split(ymdstr, '-'), 'v:val + 0')
     if len(ymd) == 3
       let newdate = calendar#day#new(ymd[0], ymd[1], ymd[2]).add(1)

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/07/04 01:31:54.
+" Last Change: 2017/07/02 08:23:01.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -76,7 +76,7 @@ function! calendar#google#task#getTasks() abort
           if type(cnt) == type({}) && cnt != {} && has_key(cnt, 'items') && type(cnt.items) == type([])
             call extend(task[-1].items, deepcopy(cnt.items))
             for item in task[-1].items
-              if has_key(item, 'due') && item.due =~# '\d\+-\d\+-\d\+T'
+              if has_key(item, 'due') && item.due =~# '\v\d+-\d+-\d+T'
                 let [y, m, d] = map(split(substitute(substitute(item.due, 'T.*', '', ''), '\s', '', 'g'), '[-/]'), 'substitute(v:val, "^0", "", "") + 0')
                 let ty = calendar#day#today().get_year()
                 let due = calendar#day#join_date(ty == y ? [m, d] : [y, m, d])

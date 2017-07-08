@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_textbox.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/04/20 13:53:52.
+" Last Change: 2017/07/02 08:22:27.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -303,7 +303,7 @@ function! s:instance._action(action) dict abort
     endif
   elseif a:action ==# 'command_enter' && mode() ==# 'c' && getcmdtype() ==# ':'
     let cmd = calendar#util#getcmdline()
-    if cmd =~# '^\s*\d\+\s*$'
+    if cmd =~# '\v^\s*\d+\s*$'
       let c = max([min([matchstr(cmd, '\d\+') * 1 - 1, self.length - 1]), 0])
       let idxes = filter(range(self.length), 'index(self.noindex, v:val) < 0')
       call self.move_select(get(idxes, c, get(idxes, -1, 0)) - hour)

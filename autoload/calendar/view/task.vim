@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/05/09 08:14:00.
+" Last Change: 2017/07/02 08:29:59.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -57,7 +57,7 @@ function! s:self.action(action) dict abort
       let msg = calendar#message#get('input_task') . (change ? get(task, 'title', '') . ' -> ' : '')
       let title = input(msg, change ? '' : get(task, 'title', '') . (head ? "\<Home>" : ''))
       if title !=# ''
-        if get(task, 'title') =~# '^\d\+[-/]\d\+' && title !~# '^\s*\d\+[-/]\d\+'
+        if get(task, 'title') =~# '\v^\d+[-/]\d+' && title !~# '\v^\s*\d+[-/]\d+'
           let duedate = '-1'
         else
           let [title, duedate] = s:parse_title(title)
@@ -90,10 +90,10 @@ function! s:parse_title(title) abort
   let title = a:title
   let duedate = ''
   let endian = calendar#setting#get('date_endian')
-  if title =~# '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+'
-    let time = matchstr(title, '^\s*\d\+[-/]\d\+\%([-/]\d\+\)\?\s\+')
+  if title =~# '\v^\s*\d+[-/]\d+([-/]\d+)?\s+'
+    let time = matchstr(title, '\v^\s*\d+[-/]\d+([-/]\d+)?\s+')
     let title = substitute(title[len(time):], '^\s*', '', '')
-    if time =~# '\d\+[-/]\d\+[-/]\d\+'
+    if time =~# '\v\d+[-/]\d+[-/]\d+'
       let [y, m, d] = split(substitute(time, '\s', '', 'g'), '[-/]')
       if d > 1000
         let [y, m, d] = endian ==# 'little' ? [d, m, y] : [d, y, m]
@@ -102,7 +102,7 @@ function! s:parse_title(title) abort
         endif
       endif
       let duedate = join([y, m, d], '-')
-    elseif time =~# '\d\+[-/]\d\+'
+    elseif time =~# '\v\d+[-/]\d+'
       let [m, d] = split(substitute(time, '\s', '', 'g'), '[-/]')
       if m > 12
         let [d, m] = [m, d]

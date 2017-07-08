@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_ymd.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:27:52.
+" Last Change: 2017/07/02 08:42:35.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -102,8 +102,8 @@ function! s:instance.action(action) dict abort
     let self.select_index = (self.select_index + 1) % len(self.ymd)
   elseif a:action ==# 'command_enter' && mode() ==# 'c' && getcmdtype() ==# ':'
     let cmd = calendar#util#getcmdline()
-    if cmd =~# '^\s*\d\+\s*$'
-      let c = matchstr(cmd, '\d\+') * 1
+    if cmd =~# '\v^\s*\d+\s*$'
+      let c = matchstr(cmd, '\v\d+') * 1
       if self.ymd[self.select_index] ==# 'day'
         let month = b:calendar.month()
         let [y, m] = month.get_ym()

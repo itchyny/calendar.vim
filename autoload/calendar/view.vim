@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/06/27 17:06:14.
+" Last Change: 2017/07/02 08:39:21.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -405,36 +405,36 @@ function! s:self.action(action) dict abort
       if getcmdtype() ==# ':'
         let cmd = calendar#util#getcmdline()
         let digits = []
-        if cmd =~# '^\s*marks\s*$'
+        if cmd =~# '\v^\s*marks\s*$'
           call b:calendar.mark.showmarks()
           return calendar#util#update_keys()
-        elseif cmd =~# '^\s*\(ma\%[rk]\s\+\|k\s*\)[a-z]\s*$'
-          let mark = matchstr(cmd, '[a-z]\(\s*$\)\@=')
+        elseif cmd =~# '\v^\s*(ma%[rk]\s+|k\s*)[a-z]\s*$'
+          let mark = matchstr(cmd, '\v[a-z](\s*$)@=')
           call b:calendar.mark.set(mark)
           return calendar#util#update_keys()
-        elseif cmd =~# '^\s*delm\%[arks]!\s*$'
+        elseif cmd =~# '\v^\s*delm%[arks]!\s*$'
           call b:calendar.mark.delmarks()
           return calendar#util#update_keys()
-        elseif cmd =~# '^\s*delm\%[arks]\s\+[a-z]\s*$'
-          let mark = matchstr(cmd, '[a-z]\(\s*$\)\@=')
+        elseif cmd =~# '\v^\s*delm%[arks]\s+[a-z]\s*$'
+          let mark = matchstr(cmd, '\v[a-z](\s*$)@=')
           call b:calendar.mark.delmarks(mark)
           return calendar#util#update_keys()
-        elseif cmd =~# '^\s*\d\+\s*$'
+        elseif cmd =~# '\v^\s*\d+\s*$'
           return calendar#util#update_keys()
-        elseif cmd =~# '^\s*\d\+\s*/\s*\d\+\s*\(/\s*\d\+\s*\)\?$'
-          let digits = map(split(cmd, '/'), 'matchstr(v:val, "\\d\\+") * 1')
-        elseif cmd =~# '^\s*\d\+\s*-\s*\d\+\s*\(-\s*\d\+\s*\)\?$'
-          let digits = map(split(cmd, '-'), 'matchstr(v:val, "\\d\\+") * 1')
-        elseif cmd =~# '^\s*\d\+\s*\.\s*\d\+\s*\(\.\s*\d\+\s*\)\?$'
-          let digits = map(split(cmd, '\.'), 'matchstr(v:val, "\\d\\+") * 1')
-        elseif cmd =~# '^\s*\d\+\s\+\d\+\s*\(\s\+\d\+\s*\)\?$'
-          let digits = map(split(cmd, '\s\+'), 'matchstr(v:val, "\\d\\+") * 1')
-        elseif cmd =~# '^\s*\d*\s*\(<\s*\)\+\d*$'
+        elseif cmd =~# '\v^\s*\d+\s*/\s*\d+\s*(/\s*\d+\s*)?$'
+          let digits = map(split(cmd, '/'), 'matchstr(v:val, "\\v\\d+") * 1')
+        elseif cmd =~# '\v^\s*\d+\s*-\s*\d+\s*(-\s*\d+\s*)?$'
+          let digits = map(split(cmd, '-'), 'matchstr(v:val, "\\v\\d+") * 1')
+        elseif cmd =~# '\v^\s*\d+\s*\.\s*\d+\s*(\.\s*\d+\s*)?$'
+          let digits = map(split(cmd, '\.'), 'matchstr(v:val, "\\v\\d+") * 1')
+        elseif cmd =~# '\v^\s*\d+\s+\d+\s*(\s+\d+\s*)?$'
+          let digits = map(split(cmd, '\s\+'), 'matchstr(v:val, "\\v\\d+") * 1')
+        elseif cmd =~# '\v^\s*\d*\s*(\<\s*)+\d*$'
           let c = matchstr(cmd, '\d\+')
           let d = len(cmd) - len(substitute(cmd, '<', '', 'g'))
           call self.change_index(-max([len(c) ? c + 0 : 1, 1]) * d)
           return calendar#util#update_keys()
-        elseif cmd =~# '^\s*\d*\s*\(>\s*\)\+\d*$'
+        elseif cmd =~# '\v^\s*\d*\s*(\>\s*)+\d*$'
           let c = matchstr(cmd, '\d\+')
           let d = len(cmd) - len(substitute(cmd, '>', '', 'g'))
           call self.change_index(max([len(c) ? c + 0 : 1, 1]) * d)

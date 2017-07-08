@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/event/local.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2017/05/23 22:01:23.
+" Last Change: 2017/07/02 08:22:50.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -95,11 +95,11 @@ endfunction
 function! s:self.insert(calendarId, title, start, end, year, month, ...) dict abort
   let calendarList = self.calendarList()
   let [y, m] = [printf('%04d', a:year), printf('%02d', a:month)]
-  if a:start =~# '^\d\+[-/]\d\+[-/]\d\+'
-    let ymd = map(split(matchstr(a:start, '^\d\+[-/]\d\+[-/]\d\+'), '[-/]'), 'v:val + 0')
+  if a:start =~# '\v^\d+[-/]\d+[-/]\d+'
+    let ymd = map(split(matchstr(a:start, '\v^\d+[-/]\d+[-/]\d+'), '[-/]'), 'v:val + 0')
     let [y, m] = [printf('%04d', ymd[0]), printf('%02d', ymd[1])]
-  elseif a:start =~# '^\d\+[-/]\d\+'
-    let md = map(split(matchstr(a:start, '^\d\+[-/]\d\+'), '[-/]'), 'v:val + 0')
+  elseif a:start =~# '\v^\d+[-/]\d+'
+    let md = map(split(matchstr(a:start, '\v^\d+[-/]\d+'), '[-/]'), 'v:val + 0')
     let m = printf('%04d', md[0])
   endif
   for calendar in calendarList
@@ -109,8 +109,8 @@ function! s:self.insert(calendarId, title, start, end, year, month, ...) dict ab
       call add(cnt.items,
             \ { 'id': calendar#util#id()
             \ , 'summary': a:title
-            \ , 'start': a:start =~# 'T\d\+' ? { 'dateTime': a:start } : { 'date': a:start }
-            \ , 'end': a:end =~# 'T\d\+' ? { 'dateTime': a:end } : { 'date': a:end }
+            \ , 'start': a:start =~# '\vT\d+' ? { 'dateTime': a:start } : { 'date': a:start }
+            \ , 'end': a:end =~# '\vT\d+' ? { 'dateTime': a:end } : { 'date': a:end }
             \ })
       silent! call s:event_cache.new(calendar.id).new(y).new(m).save('0', cnt)
       return
