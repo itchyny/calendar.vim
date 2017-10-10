@@ -60,5 +60,21 @@ function! calendar#revive() abort
   endif
 endfunction
 
+let s:calendarToggle = 0
+let s:calendarBuf = -1
+function! calendar#toggle()
+    if s:calendarBuf > -1 && bufwinnr(s:calendarBuf) == -1
+        let s:calendarToggle = 0
+    endif
+    if s:calendarToggle
+        silent execute 'bd' s:calendarBuf
+        let s:calendarToggle = 0
+    else
+        :Calendar -view=year -split=vertical -width=27
+        let s:calendarToggle = 1
+        let s:calendarBuf = bufnr("%")
+    endif
+endfunction
+
 let &cpo = s:save_cpo
 unlet s:save_cpo

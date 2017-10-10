@@ -17,6 +17,8 @@ set cpo&vim
 command! -nargs=* -complete=customlist,calendar#argument#complete
        \ Calendar call calendar#new(<q-args>)
 
+command! CalendarToggle call calendar#toggle()
+
 " <Plug>(calendar)
 nnoremap <silent> <Plug>(calendar) :<C-u>Calendar<CR>
 vnoremap <silent> <Plug>(calendar) :<C-u>Calendar<CR>
