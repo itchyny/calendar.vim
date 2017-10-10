@@ -133,6 +133,10 @@ COMMANDS					*calendar-commands*
 < 		See |calendar-options-year|, |calendar-options-month| and
 		|calendar-options-day| for more information.
 
+:CalendarToggle
+						*:CalendarToggle*
+		Toggle calendar panel on the left of the window.
+
 ------------------------------------------------------------------------------
 OPTIONS						*calendar-options*
 
