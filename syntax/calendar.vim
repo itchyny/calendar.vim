@@ -2,7 +2,7 @@
 " Filename: syntax/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2017/04/26 22:14:34.
+" Last Change: 2018/03/12 18:49:05.
 " =============================================================================
 
 if version < 700
@@ -14,14 +14,15 @@ endif
 let s:save_cpo = &cpo
 set cpo&vim
 
+let s:is_gui = has('gui_running') || (has('termguicolors') && &termguicolors)
 let s:fg_color = calendar#color#normal_fg_color()
 let s:bg_color = calendar#color#normal_bg_color()
 let s:comment_fg_color = calendar#color#comment_fg_color()
 let s:select_color = calendar#color#gen_color(s:fg_color, s:bg_color, 1, 4)
-let s:is_win32cui = (has('win32') || has('win64')) && !has('gui_running')
+let s:is_win32cui = (has('win32') || has('win64')) && !s:is_gui
 let s:is_dark = calendar#color#is_dark()
 
-if !has('gui_running')
+if !s:is_gui
   if s:is_win32cui
     if s:is_dark
       let s:select_color = 8
