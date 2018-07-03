@@ -86,7 +86,7 @@ There are lots of Vim plugins. We can classify them as the following groups.
 <	- syntax plugins >
 	  (e.g. vim-json, syntaxm4.vim)
 <	- edit assistance plugins >
-	  (e.g. completion plugins, comment plguins)
+	  (e.g. completion plugins, comment plugins)
 <	- special buffer plugins >
 	  (e.g. VimFiler, TweetVim, gmail.vim)
 <	- plugins extending the function of a plugin >
