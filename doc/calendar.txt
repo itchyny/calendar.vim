@@ -42,19 +42,19 @@ the default key mappings of Vim itself. Of course, users can freely configure
 key mappings in |calendar| buffers.
 
 This |calendar| plugin also supports importing events from Google Calendar.
-Once the user connect this plugin to Google Calendar, your can freely edit,
-create and delete events in Vim. The events are automatically synchronized with
-Google Calendar.
+Once the user connects this plugin to Google Calendar, you can freely edit,
+create, and delete events in Vim. The events are automatically synchronized
+with Google Calendar.
 
 Moreover, the Julian calendar is supported in this plugin. Basically in the
-history of calendar, there are two kinds of calendars: the Julian calendar
+history of calendars, there are two kinds of calendars: the Julian calendar
 and the Gregorian calendar. In most countries (for example, Holy Rome Empire,
-France and Spain) the Julian calendar was replaced with the Gregorian in 1582
-October, so the |calendar| adopts this boundary date by default. However, in
-British Empire, it was switched in 1752, and in Russia, in 1918. The |calendar|
-plugin provides a way to configure the date in which the Julian calendar is
-switched to the Gregorian calendar. The plugin also provides a way to view the
-Julian calendar in the present day, and vice versa.
+France and Spain) the Julian calendar was replaced with the Gregorian in
+October of 1582, so the |calendar| adopts this boundary date by default.
+However, in the British Empire, it was switched in 1752, and in Russia, in
+1918. The |calendar| plugin provides a way to configure the date in which the
+Julian calendar is switched to the Gregorian calendar. The plugin also
+provides a way to view the Julian calendar in the present day, and vice versa.
 
 ------------------------------------------------------------------------------
 CONCEPT						*Calendar-Concept*
@@ -106,7 +106,7 @@ buffer plugins. A Vim application should:
 <	- provide a rich interface >
 	  (for example, window layers composition)
 <	- be coded with loose coupling >
-	  (any two files do not have the common codes)
+	  (any two files do not have common code)
 <	- be independent to any other plugins >
 	  (all the requirements are included)
 <The |calendar| plugin is the first Vim application. So now, it's time to put
@@ -250,7 +250,7 @@ The following options change the appearance of the calendar.
 		-date_month_name[!]
 		let g:calendar_date_month_name={0/1}
 		If on, a date string uses month names. In order to disable
-		this option from the argument, add the trailing '!'.
+		this option with the argument, add the trailing '!'.
 		The default value is 0.
 
 						*calendar-options-date_full_month_name*
@@ -258,7 +258,7 @@ The following options change the appearance of the calendar.
 		-date_full_month_name[!]
 		let g:calendar_date_full_month_name={0/1}
 		If on, a date string uses the full month names. In order to
-		disable this option from the argument, add the trailing '!'.
+		disable this option with the argument, add the trailing '!'.
 		The default value is 0.
 
 						*calendar-options-week_number*
@@ -266,7 +266,7 @@ The following options change the appearance of the calendar.
 		-week_number[!]
 		let g:calendar_week_number={0/1}
 		If on, it shows the week numbers. In order to disable
-		this option from the argument, add the trailing '!'.
+		this option with the argument, add the trailing '!'.
 		The default value is 0.
 
 						*calendar-options-task*
@@ -303,7 +303,7 @@ The following options change the appearance of the calendar.
 		-clock_12hour[!]
 		let g:calendar_clock_12hour={0/1}
 		If on, times are displayed in 12-hour clock style. In order to
-		disable this option from the argument, add the trailing '!'.
+		disable this option with the argument, add the trailing '!'.
 		The default value is 0.
 
 						*calendar-options-frame*
@@ -360,8 +360,8 @@ options.
 		-google_calendar[!]
 		let g:calendar_google_calendar = {0/1}
 		If the value is 1 or the argument is given, this application
-		download the calendars from Google Calendar, under your
-		permission. In order to disable this option from the argument,
+		will download the calendars from Google Calendar, with your
+		permission. In order to disable this option with the argument,
 		add the trailing '!'.
 		The default value is 0.
 
@@ -370,8 +370,8 @@ options.
 		-google_task[!]
 		let g:calendar_google_task = {0/1}
 		If the value is 1 or the argument is given, this application
-		download the tasks from Google Task, under your permission.
-		In order to disable this option from the argument, add the
+		will download the tasks from Google Task, with your permission.
+		In order to disable this option with the argument, add the
 		trailing '!'.
 		The default value is 0.
 
@@ -506,10 +506,10 @@ This application provides a global mapping.
 
 In the calendar buffer, a lot of mappings are provided.
 This application has many views. Thus pressing j triggers various actions
-based on the active window. For example, go to 7 day after in the month view,
-go to the below month in the year view, 1 hour after in the days views, the
-next task in the task window. So the following mappings change its behavior
-conformably in each views.
+based on the active window. For example, go to 7 days after in the month view,
+go to the below month in the year view, 1 hour after in the week and day views,
+and the next task in the task window. So the following mappings change its
+behavior conformably in each views.
 
 Normal mode key mappings.
 
