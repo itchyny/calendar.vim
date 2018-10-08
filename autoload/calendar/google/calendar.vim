@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2018/06/27 20:52:23.
+" Last Change: 2018/10/08 17:46:24.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -149,6 +149,7 @@ function! calendar#google#calendar#getEvents(year, month, ...) abort
     return events
   endif
   let [y, m] = [printf('%04d', a:year), printf('%02d', a:month)]
+  let clock_12hour = calendar#setting#get('clock_12hour')
   for item in calendarList.items
     if !get(item, 'selected')
       continue
@@ -194,8 +195,19 @@ function! calendar#google#calendar#getEvents(year, month, ...) abort
           if has_key(itm.end, 'date')
             let endymd = ymd[:2] == [endymd[0], endymd[1], endymd[2] - 1] ? ymd : calendar#day#new(endymd[0], endymd[1], endymd[2]).add(-1).get_ymd() + endymd[3:]
           endif
-          let starttime = ymd[5] ? printf('%d:%02d:%02d', ymd[3], ymd[4], ymd[5]) : printf('%d:%02d', ymd[3], ymd[4])
-          let endtime = endymd[5] ? printf('%d:%02d:%02d', endymd[3], endymd[4], endymd[5]) : printf('%d:%02d', endymd[3], endymd[4])
+          if clock_12hour
+            let start_postfix = ymd[3] < 12 || ymd[3] == 24 ? 'am' : 'pm'
+            let end_postfix = endymd[3] < 12 || endymd[3] == 24 ? 'am' : 'pm'
+            let starttime = ymd[5] ?
+                  \ printf('%d:%02d:%02d%s', calendar#time#hour12(ymd[3]), ymd[4], ymd[5], start_postfix ==# end_postfix ? '' : start_postfix) :
+                  \ printf('%d:%02d%s', calendar#time#hour12(ymd[3]), ymd[4], start_postfix ==# end_postfix ? '' : start_postfix)
+            let endtime = endymd[5] ?
+                  \ printf('%d:%02d:%02d%s', calendar#time#hour12(endymd[3]), endymd[4], endymd[5], end_postfix) :
+                  \ printf('%d:%02d%s', calendar#time#hour12(endymd[3]), endymd[4], end_postfix)
+          else
+            let starttime = ymd[5] ? printf('%d:%02d:%02d', ymd[3], ymd[4], ymd[5]) : printf('%d:%02d', ymd[3], ymd[4])
+            let endtime = endymd[5] ? printf('%d:%02d:%02d', endymd[3], endymd[4], endymd[5]) : printf('%d:%02d', endymd[3], endymd[4])
+          endif
           if !has_key(events, date)
             let events[date] = { 'events': [] }
           endif
