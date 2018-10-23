@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/webapi.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/07/06 20:07:08.
+" Last Change: 2018/10/23 23:04:10.
 " =============================================================================
 
 " Web interface.
@@ -158,16 +158,18 @@ function! s:command(url, method, header, postfile, output) abort
     let command .= ' ' . quote . a:url . quote
     return command
   elseif executable('wget')
-    let command = 'wget -O- --save-headers --server-response -q'
+    let command = 'wget -O- --server-response -q'
     let a:header['X-HTTP-Method-Override'] = a:method
     let command .= s:make_header_args(a:header, '--header=', quote)
     if a:postfile !=# ''
       let command .= ' --post-file=' . quote . a:postfile . quote
-    endif
-    if a:output !=# ''
-      let command .= ' -O ' . quote . a:output . quote
+    else
+      let command .= ' --method=' . a:method
     endif
     let command .= ' ' . quote . a:url . quote
+    if a:output !=# ''
+      let command .= ' > ' . quote . a:output . quote . ' 2>&1'
+    endif
     return command
   else
     call calendar#echo#error_message('curl_wget_not_found')
@@ -204,6 +206,14 @@ function! calendar#webapi#parse(data) abort
     return { 'status': '0', 'message': '', 'header': '', 'content': '' }
   endif
   let i = 0
+  while i < len(a:data) && a:data[i] =~# '^  ' " for wget
+    let a:data[i] = a:data[i][2:]
+    let i += 1
+  endwhile
+  if i > 0
+    call insert(a:data, '', i)
+    let i = 0
+  endif
   while i < len(a:data) && (a:data[i] =~# '\v^HTTP/[12]%(\.\d)? 3' ||
         \ (i + 2 < len(a:data) && a:data[i] =~# '\v^HTTP/1\.\d \d{3}' &&
         \ a:data[i + 1] =~# '\v^\r?$' && a:data[i + 2] =~# '\v^HTTP/1\.\d \d{3}'))
