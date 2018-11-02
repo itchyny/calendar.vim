@@ -2,7 +2,7 @@
 " Filename: syntax/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2018/03/12 18:49:05.
+" Last Change: 2018/11/02 23:13:54.
 " =============================================================================
 
 if version < 700
@@ -19,6 +19,8 @@ let s:fg_color = calendar#color#normal_fg_color()
 let s:bg_color = calendar#color#normal_bg_color()
 let s:comment_fg_color = calendar#color#comment_fg_color()
 let s:select_color = calendar#color#gen_color(s:fg_color, s:bg_color, 1, 4)
+let s:space_fg_color = calendar#color#gen_color(s:fg_color, s:bg_color, 0, 1)
+let s:space_bg_color = calendar#color#gen_color(s:fg_color, s:bg_color, 1, 0)
 let s:is_win32cui = (has('win32') || has('win64')) && !s:is_gui
 let s:is_dark = calendar#color#is_dark()
 
@@ -85,12 +87,12 @@ call calendar#color#syntax('SundayTitle', s:sunday_title_fg_color, s:sunday_bg_c
 call calendar#color#syntax('SaturdayTitle', s:saturday_title_fg_color, s:saturday_bg_color, '')
 call calendar#color#syntax('OtherMonth', s:othermonth_fg_color, '', '')
 call calendar#color#syntax('OtherMonthSelect', s:othermonth_fg_color, s:select_color, '')
-call calendar#color#syntax('NormalSpace', s:bg_color, s:fg_color, '')
+call calendar#color#syntax('NormalSpace', s:space_fg_color, s:space_bg_color, '')
 call calendar#color#syntax('CommentSelect', s:comment_fg_color, s:select_color, '')
 
 highlight link CalendarComment Comment
 
-unlet! s:fg_color s:bg_color s:comment_fg_color s:select_color s:is_win32cui s:is_dark
+unlet! s:fg_color s:bg_color s:comment_fg_color s:select_color s:space_fg_color s:space_bg_color s:is_win32cui s:is_dark
       \ s:today_color s:today_fg_color s:othermonth_fg_color s:weekday_color s:weekday_fg_color
       \ s:sunday_bg_color s:sunday_fg_color s:sunday_title_fg_color
       \ s:saturday_bg_color s:saturday_fg_color s:saturday_title_fg_color
