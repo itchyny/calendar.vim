@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/setlocal.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:31:12.
+" Last Change: 2019/07/20 13:22:17.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -18,14 +18,17 @@ function! calendar#setlocal#new() abort
   setlocal nomodifiable buftype=nofile noswapfile readonly
         \ bufhidden=hide wrap nowrap nobuflisted nofoldenable foldcolumn=0
         \ nolist completefunc= omnifunc=
-        \ nocursorcolumn nocursorline nonumber nomodeline
+        \ nocursorcolumn nocursorline nomodeline
+  if &number
+    setlocal nonumber
+  endif
   if s:undolevels
     setlocal undolevels=-1
   endif
   if s:colorcolumn
     setlocal colorcolumn=
   endif
-  if s:relativenumber
+  if s:relativenumber && &relativenumber
     setlocal norelativenumber
   endif
   call calendar#setlocal#filetype()
