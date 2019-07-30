@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/color.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2018/03/12 18:49:09.
+" Last Change: 2019/07/30 22:37:29.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -12,7 +12,7 @@ set cpo&vim
 
 let s:is_gui = has('gui_running') || (has('termguicolors') && &termguicolors)
 let s:is_cterm = !s:is_gui
-let s:is_win32cui = (has('win32') || has('win64')) && !s:is_gui
+let s:is_win32cui = has('win32') && !s:is_gui
 let s:term = s:is_gui ? 'gui' : 'cterm'
 let s:is_dark = -1
 let s:colors_name = ''

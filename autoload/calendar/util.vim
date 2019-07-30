@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/util.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:32:26.
+" Last Change: 2019/07/30 22:37:39.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -95,7 +95,7 @@ if has('unix')
     let cmd .= flags =~# 'f' && cmd ==# 'rm -r' ? ' -f' : ''
     let ret = system(cmd . ' ' . shellescape(a:path))
   endfunction
-elseif has('win16') || has('win32') || has('win64') || has('win95')
+elseif has('win32')
   function! calendar#util#rmdir(path, ...) abort
     let flags = a:0 ? a:1 : ''
     if &shell =~? 'sh$'

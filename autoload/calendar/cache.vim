@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/cache.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2017/05/23 21:52:16.
+" Last Change: 2019/07/30 22:37:19.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -39,7 +39,7 @@ function! s:self.escape(key) dict abort
   return substitute(a:key, '[^a-zA-Z0-9_.-]', '\=printf("%%%02X",char2nr(submatch(0)))', 'g')
 endfunction
 
-if has('win32') || has('win64')
+if has('win32')
   function! s:self.dir() dict abort
     return substitute(substitute(calendar#setting#get('cache_directory'), '[/\\]$', '', '') . '/' . self.subpath, '/', '\', 'g')
   endfunction
