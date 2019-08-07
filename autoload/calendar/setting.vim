@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/setting.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2017/07/02 08:25:13.
+" Last Change: 2019/08/07 20:57:43.
 " =============================================================================
 
 scriptencoding utf-8
@@ -136,7 +136,7 @@ function! s:view_source() abort
         \ , 'position': 'absolute'
         \ , 'maxwidth': 'max([calendar#util#winwidth() / 3, 15])'
         \ , 'maxheight': 'max([calendar#util#winheight() / 2, 3])'
-        \ , 'visible': 'b:calendar.view._event && b:calendar.view.get_calendar_views() !~# "clock\\|event\\|agenda"'
+        \ , 'visible': 'b:calendar.view.event_visible() && b:calendar.view.get_calendar_views() !~# "clock\\|event\\|agenda"'
         \ },
         \ { 'type': 'task'
         \ , 'align': 'right'
@@ -145,7 +145,7 @@ function! s:view_source() abort
         \ , 'position': 'absolute'
         \ , 'maxwidth': 'calendar#util#winwidth() / 6'
         \ , 'maxheight': 'max([calendar#util#winheight() * 5 / 6, 3])'
-        \ , 'visible': 'b:calendar.view._task'
+        \ , 'visible': 'b:calendar.view.task_visible()'
         \ },
         \ { 'type': 'help'
         \ , 'align': 'center'
@@ -155,7 +155,7 @@ function! s:view_source() abort
         \ , 'top': '(calendar#util#winheight() - self.height()) / 2'
         \ , 'maxwidth': 'max([min([calendar#util#winwidth() / 2, min([77, calendar#util#winwidth()])]), min([30, calendar#util#winwidth()])])'
         \ , 'maxheight': 'max([calendar#util#winheight() * 3 / 5, 3])'
-        \ , 'visible': 'b:calendar.view._help'
+        \ , 'visible': 'b:calendar.view.help_visible()'
         \ },
         \ { 'type': 'calendar'
         \ , 'top': 'b:calendar.view.get_calendar_views() =~# "clock\\|event\\|agenda" ? 0 : 3'

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2017/07/02 08:39:21.
+" Last Change: 2019/08/07 20:57:33.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -73,12 +73,20 @@ function! s:self.change_index(diff) dict abort
   let self.updated = 1
 endfunction
 
+function! s:self.event_visible() dict abort
+  return self._event
+endfunction
+
 function! s:self.task_visible() dict abort
   return self._task
 endfunction
 
 function! s:self.set_task_visibility(_task) dict abort
   let self._task = type(a:_task) == type('') ? a:_task ==# '1' : a:_task
+endfunction
+
+function! s:self.help_visible() dict abort
+  return self._help
 endfunction
 
 function! s:self.set_view_source(source) dict abort
