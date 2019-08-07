@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2019/08/07 20:57:33.
+" Last Change: 2019/08/07 21:22:19.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -23,7 +23,6 @@ let s:self.index = 0
 let s:self.calendar_views = ['year', 'month', 'week', 'day_4', 'day_1', 'clock']
 let s:self.index_max = len(s:self.calendar_views) - 1
 let s:self.updated = 1
-let s:self._height = 0
 let s:self._help = 0
 let s:self._task = 0
 let s:self._event = 0

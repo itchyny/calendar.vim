@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/mapping.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/07/18 02:25:56.
+" Last Change: 2019/08/07 21:21:45.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -18,7 +18,7 @@ function! calendar#mapping#new() abort
   if has_key(get(b:, 'calendar', {}), 'view')
     let v = b:calendar.view
     if maparg('<ESC>', 'n') !=# '<Plug>(calendar_escape)'
-      if v._help || v._event || v._task || b:calendar.visual_mode()
+      if v.help_visible() || v.event_visible() || v.task_visible() || b:calendar.visual_mode()
         if v:version > 703
           nmap <buffer><nowait> <ESC> <Plug>(calendar_escape)
         else
@@ -26,7 +26,7 @@ function! calendar#mapping#new() abort
         endif
       endif
     else
-      if !(v._help || v._event || v._task || b:calendar.visual_mode())
+      if !(v.help_visible() || v.event_visible() || v.task_visible() || b:calendar.visual_mode())
         nunmap <buffer> <ESC>
       endif
     endif
@@ -57,10 +57,10 @@ function! calendar#mapping#new() abort
 
   " escape
   nmap <buffer><silent><expr> <Plug>(calendar_escape)
-        \ b:calendar.view._help ? "\<Plug>(calendar_help)" :
-        \ b:calendar.view._event ? "\<Plug>(calendar_event)" :
+        \ b:calendar.view.help_visible() ? "\<Plug>(calendar_help)" :
+        \ b:calendar.view.event_visible() ? "\<Plug>(calendar_event)" :
         \ b:calendar.visual_mode() ? "\<Plug>(calendar_exit_visual)" :
-        \ b:calendar.view._task ? "\<Plug>(calendar_task)" :
+        \ b:calendar.view.task_visible() ? "\<Plug>(calendar_task)" :
         \ ""
 
   " mark
