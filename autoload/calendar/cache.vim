@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/cache.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2019/12/03 21:37:53.
+" Last Change: 2019/12/13 13:36:54.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -13,6 +13,7 @@ function! calendar#cache#new(...) abort
   let self = copy(s:self)
   let self.subpath = a:0 ? a:1 : ''
   let self.subpath .= len(self.subpath) && self.subpath[len(self.subpath) - 1] !~ '^[/\\]$' ? '/' : ''
+  call s:setfperm_dir(self.dir())
   return self
 endfunction
 
@@ -76,6 +77,7 @@ function! s:self.check_dir(...) dict abort
       else
         call calendar#util#system('mkdir -p ' .  shellescape(dir))
       endif
+      call s:setfperm(dir)
     catch
     endtry
   endif
@@ -96,6 +98,7 @@ function! s:self.save(key, val) dict abort
   endif
   try
     call writefile(calendar#cache#string(a:val), path)
+    call s:setfperm_file(path)
   catch
     call calendar#echo#error(calendar#message#get('cache_write_fail') . ': ' . path)
     return 1
@@ -108,6 +111,7 @@ function! s:self.get(key) dict abort
   endif
   let path = self.path(a:key)
   if filereadable(path)
+    call s:setfperm_file(path)
     let result = readfile(path)
     try
       if len(result)
@@ -129,6 +133,7 @@ function! s:self.get_raw(key) dict abort
   endif
   let path = self.path(a:key)
   if filereadable(path)
+    call s:setfperm_file(path)
     return readfile(path)
   else
     return 1
@@ -197,6 +202,26 @@ function! calendar#cache#string(v, ...) abort
   endif
   return r
 endfunction
+
+if exists('*getfperm') && exists('*setfperm')
+  function! s:setfperm_dir(dir) abort
+    let expected = 'rwx------'
+    if getfperm(a:dir) !=# expected
+      call setfperm(a:dir, expected)
+    endif
+  endfunction
+  function! s:setfperm_file(path) abort
+    let expected = 'rw-------'
+    if getfperm(a:path) !=# expected
+      call setfperm(a:path, expected)
+    endif
+  endfunction
+else
+  function! s:setfperm_dir(dir) abort
+  endfunction
+  function! s:setfperm_file(path) abort
+  endfunction
+endif
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
