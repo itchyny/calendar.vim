@@ -85,6 +85,34 @@ let g:calendar_google_task = 1
 ```
 It requires `wget` or `curl`.
 
+### Important notice
+Currently the client key of this application is disabled and you will get the **Sign in with Google temporarily disabled for this app** error.
+You can create your own Google API key and use for authentication with the following steps.
+
+- Create a new project in [GCP](https://cloud.google.com/) and go to [Google APIs](https://console.developers.google.com/apis/).
+- Click `ENABLE APIS AND SERVICES` add `Google Calendar API` and `Tasks API`.
+- Go to [Google APIs](https://console.developers.google.com/apis/) and click `OAuth consent screen` from the sidebar.
+  - Choose `External` (Available to any user with a Google Account.) and click `CREATE`.
+  - Input your favorite name to `Application name`. In the `Scopes for Google APIs` section, click `Add scope` and add `Google Calendar API ../auth/calendar` and `Task API ../auth/tasks`.
+  - Click `Save` (DO NOT `Submit for verification`).
+- Go to the `Credentials` page from the sidebar.
+  - Create a new API key and restrict key to the two APIs (`Google Calendar API`, `Tasks API`).
+    - You have the api key.
+  - Create a new `OAuth client ID`. Select `Other` for the application type.
+    - You have the client id and client secret.
+- Open your terminal and save the credentials.
+  - `mkdir -p ~/.cache/calendar.vim/ && touch ~/.cache/calendar.vim/credentials.vim`
+  - `chmod 700 ~/.cache/calendar.vim && chmod 600 ~/.cache/calendar.vim/credentials.vim`
+  - `vi ~/.cache/calendar.vim/credentials.vim`
+  - Add the following three lines and save it. Please be sure to keep this file securely.
+```vim
+let g:calendar_google_api_key = '...'
+let g:calendar_google_client_id = '....apps.googleusercontent.com'
+let g:calendar_google_client_secret = '...'
+```
+  - Add `source ~/.cache/calendar.vim/credentials.vim` to your .vimrc.
+- Restart Vim and open calendar.vim. You will get the unverified message but click `Advanced` and `Go to your-app (unsafe)`.
+- Approve against some confirms (maybe three clicks) and you will get the login code. Copy and paste it into the prompt of calendar.vim. Now you'll be authenticated to your application..
 
 ## Terms of Use
 Under no circumstances we are liable for any damages (including but not limited to damages for loss of business, loss of profits, interruption or the like) arising from use of this software.

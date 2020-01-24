@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/setting.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2019/08/07 20:57:43.
+" Last Change: 2020/01/25 00:22:51.
 " =============================================================================
 
 scriptencoding utf-8
@@ -240,6 +240,15 @@ function! s:google_client() abort
         \ 'scope': 'myyux?44|||3lttlqjfunx3htr4fzym4hfqjsifw%myyux?44|||3lttlqjfunx3htr4fzym4yfxpx',
         \ 'api_key': 'FN fX~FQ[fQJfrUnPtdu;H;u <=t8fStIQ]}lWN',
         \ 'client_secret': 'R_s=vS}6Jlg{dR<rt~OrYXR5'}, 100)
+  if exists('g:calendar_google_api_key')
+    let s:g.api_key = g:calendar_google_api_key
+  endif
+  if exists('g:calendar_google_client_id')
+    let s:g.client_id = g:calendar_google_client_id
+  endif
+  if exists('g:calendar_google_client_secret')
+    let s:g.client_secret = g:calendar_google_client_secret
+  endif
   return s:g
 endfunction
 
