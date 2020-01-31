@@ -2,6 +2,7 @@ let s:suite = themis#suite('week')
 let s:assert = themis#helper('assert')
 
 function! s:suite.before_each()
+  language en_US.UTF-8
   unlet! g:calendar_first_day
 endfunction
 
