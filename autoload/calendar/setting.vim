@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/setting.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/01/25 00:22:51.
+" Last Change: 2020/02/08 16:07:37.
 " =============================================================================
 
 scriptencoding utf-8
@@ -115,6 +115,18 @@ endfunction
 
 function! s:yank_deleting() abort
   return 1
+endfunction
+
+function! s:skip_event_delete_confirm() abort
+  return 0
+endfunction
+
+function! s:skip_task_delete_confirm() abort
+  return 0
+endfunction
+
+function! s:skip_task_clear_completed_confirm() abort
+  return 0
 endfunction
 
 function! s:task_delete() abort

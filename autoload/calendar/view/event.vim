@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/02/08 15:39:44.
+" Last Change: 2020/02/08 16:03:06.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -121,7 +121,7 @@ function! s:self.action(action) dict abort
     if calendar#setting#get('yank_deleting')
       call self.yank()
     endif
-    if calendarId !=# '' && input(calendar#message#get('delete_event')) =~# '\c^y\%[es]$'
+    if calendarId !=# '' && (calendar#setting#get('skip_event_delete_confirm') || input(calendar#message#get('delete_event')) =~# '\c^y\%[es]$')
       call b:calendar.event.delete(calendarId, eventid, year, month)
     endif
   elseif index(['start_insert', 'start_insert_append', 'start_insert_head', 'start_insert_last', 'change', 'change_line'], a:action) >= 0

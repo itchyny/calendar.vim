@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2020/02/08 15:40:57.
+Last Change: 2020/02/08 16:07:54.
 
 CONTENTS					*calendar-contents*
 
@@ -418,6 +418,30 @@ Other miscellaneous options.
 		Specify the updatetime (in msec) in the calendar buffer. This
 		value is used for asynchronous web queries and the clock view.
 		The default value is 200.
+
+						*calendar-options-skip_event_delete_confirm*
+						*g:calendar_skip_event_delete_confirm*
+		-skip_event_delete_confirm[!]
+		let g:calendar_skip_event_delete_confirm = {0/1}
+		If the value is 1, the application skips confirmation on
+		deleting an event.
+		The default value is 0.
+
+						*calendar-options-skip_task_delete_confirm*
+						*g:calendar_skip_task_delete_confirm*
+		-skip_task_delete_confirm[!]
+		let g:calendar_skip_task_delete_confirm = {0/1}
+		If the value is 1, the application skips confirmation on
+		deleting a task.
+		The default value is 0.
+
+						*calendar-options-skip_task_clear_completed_confirm*
+						*g:calendar_skip_task_clear_completed_confirm*
+		-skip_task_clear_completed_confirm[!]
+		let g:calendar_skip_task_clear_completed_confirm = {0/1}
+		If the value is 1, the application skips confirmation on
+		completing a task.
+		The default value is 0.
 
 						*calendar-options-yank_deleting*
 						*g:calendar_yank_deleting*
