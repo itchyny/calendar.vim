@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2020/02/08 16:07:54.
+Last Change: 2020/02/08 16:27:35.
 
 CONTENTS					*calendar-contents*
 
@@ -315,6 +315,13 @@ The following options change the appearance of the calendar.
 		The default value is:
 			"unicode": If |'enc'| is 'utf-8' and |'fenc'| is 'utf-8'
 			"default": In other cases
+
+						*calendar-options-task_width*
+						*g:calendar_task_width*
+		-task_width={number}
+		let g:calendar_task_width = {number}
+		The width of the task list window.
+		The default value is 1/6 of the window width.
 
 						*calendar-options-message_prefix*
 						*g:calendar_message_prefix*

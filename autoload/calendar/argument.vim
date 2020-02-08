@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/argument.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/02/08 16:08:07.
+" Last Change: 2020/02/08 16:14:11.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -33,6 +33,7 @@ let s:all_value_options = {
       \ '-width': [],
       \ '-height': [],
       \ '-message_prefix': [],
+      \ '-task_width': [],
       \ }
 let s:all_novalue_options = [
       \ '-google_calendar',
