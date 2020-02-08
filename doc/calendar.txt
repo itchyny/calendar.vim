@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2016/07/18 02:36:58.
+Last Change: 2020/02/08 15:40:57.
 
 CONTENTS					*calendar-contents*
 
@@ -772,6 +772,7 @@ Calendar:
 		EVENT: 12:00:30 - 14:00:20 [event-title]
 
 	Few days event:
+		EVENT: mm/dd [event-title] (all day event)
 		EVENT: mm/dd - mm/dd [event-title]
 		EVENT: yyyy/mm/dd - yyyy/mm/dd [event-title] (big endian)
 		EVENT: mm/dd/yyyy - mm/dd/yyyy [event-title] (middle endian)
@@ -779,6 +780,7 @@ Calendar:
 		EVENT: yyyy-mm-dd - yyyy-mm-dd [event-title] (big endian, "-" separator)
 
 		Example:
+		EVENT: 10/10 [event-title] (all day event)
 		EVENT: 10/10 - 10/12 [event-title]
 		EVENT: 2014/10/10 - 2014/10/12 [event-title] (big endian)
 		EVENT: 10/10/2014 - 10/12/2014 [event-title] (middle endian)

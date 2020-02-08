@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2017/07/02 08:35:25.
+" Last Change: 2020/02/08 15:39:44.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -293,23 +293,6 @@ function! s:parse_title(title, ...) abort
     endif
     let title = substitute(title[len(time):], '^\s*', '', '')
     let [startdate, enddate] = [s:format_time(startday . 'T' . starttime), s:format_time(endday . 'T' . endtime)]
-  elseif title =~# '\v^\s*\d+[-/]\d+([-/]\d+)?\s*-\s*\d+[-/]\d+([-/]\d+)?'
-    let time = matchstr(title, '\v^\s*\d+[-/]\d+([-/]\d+)?\s*-\s*\d+[-/]\d+([-/]\d+)?')
-    let starttime = matchstr(time, len(split(time, '-')) == 2 ? '\v^\s*\d+/\d+(/\d+)?\s*' : '\v^\s*\d+[-/]\d+([-/]\d+)?\s*')
-    let endtime = matchstr(time[len(starttime):], '\v\d+[-/]\d+([-/]\d+)?')
-    let title = substitute(title[len(time):], '^\s*', '', '')
-    let [startdate, enddate] = [s:format_time(starttime), s:format_time_end(endtime)]
-    if startdate =~# '\v^\d+-\d+-\d+$' && enddate =~# '\v^\d+-\d+-\d+$'
-      let [sy, sm, sd] = map(split(startdate, '-'), 'v:val + 0')
-      let [ey, em, ed] = map(split(enddate, '-'), 'v:val + 0')
-      if sy == ey && sm > em
-        if [year, month] == [ey, em]
-          let startdate = join([sy - 1, sm, sd], '-')
-        else
-          let enddate = join([ey + 1, em, ed], '-')
-        endif
-      endif
-    endif
   elseif title =~# '\v^\s*\d+[-/]\d+([-/]\d+)?\s+\d+:\d+(:\d+)?\s*-\s*(\d+[-/]\d+([-/]\d+)?\s+)?\d+:\d+(:\d+)?'
     let time = matchstr(title, '\v^\s*\d+[-/]\d+([-/]\d+)?\s+\d+:\d+(:\d+)?\s*-\s*(\d+[-/]\d+([-/]\d+)?\s+)?\d+:\d+(:\d+)?')
     let starttime = matchstr(time, '\v^\s*\d+[-/]\d+([-/]\d+)?\s+\d+:\d+(:\d+)?\s*')
@@ -321,6 +304,23 @@ function! s:parse_title(title, ...) abort
     endif
     let title = substitute(title[len(time):], '^\s*', '', '')
     let [startdate, enddate] = [s:format_time(starttime), s:format_time(endtime)]
+  elseif title =~# '\v^\s*\d+[-/]\d+([-/]\d+)?%(\s*-\s*\d+[-/]\d+([-/]\d+)?|\s+)'
+    let time = matchstr(title, '\v^\s*\d+[-/]\d+([-/]\d+)?%(\s*-\s*\d+[-/]\d+([-/]\d+)?|\s+)')
+    let starttime = matchstr(time, '\v^\s*\d+[-/]\d+([-/]\d+)?\s*')
+    let endtime = matchstr(time[len(starttime):], '\v\d+[-/]\d+([-/]\d+)?')
+    let title = substitute(title[len(time):], '^\s*', '', '')
+    let [startdate, enddate] = [s:format_time(starttime), s:format_time_end(endtime !=# '' ? endtime : starttime)]
+    if startdate =~# '\v^\d+-\d+-\d+$' && enddate =~# '\v^\d+-\d+-\d+$'
+      let [sy, sm, sd] = map(split(startdate, '-'), 'v:val + 0')
+      let [ey, em, ed] = map(split(enddate, '-'), 'v:val + 0')
+      if sy == ey && sm > em
+        if [year, month] == [ey, em]
+          let startdate = join([sy - 1, sm, sd], '-')
+        else
+          let enddate = join([ey + 1, em, ed], '-')
+        endif
+      endif
+    endif
   elseif !a:0 || !a:1
     let [startdate, enddate] = [date, ndate]
   endif

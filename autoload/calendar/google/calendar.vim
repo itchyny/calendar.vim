@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2018/10/08 17:46:24.
+" Last Change: 2020/02/08 15:38:32.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -598,6 +598,8 @@ function! s:set_timezone(calendarId, obj) abort
   endif
   if has_key(a:obj, 'dateTime')
     let a:obj.date = function('calendar#webapi#null')
+  elseif has_key(a:obj, 'date')
+    let a:obj.dateTime = function('calendar#webapi#null')
   endif
 endfunction
 
