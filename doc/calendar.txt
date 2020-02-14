@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2020/02/08 16:27:35.
+Last Change: 2020/02/15 01:08:50.
 
 CONTENTS					*calendar-contents*
 
@@ -811,12 +811,12 @@ Calendar:
 		EVENT: yyyy-mm-dd - yyyy-mm-dd [event-title] (big endian, "-" separator)
 
 		Example:
-		EVENT: 10/10 [event-title] (all day event)
-		EVENT: 10/10 - 10/12 [event-title]
-		EVENT: 2014/10/10 - 2014/10/12 [event-title] (big endian)
-		EVENT: 10/10/2014 - 10/12/2014 [event-title] (middle endian)
-		EVENT: 10/10/2014 - 12/10/2014 [event-title] (little endian)
-		EVENT: 2014-10-10 - 2014-10-12 [event-title] (big endian, "-" separator)
+		EVENT: 10/23 [event-title] (all day event)
+		EVENT: 10/23 - 10/25 [event-title]
+		EVENT: 2014/10/23 - 2014/10/25 [event-title] (big endian)
+		EVENT: 10/23/2014 - 10/25/2014 [event-title] (middle endian)
+		EVENT: 23/10/2014 - 25/10/2014 [event-title] (little endian)
+		EVENT: 2014-10-23 - 2014-10-25 [event-title] (big endian, "-" separator)
 
 	Days and hours event:
 		EVENT: mm/dd HH:MM - mm/dd HH:MM [event-title]
@@ -825,9 +825,9 @@ Calendar:
 		EVENT: dd-mm-yyyy HH:MM - dd-mm-yyyy HH:MM [event-title] (little endian, "-" separator)
 
 		Example:
-		EVENT: 10/10 19:00 - 10/11 21:00 [event-title]
-		EVENT: 2014/10/10 19:00 - 2014/10/11 21:00 [event-title]
-		EVENT: 10-10-2014 10:00 - 12-10-2014 21:00 [event-title] (little endian, "-" separator)
+		EVENT: 10/23 19:00 - 10/25 21:00 [event-title]
+		EVENT: 2014/10/23 19:00 - 2014/10/25 21:00 [event-title]
+		EVENT: 23-10-2014 10:00 - 25-10-2014 21:00 [event-title] (little endian, "-" separator)
 
 Task:
 	Simple task:
@@ -843,18 +843,18 @@ Task:
 		TASK: yyyy-mm-dd [task-title]
 
 		Example:
-		TASK: 10/30 [task-title]
-		TASK: 10-30 [task-title]
-		TASK: 2014/10/30 [task-title]
-		TASK: 2014-10-30 [task-title]
+		TASK: 10/23 [task-title]
+		TASK: 10-23 [task-title]
+		TASK: 2014/10/23 [task-title]
+		TASK: 2014-10-23 [task-title]
 
 	Task with due date and note:
 		TASK: yyyy/mm/dd [task-title] note: [task-note]
 		TASK: yyyy-mm-dd [task-title] note: [task-note]
 
 		Example:
-		TASK: 2014/10/30 [task-title] note: [task-note]
-		TASK: 2014-10-30 [task-title] note: [task-note]
+		TASK: 2014/10/23 [task-title] note: [task-note]
+		TASK: 2014-10-23 [task-title] note: [task-note]
 
 ------------------------------------------------------------------------------
 TROUBLESHOOTING					*calendar-troubleshooting*
