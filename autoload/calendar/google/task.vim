@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/05/24 22:07:04.
+" Last Change: 2020/05/24 22:10:43.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -63,10 +63,6 @@ function! calendar#google#task#getTasks() abort
       unlet! cnt
       let cnt = s:task_cache.new(tasklist.id).get('information')
       if type(cnt) == type({}) && cnt != {}
-        " if flg && get(get(s:task, len(task) - 1, {}), 'etag', '') ==# get(cnt, 'etag', ',')
-        "   echo [get(get(s:task, len(task) - 1, {}), 'etag', '') , get(cnt, 'etag', ',')]
-        "   break
-        " endif
         let flg = 0
         let i = 0
         let task[-1].etag = cnt.etag
