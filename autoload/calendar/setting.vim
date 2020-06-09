@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/setting.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/02/08 16:21:25.
+" Last Change: 2020/06/09 19:41:12.
 " =============================================================================
 
 scriptencoding utf-8
@@ -247,25 +247,26 @@ function! s:frame_space() abort
 endfunction
 
 function! s:google_client() abort
-  if has_key(s:, 'g')
-    return s:g
+  if has_key(s:, '_google_client')
+    return s:_google_client
   endif
-  let s:g = calendar#cipher#decipher({
-        \ 'redirect_uri': 'zws?njyk?|l?tfzym?735?ttg',
-        \ 'client_id': '::88>5<99<8:2{rlm<qmzs{xgwwzfz9hf>qkuuytu9mox3fuux3lttlqjzxjwhtsyjsy3htr',
-        \ 'scope': 'myyux?44|||3lttlqjfunx3htr4fzym4hfqjsifw%myyux?44|||3lttlqjfunx3htr4fzym4yfxpx',
-        \ 'api_key': 'FN fX~FQ[fQJfrUnPtdu;H;u <=t8fStIQ]}lWN',
-        \ 'client_secret': 'R_s=vS}6Jlg{dR<rt~OrYXR5'}, 100)
+  let s:_google_client = {
+        \ 'redirect_uri': 'urn:ietf:wg:oauth:2.0:oob',
+        \ 'scope': 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/tasks',
+        \ 'api_key': '',
+        \ 'client_id': '',
+        \ 'client_secret': '',
+        \ }
   if exists('g:calendar_google_api_key')
-    let s:g.api_key = g:calendar_google_api_key
+    let s:_google_client.api_key = g:calendar_google_api_key
   endif
   if exists('g:calendar_google_client_id')
-    let s:g.client_id = g:calendar_google_client_id
+    let s:_google_client.client_id = g:calendar_google_client_id
   endif
   if exists('g:calendar_google_client_secret')
-    let s:g.client_secret = g:calendar_google_client_secret
+    let s:_google_client.client_secret = g:calendar_google_client_secret
   endif
-  return s:g
+  return s:_google_client
 endfunction
 
 function! s:message_prefix() abort

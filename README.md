@@ -86,8 +86,8 @@ let g:calendar_google_task = 1
 It requires `wget` or `curl`.
 
 ### Important notice
-Currently the client key of this application is disabled and you will get the **Sign in with Google temporarily disabled for this app** error.
-You can create your own Google API key and use for authentication with the following steps.
+The default client key is not provided anymore and you will get the **Authorization Error**.
+You have to create your own Google API key and use for authentication with the following steps.
 
 - Create a new project in [GCP](https://cloud.google.com/) and go to [Google APIs](https://console.developers.google.com/apis/).
 - Click `ENABLE APIS AND SERVICES` add `Google Calendar API` and `Tasks API`.
