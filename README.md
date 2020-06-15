@@ -98,7 +98,7 @@ You have to create your own Google API key and use for authentication with the f
 - Go to the `Credentials` page from the sidebar.
   - Create a new API key and restrict key to the two APIs (`Google Calendar API`, `Tasks API`).
     - You have the api key.
-  - Create a new `OAuth client ID`. Select `Other` for the application type.
+  - Create a new `OAuth client ID`. Select `Desktop application` for the application type.
     - You have the client id and client secret.
 - Open your terminal and save the credentials.
   - `mkdir -p ~/.cache/calendar.vim/ && touch ~/.cache/calendar.vim/credentials.vim`
