@@ -74,7 +74,13 @@ itchyny (https://github.com/itchyny)
 This software is released under the MIT License, see LICENSE.
 
 ## Installation
-Install with your favorite plugin manager.
+Install with your favorite plugin manager.   
+Example installation using vim-plug: 
+
+Add the following line in your ~/.vimrc
+```
+Plug 'itchyny/calendar.vim'
+```
 
 ## Google Calendar and Google Task
 In order to view and edit calendars on Google Calendar, or task on Google Task,
