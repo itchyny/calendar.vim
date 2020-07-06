@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/07/06 23:55:32.
+" Last Change: 2020/07/07 06:37:21.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -48,56 +48,80 @@ function! calendar#google#task#getTaskList_response(id, response) abort
   endif
 endfunction
 
-let s:task = []
 function! calendar#google#task#getTasks() abort
   if calendar#timestamp#update('google_task', 30 * 60)
     call calendar#async#new('calendar#google#task#downloadTasks(1)')
   endif
-  let task = []
+  let allTaskList = []
   let taskList = calendar#google#task#getTaskList()
-  let flg = 1
   if has_key(taskList, 'items') && type(taskList.items) == type([])
     for tasklist in taskList.items
-      call add(task, deepcopy(tasklist))
-      let task[-1].items = []
+      call add(allTaskList, deepcopy(tasklist))
+      let allTaskList[-1].items = []
       unlet! cnt
       let cnt = s:task_cache.new(tasklist.id).get('information')
       if type(cnt) == type({}) && cnt != {}
-        let flg = 0
         let i = 0
-        let task[-1].etag = cnt.etag
+        let allTaskList[-1].etag = cnt.etag
+        let items = []
         while type(cnt) == type({})
           unlet! cnt
           let cnt = s:task_cache.new(tasklist.id).get(i)
           if type(cnt) == type({}) && cnt != {} && has_key(cnt, 'items') && type(cnt.items) == type([])
-            call extend(task[-1].items, deepcopy(cnt.items))
-            for item in task[-1].items
-              if has_key(item, 'due') && item.due =~# '\v\d+-\d+-\d+T'
-                let [y, m, d] = map(split(substitute(substitute(item.due, 'T.*', '', ''), '\s', '', 'g'), '[-/]'), 'substitute(v:val, "^0", "", "") + 0')
-                let item.title = calendar#day#join_date([y, m, d]) . ' ' . get(item, 'title', '')
-                call remove(item, 'due')
-              endif
-              if has_key(item, 'notes') && item.notes !=# ''
-                let item.title = get(item, 'title', '') . ' note: ' . get(item, 'notes', '')
-              endif
-            endfor
+            call extend(items, deepcopy(cnt.items))
           endif
           let i += 1
         endwhile
-        call sort(task[-1].items, function('calendar#google#task#sorter'))
+        for item in items
+          if has_key(item, 'due') && item.due =~# '\v\d+-\d+-\d+T'
+            let [y, m, d] = map(split(substitute(substitute(item.due, 'T.*', '', ''), '\s', '', 'g'), '[-/]'), 'substitute(v:val, "^0", "", "") + 0')
+            let item.title = calendar#day#join_date([y, m, d]) . ' ' . get(item, 'title', '')
+            call remove(item, 'due')
+          endif
+          if has_key(item, 'notes') && item.notes !=# ''
+            let item.title = get(item, 'title', '') . ' note: ' . get(item, 'notes', '')
+          endif
+        endfor
+        call sort(items, function('calendar#google#task#sorter'))
+        let i = 0
+        while i < len(items)
+          if !has_key(items[i], 'parent')
+            break
+          endif
+          let j = i + 1
+          let items[i].prefix = ' +- '
+          while j < len(items)
+            if items[j].id ==# items[i].parent
+              while j < len(items) - 1
+                if get(items[j + 1], 'parent', '') ==# items[i].parent
+                  let items[j + 1].prefix = ' |- '
+                  let j += 1
+                else
+                  break
+                endif
+              endwhile
+              call insert(items, items[i], j + 1)
+              call remove(items, i)
+              let i -= 1
+              break
+            endif
+            let j += 1
+          endwhile
+          let i += 1
+        endwhile
+        let allTaskList[-1].items = items
       else
         call calendar#google#task#downloadTasks()
       endif
     endfor
   endif
-  if !flg
-    let s:task = task
-  endif
-  return s:task
+  return allTaskList
 endfunction
 
 function! calendar#google#task#sorter(x, y) abort
-  return a:x.position ==# a:y.position
+  return has_key(a:x, 'parent') != has_key(a:y, 'parent')
+        \ ? (has_key(a:x, 'parent') ? -1 : 1)
+        \ : a:x.position ==# a:y.position
         \ ? (a:x.updated > a:y.updated ? 1 : -1)
         \ : a:x.position > a:y.position ? 1 : -1
 endfunction

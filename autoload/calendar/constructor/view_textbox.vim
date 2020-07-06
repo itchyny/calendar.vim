@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_textbox.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2017/07/02 08:22:27.
+" Last Change: 2020/07/07 06:36:46.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -157,7 +157,7 @@ function! s:instance.get_contents() dict abort
         elseif has_key(tt, 'syntax')
           call add(self.syntax, [len(cnt), tt.syntax])
         endif
-        call add(cnt, get(tt, 'title', get(tt, 'summary', '')))
+        call add(cnt, get(tt, 'prefix', '') . get(tt, 'title', get(tt, 'summary', '')))
       endfor
     endfor
     if self._nocontents && has_key(self, 'min_index') && has_key(self, 'max_index')
