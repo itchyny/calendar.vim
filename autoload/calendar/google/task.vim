@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/07/06 22:00:35.
+" Last Change: 2020/07/06 23:55:32.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -84,6 +84,7 @@ function! calendar#google#task#getTasks() abort
           endif
           let i += 1
         endwhile
+        call sort(task[-1].items, function('calendar#google#task#sorter'))
       else
         call calendar#google#task#downloadTasks()
       endif
@@ -93,6 +94,12 @@ function! calendar#google#task#getTasks() abort
     let s:task = task
   endif
   return s:task
+endfunction
+
+function! calendar#google#task#sorter(x, y) abort
+  return a:x.position ==# a:y.position
+        \ ? (a:x.updated > a:y.updated ? 1 : -1)
+        \ : a:x.position > a:y.position ? 1 : -1
 endfunction
 
 " Optional argument: Force download.
