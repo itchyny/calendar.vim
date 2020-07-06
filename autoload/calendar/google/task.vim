@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/05/24 22:10:43.
+" Last Change: 2020/07/06 21:21:30.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -300,7 +300,7 @@ function! calendar#google#task#update_response(id, response) abort
 endfunction
 
 function! calendar#google#task#complete(id, taskid) abort
-  call calendar#google#client#put_async(s:newid(['complete', 0, a:id, a:taskid]),
+  call calendar#google#client#patch_async(s:newid(['complete', 0, a:id, a:taskid]),
         \ 'calendar#google#task#complete_response',
         \ calendar#google#task#get_url('lists/' . a:id . '/tasks/' . a:taskid),
         \ { 'tasklist': a:id, 'task': a:taskid },
@@ -314,7 +314,7 @@ function! calendar#google#task#complete_response(id, response) abort
   elseif a:response.status == 401
     if err == 0
       call calendar#google#client#refresh_token()
-      call calendar#google#client#put_async(s:newid(['complete', 1, id, taskid]),
+      call calendar#google#client#patch_async(s:newid(['complete', 1, id, taskid]),
             \ 'calendar#google#task#complete_response',
             \ calendar#google#task#get_url('lists/' . id . '/tasks/' . taskid),
             \ { 'tasklist': id, 'task': taskid },
@@ -324,7 +324,7 @@ function! calendar#google#task#complete_response(id, response) abort
 endfunction
 
 function! calendar#google#task#uncomplete(id, taskid) abort
-  call calendar#google#client#put_async(s:newid(['uncomplete', 0, a:id, a:taskid]),
+  call calendar#google#client#patch_async(s:newid(['uncomplete', 0, a:id, a:taskid]),
         \ 'calendar#google#task#uncomplete_response',
         \ calendar#google#task#get_url('lists/' . a:id . '/tasks/' . a:taskid),
         \ { 'tasklist': a:id, 'task': a:taskid },
@@ -338,7 +338,7 @@ function! calendar#google#task#uncomplete_response(id, response) abort
   elseif a:response.status == 401
     if err == 0
       call calendar#google#client#refresh_token()
-      call calendar#google#client#put_async(s:newid(['uncomplete', 1, id, taskid]),
+      call calendar#google#client#patch_async(s:newid(['uncomplete', 1, id, taskid]),
             \ 'calendar#google#task#uncomplete_response',
             \ calendar#google#task#get_url('lists/' . id . '/tasks/' . taskid),
             \ { 'tasklist': id, 'task': taskid },
