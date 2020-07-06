@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/07/06 21:21:30.
+" Last Change: 2020/07/06 22:00:35.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -18,7 +18,7 @@ endfunction
 
 function! calendar#google#task#getTaskList() abort
   let taskList = s:cache.get('taskList')
-  if type(taskList) != type({})
+  if type(taskList) != type({}) || calendar#timestamp#update('google_tasklist', 7 * 24 * 60 * 60)
     call calendar#google#client#get_async(s:newid(['taskList', 0]),
           \ 'calendar#google#task#getTaskList_response',
           \ calendar#google#task#get_url('users/@me/lists'))
