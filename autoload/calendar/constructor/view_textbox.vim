@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_textbox.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/07/07 06:36:46.
+" Last Change: 2020/07/07 07:22:00.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -108,7 +108,6 @@ function! s:instance.get_contents() dict abort
   let frame = calendar#setting#frame()
   let width = calendar#string#strdisplaywidth(frame.vertical)
   let cnts = self.get_raw_contents()
-  let self.raw_cnts = cnts
   let w = self.sizex() - width * 2
   if len(cnts)
     let self._current_contents = {}

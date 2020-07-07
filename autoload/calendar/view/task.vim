@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/02/08 16:07:29.
+" Last Change: 2020/07/07 07:16:53.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -43,11 +43,13 @@ function! s:self.action(action) dict abort
   elseif index(['undo_line'], a:action) >= 0
     call b:calendar.task.uncomplete(self.current_group_id(), taskid)
   elseif index(['move_down', 'move_up'], a:action) >= 0
-    let prevprevtaskid = get(self.prevprev_contents(), 'id', '')
-    let nexttaskid = get(self.next_contents(), 'id', '')
-    let newprevioustaskid = a:action ==# 'move_down' ? nexttaskid : prevprevtaskid
-    if newprevioustaskid !=# '' || a:action ==# 'move_up'
-      call b:calendar.task.move(self.current_group_id(), taskid, newprevioustaskid)
+    let previoustask = a:action ==# 'move_down' ? self.next_contents() : self.prevprev_contents()
+    if get(previoustask, 'id', '') !=# '' || a:action ==# 'move_up'
+      if has_key(task, 'parent') && task.parent !=# get(previoustask, 'parent', get(previoustask, 'id', ''))
+        return
+      endif
+      let previoustaskid = get(task, 'parent', '') ==# get(previoustask, 'id', '') ? '' : get(previoustask, 'id', '')
+      call b:calendar.task.move(self.current_group_id(), taskid, previoustaskid, get(task, 'parent', ''))
       let self.select += a:action ==# 'move_up' ? -1 : 1
     endif
   elseif index(['start_insert', 'start_insert_append', 'start_insert_head', 'start_insert_last', 'change', 'change_line'], a:action) >= 0

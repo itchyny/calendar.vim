@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/02/08 16:24:19.
+" Last Change: 2020/07/07 06:54:38.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -46,9 +46,9 @@ function! s:self.insert(listid, previous, title, ...) dict abort
   call self.task_source.insert(a:listid, a:previous, a:title, a:0 ? a:1 : {})
 endfunction
 
-function! s:self.move(listid, taskid, previous) dict abort
+function! s:self.move(listid, taskid, previous, parent) dict abort
   let self._updated = 1
-  call self.task_source.move(a:listid, a:taskid, a:previous)
+  call self.task_source.move(a:listid, a:taskid, a:previous, a:parent)
 endfunction
 
 function! s:self.update(listid, taskid, title, ...) dict abort
