@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/controller.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:28:27.
+" Last Change: 2020/07/12 16:06:26.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -167,6 +167,7 @@ endfunction
 
 function! s:self.update_force_redraw() dict abort
   call self.event.clear_cache()
+  call self.task.clear_cache()
   call self.prepare()
   call self.redraw(1, 1)
 endfunction
