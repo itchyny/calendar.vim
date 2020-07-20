@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/07/07 07:16:53.
+" Last Change: 2020/07/21 00:29:00.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -77,7 +77,10 @@ function! s:self.action(action) dict abort
         let self.select += 1
       endif
       let [title, duedate] = s:parse_title(title)
-      call b:calendar.task.insert(self.current_group_id(), next ? taskid : prevtaskid, title, duedate ==# '' ? {} : { 'due': duedate })
+      call b:calendar.task.insert(self.current_group_id(),
+            \ next ? taskid : !has_key(task, 'parent') || has_key(prevtask, 'parent') ? prevtaskid : '',
+            \ get(next ? task : !has_key(task, 'parent') || has_key(prevtask, 'parent') ? prevtask : task, 'parent', ''),
+            \ title, duedate ==# '' ? {} : { 'due': duedate })
     endif
   elseif a:action ==# 'clear'
     if calendar#setting#get('skip_task_clear_completed_confirm') || input(calendar#message#get('clear_completed_task')) =~# '\c^y\%[es]$'

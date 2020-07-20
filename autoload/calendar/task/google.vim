@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/task/google.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/07/07 06:54:21.
+" Last Change: 2020/07/21 00:15:11.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -22,8 +22,8 @@ function! s:self.get_task() dict abort
   return calendar#google#task#getTasks()
 endfunction
 
-function! s:self.insert(listid, previous, title, ...) dict abort
-  call calendar#google#task#insert(a:listid, a:previous, a:title, a:0 ? a:1 : {})
+function! s:self.insert(listid, previous, parent, title, ...) dict abort
+  call calendar#google#task#insert(a:listid, a:previous, a:parent, a:title, a:0 ? a:1 : {})
 endfunction
 
 function! s:self.move(listid, taskid, previous, parent) dict abort

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/task/local.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/07/07 06:54:11.
+" Last Change: 2020/07/21 00:14:57.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -59,7 +59,7 @@ function! s:self.get_task() dict abort
   return task
 endfunction
 
-function! s:self.insert(listid, previous, title, ...) dict abort
+function! s:self.insert(listid, previous, parent, title, ...) dict abort
   let k = self.get_tasklist_index(a:listid)
   if k >= 0
     let j = self.get_index(k, a:previous) + 1

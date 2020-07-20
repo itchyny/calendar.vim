@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/07/12 16:31:21.
+" Last Change: 2020/07/21 00:34:26.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -207,8 +207,14 @@ function! calendar#google#task#response(id, response) abort
   endif
 endfunction
 
-function! calendar#google#task#insert(id, previous, title, ...) abort
-  let opt = extend({ 'tasklist': a:id }, a:previous !=# '' ? { 'previous': a:previous } : {})
+function! calendar#google#task#insert(id, previous, parent, title, ...) abort
+  let opt = { 'tasklist': a:id }
+  if a:previous !=# ''
+    let opt.previous = a:previous
+  endif
+  if a:parent !=# ''
+    let opt.parent = a:parent
+  endif
   let due = ''
   if a:0
     let due = get(a:1, 'due', '')
@@ -247,7 +253,10 @@ function! calendar#google#task#insert_response(id, response) abort
 endfunction
 
 function! calendar#google#task#move(id, taskid, previous, parent) abort
-  let opt = extend({ 'tasklist': a:id }, a:previous !=# '' ? { 'previous': a:previous } : {})
+  let opt = { 'tasklist': a:id }
+  if a:previous !=# ''
+    let opt.previous = a:previous
+  endif
   if a:parent !=# ''
     let opt.parent = a:parent
   endif
