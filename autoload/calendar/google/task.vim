@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/07/21 00:34:26.
+" Last Change: 2020/08/03 10:10:07.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -137,7 +137,7 @@ function! calendar#google#task#downloadTasks(...) abort
       unlet! cnt
       let cnt = s:task_cache.new(item.id).get('information')
       if type(cnt) != type({}) || cnt == {} || get(a:000, 0) && (a:0 <= 1 || item.id ==# get(a:000, 1, ''))
-        let opt = { 'tasklist': item.id }
+        let opt = { 'tasklist': item.id, 'maxResults': 100 }
         call calendar#google#client#get_async(s:newid(['download', 0, j, 0, item.id, a:000]),
               \ 'calendar#google#task#response',
               \ calendar#google#task#get_url('lists/' . item.id . '/tasks'), opt)
@@ -181,7 +181,7 @@ function! calendar#google#task#response(id, response) abort
           let item = taskList.items[j]
           unlet! cnt
           let cnt = s:task_cache.new(item.id).get('information')
-          let opt = { 'tasklist': item.id }
+          let opt = { 'tasklist': item.id, 'maxResults': 100 }
           if type(cnt) != type({}) || cnt == {} || get(force, 0) && (len(force) <= 1 || item.id ==# get(force, 1, ''))
             call calendar#google#client#get_async(s:newid(['download', 0, j, 0, item.id, force]),
                   \ 'calendar#google#task#response',
