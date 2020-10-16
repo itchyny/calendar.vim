@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2020/02/15 01:08:50.
+Last Change: 2020/10/17 01:41:15.
 
 CONTENTS					*calendar-contents*
 
@@ -349,7 +349,7 @@ This application has some different views. You can switch views with |<| and
 			'year', 'month', 'week', 'weekday',
 			'day_7', 'day_6', 'day_5', 'day_4',
 			'day_3', 'day_2', 'day_1', 'day',
-			'clock', 'event', 'agenda' 
+			'clock', 'event', 'agenda'
 <
 						*calendar-options-cyclic_view*
 						*g:calendar_cyclic_view*
@@ -417,6 +417,14 @@ Other miscellaneous options.
 			russia			14	 2	1918
 			greece			 1	 3	1923
 			turkey			 1	 1	1927
+
+						*calendar-options-calendar_candidates*
+						*g:calendar_calendar_candidates*
+		-calendar_candidates=pattern1,pattern2,pattern3
+		let g:calendar_calendar_candidates = ["pattern1", "pattern2", "pattern3"]
+		Specify the calendar candidates on inserting and moving a
+		calendar event. Note that the values are matched against the
+		summary of the calendars.
 
 						*calendar-options-updatetime*
 						*g:calendar_updatetime*

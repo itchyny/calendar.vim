@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2017/05/23 22:00:40.
+" Last Change: 2020/10/17 01:37:16.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -112,6 +112,24 @@ endfunction
 
 function! s:self.calendarList() dict abort
   return self.event_source.calendarList()
+endfunction
+
+function! s:self.calendarCandidates() dict abort
+  let calendars = self.event_source.calendarList()
+  let calendar_candidates = calendar#setting#get('calendar_candidates')
+  if type(calendar_candidates) ==# type('') || type(calendar_candidates) ==# type([])
+    let cs = []
+    for pattern in type(calendar_candidates) ==# type('') ?
+          \ split(calendar_candidates, ', *') : calendar_candidates
+      for c in calendars
+        if c.summary =~# pattern
+          call add(cs, c)
+        endif
+      endfor
+    endfor
+    let calendars = cs
+  endif
+  return calendars
 endfunction
 
 let &cpo = s:save_cpo

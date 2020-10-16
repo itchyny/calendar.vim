@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/setting.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/06/09 19:41:12.
+" Last Change: 2020/10/17 01:28:47.
 " =============================================================================
 
 scriptencoding utf-8
@@ -33,6 +33,10 @@ endfunction
 
 function! s:calendar() abort
   return 'default'
+endfunction
+
+function! s:calendar_candidates() abort
+  return 0
 endfunction
 
 function! s:first_day() abort

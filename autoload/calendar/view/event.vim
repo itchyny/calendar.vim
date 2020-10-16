@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/02/08 16:03:06.
+" Last Change: 2020/10/17 01:37:50.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -166,15 +166,18 @@ function! s:self.insert_new_event(action, ...) dict abort
       let self.select += 1
     endif
     let [title, startdate, enddate, recurrence] = s:parse_title(title)
-    let calendars = b:calendar.event.calendarList()
+    let calendars = b:calendar.event.calendarCandidates()
     if len(calendars) == 0
       if calendar#setting#get('google_calendar')
         return
       else
-        call b:calendar.event.createCalendar()
         let calendars = b:calendar.event.calendarList()
         if len(calendars) == 0
-          return
+          call b:calendar.event.createCalendar()
+          let calendars = b:calendar.event.calendarList()
+          if len(calendars) == 0
+            return
+          endif
         endif
       endif
     endif
@@ -220,15 +223,18 @@ function! s:self.move_event() dict abort
   let event = self.current_contents()
   let calendarId = get(event, 'calendarId', '')
   let [year, month, day] = b:calendar.day().get_ymd()
-  let calendars = b:calendar.event.calendarList()
+  let calendars = b:calendar.event.calendarCandidates()
   if len(calendars) == 0
     if calendar#setting#get('google_calendar')
       return
     else
-      call b:calendar.event.createCalendar()
       let calendars = b:calendar.event.calendarList()
       if len(calendars) == 0
-        return
+        call b:calendar.event.createCalendar()
+        let calendars = b:calendar.event.calendarList()
+        if len(calendars) == 0
+          return
+        endif
       endif
     endif
   endif

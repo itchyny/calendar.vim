@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/argument.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/02/08 16:14:11.
+" Last Change: 2020/10/17 01:28:50.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -19,6 +19,7 @@ let s:all_value_options = {
       \ '-day': [],
       \ '-locale': [ 'default', 'en', 'ja' ],
       \ '-calendar': ['default', 'gregorian', 'julian'] + sort(s:calendars),
+      \ '-calendar_candidates': [],
       \ '-first_day': [ 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday' ],
       \ '-time_zone': map(range(-12, 12), 'printf("%+03d00", v:val)'),
       \ '-date_endian': [ 'little', 'big', 'middle' ],
