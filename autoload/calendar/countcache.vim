@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/countcache.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:28:31.
+" Last Change: 2020/11/19 07:40:05.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -50,7 +50,7 @@ function! calendar#countcache#save() abort
   endif
   for c in s:caches
     if get(s:saveflag, c.name, 1)
-      silent! call s:cache.save(c.name, filter(c.cache, 'v:val[0] > 29'))
+      call s:cache.save(c.name, filter(c.cache, 'v:val[0] > 29'))
       let s:saveflag[c.name] = 0
     endif
   endfor
@@ -61,7 +61,7 @@ endfunction
 
 augroup CalendarCountCache
   autocmd!
-  autocmd CursorHold * silent! call calendar#countcache#save()
+  autocmd CursorHold * call calendar#countcache#save()
 augroup END
 
 let s:self = {}

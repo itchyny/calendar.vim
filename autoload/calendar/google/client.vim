@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/client.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2019/11/04 22:07:36.
+" Last Change: 2020/11/19 07:40:40.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -97,9 +97,9 @@ function! calendar#google#client#access_token_response(response, content) abort
       call calendar#echo#error_message('google_access_token_fail')
       return 1
     else
-      silent! call s:cache.save('access_token', a:content)
+      call s:cache.save('access_token', a:content)
       if has_key(a:content, 'refresh_token') && type(a:content.refresh_token) == type('')
-        silent! call s:cache.save('refresh_token', { 'refresh_token': a:content.refresh_token })
+        call s:cache.save('refresh_token', { 'refresh_token': a:content.refresh_token })
       endif
     endif
   else

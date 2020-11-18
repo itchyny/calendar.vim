@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/11/19 06:44:36.
+" Last Change: 2020/11/19 07:40:44.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -35,7 +35,7 @@ function! calendar#google#task#getTaskList_response(id, response) abort
     let cnt = calendar#webapi#decode(a:response.content)
     let content = type(cnt) == type({}) ? cnt : {}
     if has_key(content, 'items') && type(content.items) == type([])
-      silent! call s:cache.save('taskList', content)
+      call s:cache.save('taskList', content)
       silent! let b:calendar.task._updated = 1
       silent! call b:calendar.update()
     endif
@@ -160,10 +160,10 @@ function! calendar#google#task#response(id, response) abort
     let cnt = calendar#webapi#decode(a:response.content)
     let content = type(cnt) == type({}) ? cnt : {}
     if has_key(content, 'items')
-      silent! call s:task_cache.new(id).save(i, content)
+      call s:task_cache.new(id).save(i, content)
       if i == 0
         call remove(content, 'items')
-        silent! call s:task_cache.new(id).save('information', content)
+        call s:task_cache.new(id).save('information', content)
       endif
       if has_key(content, 'nextPageToken')
         let opt = extend(opt, { 'pageToken': content.nextPageToken })

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/timestamp.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2017/05/23 21:52:29.
+" Last Change: 2020/11/19 07:41:09.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -26,7 +26,7 @@ function! calendar#timestamp#update(name, sec) abort
     let refresh = 1
   endif
   if refresh
-    silent! call s:cache.save(a:name,
+    call s:cache.save(a:name,
           \ { 'name': a:name
           \ , 'day' : calendar#day#today().get_ymd()
           \ , 'time': calendar#time#now().get_hms() })

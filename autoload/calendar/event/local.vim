@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/event/local.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/11/19 06:36:08.
+" Last Change: 2020/11/19 07:40:22.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -102,7 +102,7 @@ function! s:self.update(calendarId, eventId, title, year, month, ...) dict abort
         if cnt.items[i].id ==# a:eventId
           let cnt.items[i].summary = a:title
           call extend(cnt.items[i], a:0 ? a:1 : {})
-          silent! call s:event_cache.new(calendar.id).new(y).new(m).save('0', cnt)
+          call s:event_cache.new(calendar.id).new(y).new(m).save('0', cnt)
           return
         endif
       endfor
@@ -130,7 +130,7 @@ function! s:self.insert(calendarId, title, start, end, year, month, ...) dict ab
             \ , 'start': a:start =~# '\vT\d+' ? { 'dateTime': a:start } : { 'date': a:start }
             \ , 'end': a:end =~# '\vT\d+' ? { 'dateTime': a:end } : { 'date': a:end }
             \ })
-      silent! call s:event_cache.new(calendar.id).new(y).new(m).save('0', cnt)
+      call s:event_cache.new(calendar.id).new(y).new(m).save('0', cnt)
       return
     endif
   endfor
@@ -148,7 +148,7 @@ function! s:self.move(calendarId, eventId, destination, year, month) dict abort
         if cnt.items[i].id ==# a:eventId
           let event = deepcopy(cnt.items[i])
           call remove(cnt.items, i)
-          silent! call s:event_cache.new(calendar.id).new(y).new(m).save('0', cnt)
+          call s:event_cache.new(calendar.id).new(y).new(m).save('0', cnt)
           break
         endif
       endfor
@@ -164,7 +164,7 @@ function! s:self.move(calendarId, eventId, destination, year, month) dict abort
             \ , 'start': event.start
             \ , 'end': event.end
             \ })
-      silent! call s:event_cache.new(calendar.id).new(y).new(m).save('0', cnt)
+      call s:event_cache.new(calendar.id).new(y).new(m).save('0', cnt)
       return
     endif
   endfor
@@ -180,7 +180,7 @@ function! s:self.delete(calendarId, eventId, year, month) dict abort
       for i in range(len(cnt.items))
         if cnt.items[i].id ==# a:eventId
           call remove(cnt.items, i)
-          silent! call s:event_cache.new(calendar.id).new(y).new(m).save('0', cnt)
+          call s:event_cache.new(calendar.id).new(y).new(m).save('0', cnt)
           return
         endif
       endfor
@@ -226,7 +226,7 @@ function! s:self.createCalendar() dict abort
           \ , 'backgroundColor': newcolors[0]
           \ , 'foregroundColor': '#000000'
           \ })
-    silent! call s:cache.save('calendarList', c)
+    call s:cache.save('calendarList', c)
     if has_key(self, '_calendarList')
       unlet! self._calendarList
     endif

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/11/19 06:35:59.
+" Last Change: 2020/11/19 07:40:32.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -40,7 +40,7 @@ function! calendar#google#calendar#getCalendarList_response(id, response) abort
     if has_key(content, 'items') && type(content.items) == type([])
       let content.items = filter(deepcopy(content.items), 'get(v:val, "accessRole", "") ==# "owner"')
             \           + filter(deepcopy(content.items), 'get(v:val, "accessRole", "") !=# "owner"')
-      silent! call s:cache.save('calendarList', content)
+      call s:cache.save('calendarList', content)
       let g:calendar_google_event_downloading_list = 0
       let g:calendar_google_event_download = 3
       silent! let b:calendar.event._updated = 3
@@ -79,7 +79,7 @@ function! calendar#google#calendar#getColors_response(id, response) abort
     let cnt = calendar#webapi#decode(a:response.content)
     let content = type(cnt) == type({}) ? cnt : {}
     if has_key(content, 'event') && type(content.event) == type({})
-      silent! call s:cache.save('colors', content)
+      call s:cache.save('colors', content)
       silent! call b:calendar.update()
     endif
   endif
@@ -405,10 +405,10 @@ function! calendar#google#calendar#response(id, response) abort
     let cnt = calendar#webapi#decode(a:response.content)
     let content = type(cnt) == type({}) ? cnt : {}
     if has_key(content, 'items')
-      silent! call s:event_cache.new(id).new(year).new(month).save(i, content)
+      call s:event_cache.new(id).new(year).new(month).save(i, content)
       if i == 0
         call remove(content, 'items')
-        silent! call s:event_cache.new(id).new(year).new(month).save('information', content)
+        call s:event_cache.new(id).new(year).new(month).save('information', content)
       endif
       if has_key(content, 'nextPageToken')
         let opt = extend(opt, { 'pageToken': content.nextPageToken })
