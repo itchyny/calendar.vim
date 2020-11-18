@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/cache.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2019/12/13 13:36:54.
+" Last Change: 2020/11/19 07:37:50.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -115,6 +115,9 @@ function! s:self.get(key) dict abort
     let result = readfile(path)
     try
       if len(result)
+        if exists('*js_decode')
+          return js_decode(len(result) > 1 ? join(result, '') : result[0])
+        endif
         sandbox return eval(join(result, ''))
       else
         return 1
@@ -152,56 +155,62 @@ function! s:self.clear() dict abort
   call calendar#util#rmdir(self.dir(), 'rf')
 endfunction
 
-" string() with making newlines and indents properly.
-function! calendar#cache#string(v, ...) abort
-  let r = []
-  let f = 1
-  let s = a:0 ? a:1 : ''
-  if type(a:v) == type([])
-    call add(r, '[ ')
-    let s .= '  '
-    for i in range(len(a:v))
-      call add(r, s . string(a:v[i]) . ',')
-    endfor
-    if r[-1][len(r[-1]) - 1] ==# ','
-      let r[-1] = r[-1][:-2]
-    endif
-    call add(r, ' ]')
-  elseif type(a:v) == type({})
-    call add(r, '{ ')
-    let s .= '  '
-    for k in keys(a:v)
-      if type(a:v[k]) == type({}) || type(a:v[k]) == type([]) && len(a:v[k]) > 2
-        let result = calendar#cache#string(a:v[k], s . repeat(' ', len(string(k)) + 2))
-        let result[-1] .= ','
-        call add(r, s . string(k) . ': ' . result[0])
-        call remove(result, 0)
-        call extend(r, result)
-      else
-        call add(r, s . string(k) . ': ' . string(a:v[k]) . ',')
+if exists('*json_encode')
+  function! calendar#cache#string(v) abort
+    return [json_encode(a:v)]
+  endfunction
+else
+  " string() with making newlines and indents properly.
+  function! calendar#cache#string(v, ...) abort
+    let r = []
+    let f = 1
+    let s = a:0 ? a:1 : ''
+    if type(a:v) == type([])
+      call add(r, '[ ')
+      let s .= '  '
+      for i in range(len(a:v))
+        call add(r, s . string(a:v[i]) . ',')
+      endfor
+      if r[-1][len(r[-1]) - 1] ==# ','
+        let r[-1] = r[-1][:-2]
       endif
-    endfor
-    if r[-1][len(r[-1]) - 1] ==# ','
-      let r[-1] = r[-1][:-2]
+      call add(r, ' ]')
+    elseif type(a:v) == type({})
+      call add(r, '{ ')
+      let s .= '  '
+      for k in keys(a:v)
+        if type(a:v[k]) == type({}) || type(a:v[k]) == type([]) && len(a:v[k]) > 2
+          let result = calendar#cache#string(a:v[k], s . repeat(' ', len(string(k)) + 2))
+          let result[-1] .= ','
+          call add(r, s . string(k) . ': ' . result[0])
+          call remove(result, 0)
+          call extend(r, result)
+        else
+          call add(r, s . string(k) . ': ' . string(a:v[k]) . ',')
+        endif
+      endfor
+      if r[-1][len(r[-1]) - 1] ==# ','
+        let r[-1] = r[-1][:-2]
+      endif
+      call add(r, ' }')
+    else
+      call add(r, s . string(a:v))
+      let f = 0
     endif
-    call add(r, ' }')
-  else
-    call add(r, s . string(a:v))
-    let f = 0
-  endif
-  if f
-    if len(r[1]) > len(s) + 1
-      let r[1] = r[1][len(s):]
+    if f
+      if len(r[1]) > len(s) + 1
+        let r[1] = r[1][len(s):]
+      endif
+      let r[0] .= r[1]
+      call remove(r, 1)
+      if len(r) > 1
+        let r[-2] .= r[-1]
+        call remove(r, -1)
+      endif
     endif
-    let r[0] .= r[1]
-    call remove(r, 1)
-    if len(r) > 1
-      let r[-2] .= r[-1]
-      call remove(r, -1)
-    endif
-  endif
-  return r
-endfunction
+    return r
+  endfunction
+endif
 
 if exists('*getfperm') && exists('*setfperm')
   function! s:setfperm_dir(dir) abort
