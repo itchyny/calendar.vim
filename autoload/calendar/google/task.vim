@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/08/03 10:10:07.
+" Last Change: 2020/11/19 06:44:36.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -57,7 +57,7 @@ function! calendar#google#task#getTasks() abort
   let taskList = calendar#google#task#getTaskList()
   if has_key(taskList, 'items') && type(taskList.items) == type([])
     for tasklist in taskList.items
-      call add(allTaskList, deepcopy(tasklist))
+      call add(allTaskList, tasklist)
       let allTaskList[-1].items = []
       unlet! cnt
       let cnt = s:task_cache.new(tasklist.id).get('information')
@@ -69,7 +69,7 @@ function! calendar#google#task#getTasks() abort
           unlet! cnt
           let cnt = s:task_cache.new(tasklist.id).get(i)
           if type(cnt) == type({}) && cnt != {} && has_key(cnt, 'items') && type(cnt.items) == type([])
-            call extend(items, deepcopy(cnt.items))
+            call extend(items, cnt.items)
           endif
           let i += 1
         endwhile

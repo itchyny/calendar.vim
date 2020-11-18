@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/task/local.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/07/21 00:14:57.
+" Last Change: 2020/11/19 06:44:53.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -38,7 +38,7 @@ function! s:self.get_task() dict abort
   let task = []
   if has_key(taskList, 'items') && type(taskList.items) == type([])
     for item in taskList.items
-      call add(task, deepcopy(item))
+      call add(task, item)
       let task[-1].items = []
       unlet! cnt
       let cnt = s:task_cache.new(item.id).get('information')
@@ -48,7 +48,7 @@ function! s:self.get_task() dict abort
           unlet! cnt
           let cnt = s:task_cache.new(item.id).get(i)
           if type(cnt) == type({}) && cnt != {} && has_key(cnt, 'items') && type(cnt.items) == type([])
-            call extend(task[-1].items, deepcopy(cnt.items))
+            call extend(task[-1].items, cnt.items)
           endif
           let i += 1
         endwhile

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/02/08 15:38:32.
+" Last Change: 2020/11/19 06:35:59.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -212,7 +212,7 @@ function! calendar#google#calendar#getEvents(year, month, ...) abort
             let events[date] = { 'events': [] }
           endif
           call add(events[date].events,
-                \ extend(deepcopy(itm),
+                \ extend(itm,
                 \ { 'calendarId': item.id
                 \ , 'calendarSummary': item.summary
                 \ , 'syntax': syn
@@ -331,7 +331,7 @@ function! calendar#google#calendar#getHolidays(year, month) abort
           let events[date] = { 'events': [], 'hasHoliday': 1 }
         endif
         call add(events[date].events,
-              \ extend(deepcopy(itm),
+              \ extend(itm,
               \ { 'calendarId': item.id
               \ , 'calendarSummary': item.summary
               \ , 'holiday': get(itm, 'summary', '')

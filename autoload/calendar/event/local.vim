@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/event/local.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2018/10/08 17:50:51.
+" Last Change: 2020/11/19 06:36:08.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -63,7 +63,7 @@ function! s:self.get_events_one_month(year, month, ...) dict abort
       if !has_key(events, date)
         let events[date] = { 'events': [] }
       endif
-      call add(events[date].events, extend(deepcopy(itm),
+      call add(events[date].events, extend(itm,
             \ { 'calendarId': calendar.id
             \ , 'calendarSummary': calendar.summary
             \ , 'syntax': syn
