@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/cache.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/11/19 07:37:50.
+" Last Change: 2020/11/20 00:09:42.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -115,7 +115,7 @@ function! s:self.get(key) dict abort
     let result = readfile(path)
     try
       if len(result)
-        if exists('*js_decode')
+        if exists('*js_decode') && has('patch-8.0.0216')
           return js_decode(len(result) > 1 ? join(result, '') : result[0])
         endif
         sandbox return eval(join(result, ''))
