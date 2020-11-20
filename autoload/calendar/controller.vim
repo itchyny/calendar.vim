@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/controller.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/07/12 16:06:26.
+" Last Change: 2020/11/21 01:48:27.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -197,23 +197,27 @@ function! s:self.redraw(...) dict abort
   if a:0 > 1 && a:2
     redraw
   endif
-  call setline(1, map(range(calendar#util#winheight()), 'u[v:val].s'))
   call self.clear()
-  let c = 'Cursor'
-  let a = 'syntax match Calendar%s /\%%>%dl\%%<%dl\%%%dc.*\%%%dc/'
-  let b = 'syntax match Calendar%s /\%%%dl\%%%dc.*\%%%dc/'
+  call setline(1, map(range(calendar#util#winheight()), 'u[v:val].s'))
+  let xs = {}
   for t in u
     for s in t.syn
       if s[0] !=# '' && s[1] >= 0 && s[2] >= 0
-        if s[0] ==# c
+        if s[0] ==# 'Cursor'
           let self.pos = [s[2], s[1]]
-        elseif s[4]
-          exe printf(a, s[0], s[1], s[1] + s[4] + 1, s[2] + 1, s[3] + 1)
         else
-          exe printf(b, s[0], s[1] + 1, s[2] + 1, s[3] + 1)
+          if !has_key(xs, s[0])
+            let xs[s[0]] = []
+          endif
+          call add(xs[s[0]], s[4] ? [s[1], s[1] + s[4] + 1, s[2] + 1, s[3] + 1] : [s[1] + 1, s[2] + 1, s[3] + 1])
         endif
       endif
     endfor
+  endfor
+  for [name, syns] in items(xs)
+    execute 'syntax match Calendar' . name . ' /\v' . join(map(syns, 'len(v:val) > 3'
+          \.' ? "%>" . v:val[0] . "l%<" . v:val[1] . "l%" . v:val[2] . "c.*%" . v:val[3] . "c"'
+          \.' : "%" . v:val[0] . "l%" . v:val[1] . "c.*%" . v:val[2] . "c"'), '|') . '/'
   endfor
   call self.cursor()
   call calendar#setlocal#nomodifiable()
