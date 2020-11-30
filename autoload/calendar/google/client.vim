@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/client.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/11/19 07:40:40.
+" Last Change: 2020/11/30 20:02:44.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -146,9 +146,7 @@ function! s:request(method, url, param, body) abort
       return calendar#webapi#decode(response.content)
     endif
   endif
-  else
-    return 1
-  endif
+  return 1
 endfunction
 
 function! calendar#google#client#get_async(id, cb, url, ...) abort
