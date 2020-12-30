@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2020/10/17 01:41:15.
+Last Change: 2020/12/31 01:59:11.
 
 CONTENTS					*calendar-contents*
 
@@ -494,15 +494,7 @@ Other miscellaneous options.
 VIEW						*calendar-view*
 
 This application has some different views. You can switch views with |>| and
-|<| keys. The default views setting is the following.
-
-	1. Year view
-	2. Month view
-	3. Week view
-	4. Days view
-	5. Day view
-	6. Clock view
-	7. Event view
+|<| keys. Refer to |g:calendar_views| for the default views.
 
 1. Year view					*calendar-view-year*
 	This view shows the months. If the window is not wide enough to view
