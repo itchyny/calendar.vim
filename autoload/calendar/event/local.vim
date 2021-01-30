@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/event/local.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/11/19 07:40:22.
+" Last Change: 2021/01/30 16:44:33.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -83,12 +83,22 @@ function! s:self.get_events_one_month(year, month, ...) dict abort
             \ , 'endymd': endymd[:2] }))
     endfor
   endfor
+  for date in keys(events)
+    call sort(events[date].events, function('s:events_sorter'))
+  endfor
   return events
 endfunction
 
 function! s:extract_time_sec(summary) abort
   let xs = matchlist(a:summary, '\v^(\d\d?):(\d\d)%(:(\d\d))?')
   return ((xs[1] * 60) + xs[2]) * 60 + xs[3]
+endfunction
+
+function! s:events_sorter(x, y) abort
+  return a:x.calendarId ==# a:y.calendarId
+        \ ? (a:x.sec == a:y.sec
+        \   ? (get(a:x, 'summary', '') > get(a:y, 'summary', '') ? 1 : -1)
+        \ : a:x.sec > a:y.sec ? 1 : -1) : 0
 endfunction
 
 function! s:self.update(calendarId, eventId, title, year, month, ...) dict abort
