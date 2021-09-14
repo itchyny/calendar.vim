@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/controller.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/11/21 01:48:27.
+" Last Change: 2021/09/14 13:07:41.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -200,22 +200,25 @@ function! s:self.redraw(...) dict abort
   call self.clear()
   call setline(1, map(range(calendar#util#winheight()), 'u[v:val].s'))
   let xs = {}
+  let names = []
   for t in u
     for s in t.syn
-      if s[0] !=# '' && s[1] >= 0 && s[2] >= 0
-        if s[0] ==# 'Cursor'
+      let name = s[0]
+      if name !=# '' && s[1] >= 0 && s[2] >= 0
+        if name ==# 'Cursor'
           let self.pos = [s[2], s[1]]
         else
-          if !has_key(xs, s[0])
-            let xs[s[0]] = []
+          if !has_key(xs, name)
+            let xs[name] = []
+            call add(names, name)
           endif
-          call add(xs[s[0]], s[4] ? [s[1], s[1] + s[4] + 1, s[2] + 1, s[3] + 1] : [s[1] + 1, s[2] + 1, s[3] + 1])
+          call add(xs[name], s[4] ? [s[1], s[1] + s[4] + 1, s[2] + 1, s[3] + 1] : [s[1] + 1, s[2] + 1, s[3] + 1])
         endif
       endif
     endfor
   endfor
-  for [name, syns] in items(xs)
-    execute 'syntax match Calendar' . name . ' /\v' . join(map(syns, 'len(v:val) > 3'
+  for name in names
+    execute 'syntax match Calendar' . name . ' /\v' . join(map(xs[name], 'len(v:val) > 3'
           \.' ? "%>" . v:val[0] . "l%<" . v:val[1] . "l%" . v:val[2] . "c.*%" . v:val[3] . "c"'
           \.' : "%" . v:val[0] . "l%" . v:val[1] . "c.*%" . v:val[2] . "c"'), '|') . '/'
   endfor
