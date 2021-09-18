@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/11/19 07:40:44.
+" Last Change: 2021/09/18 13:24:16.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -194,6 +194,16 @@ function! calendar#google#task#response(id, response) abort
           silent! let b:calendar.task._updated = 1
           silent! call b:calendar.update()
         endif
+      endif
+    elseif i == 0 && has_key(content, 'etag')
+      let k = 0
+      while filereadable(s:task_cache.new(id).path(k))
+        silent! call s:task_cache.new(id).delete(k)
+        let k += 1
+      endwhile
+      if k > 0
+        silent! let b:calendar.task._updated = 1
+        silent! call b:calendar.update()
       endif
     endif
   elseif a:response.status == 401
