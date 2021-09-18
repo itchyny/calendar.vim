@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_textbox.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/07/07 07:22:00.
+" Last Change: 2021/09/18 13:37:00.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -161,6 +161,9 @@ function! s:instance.get_contents() dict abort
     endfor
     if self._nocontents && has_key(self, 'min_index') && has_key(self, 'max_index')
       unlet! self.min_index self.max_index
+    endif
+    if self._current_group_id == ''
+      let self._current_group_id = get(cnts[0], 'id', '')
     endif
     let [self.min_index, self.max_index] = self.min_max_index(len(cnt))
     let self._nocontents = 0
