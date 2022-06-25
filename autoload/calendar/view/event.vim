@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/10/17 01:37:50.
+" Last Change: 2022/06/25 12:41:08.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -312,7 +312,7 @@ function! s:parse_title(title, ...) abort
     let [startdate, enddate] = [s:format_time(starttime), s:format_time(endtime)]
   elseif title =~# '\v^\s*\d+[-/]\d+([-/]\d+)?%(\s*-\s*\d+[-/]\d+([-/]\d+)?|\s+)'
     let time = matchstr(title, '\v^\s*\d+[-/]\d+([-/]\d+)?%(\s*-\s*\d+[-/]\d+([-/]\d+)?|\s+)')
-    let starttime = matchstr(time, '\v^\s*\d+[-/]\d+([-/]\d+)?\s*')
+    let starttime = matchstr(time, '\v^\s*\d+[-/]\d+([-/]\d+)?\ze%(\s*-\s*\d+[-/]\d+([-/]\d+)?|\s+)')
     let endtime = matchstr(time[len(starttime):], '\v\d+[-/]\d+([-/]\d+)?')
     let title = substitute(title[len(time):], '^\s*', '', '')
     let [startdate, enddate] = [s:format_time(starttime), s:format_time_end(endtime !=# '' ? endtime : starttime)]
