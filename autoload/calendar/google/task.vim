@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2021/09/18 13:24:16.
+" Last Change: 2022/07/24 12:45:48.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -232,15 +232,7 @@ function! calendar#google#task#insert(id, previous, parent, title, ...) abort
       let due = due . (due =~# 'Z$' ? '' : 'Z')
     endif
   endif
-  let note = ''
-  if a:title =~# ' note: '
-    let note = matchstr(a:title, ' note: .*$')
-    let title = a:title[:(len(a:title) - len(note)) - 1]
-    let note = substitute(note, ' note:\s*', '', '')
-  else
-    let note = ''
-    let title = a:title
-  endif
+  let [_, title, note; __] = matchlist(a:title, '\v^(.{-})%(\s+note:\s*(.*))?$')
   call calendar#google#client#post_async(s:newid(['insert', 0, a:id, title, note, due, opt]),
         \ 'calendar#google#task#insert_response',
         \ calendar#google#task#get_url('lists/' . a:id . '/tasks'),
@@ -321,15 +313,7 @@ function! calendar#google#task#update(id, taskid, title, ...) abort
       let due = due . (due =~# 'Z$' ? '' : 'Z')
     endif
   endif
-  let note = ''
-  if a:title =~# ' note: '
-    let note = matchstr(a:title, ' note: .*$')
-    let title = a:title[:(len(a:title) - len(note)) - 1]
-    let note = substitute(note, ' note:\s*', '', '')
-  else
-    let note = ''
-    let title = a:title
-  endif
+  let [_, title, note; __] = matchlist(a:title, '\v^(.{-})%(\s+note:\s*(.*))?$')
   call calendar#google#client#put_async(s:newid(['update', 0, a:id, a:taskid, title, note, due]),
         \ 'calendar#google#task#update_response',
         \ calendar#google#task#get_url('lists/' . a:id . '/tasks/' . a:taskid),

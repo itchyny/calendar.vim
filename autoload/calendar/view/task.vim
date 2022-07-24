@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/07/21 00:29:00.
+" Last Change: 2022/07/24 11:39:17.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -95,11 +95,10 @@ function! s:parse_title(title) abort
   let title = a:title
   let duedate = ''
   let endian = calendar#setting#get('date_endian')
-  if title =~# '\v^\s*\d+[-/]\d+([-/]\d+)?\s+'
-    let time = matchstr(title, '\v^\s*\d+[-/]\d+([-/]\d+)?\s+')
-    let title = substitute(title[len(time):], '^\s*', '', '')
+  if title =~# '\v^\s*(\d+[-/]\d+%([-/]\d+)?)\s+'
+    let [_, time, title; __] = matchlist(title, '\v^\s*(\d+[-/]\d+%([-/]\d+)?)\s+(.*)')
     if time =~# '\v\d+[-/]\d+[-/]\d+'
-      let [y, m, d] = split(substitute(time, '\s', '', 'g'), '[-/]')
+      let [y, m, d] = split(time, '[-/]')
       if d > 1000
         let [y, m, d] = endian ==# 'little' ? [d, m, y] : [d, y, m]
         if m > 12
@@ -108,7 +107,7 @@ function! s:parse_title(title) abort
       endif
       let duedate = join([y, m, d], '-')
     elseif time =~# '\v\d+[-/]\d+'
-      let [m, d] = split(substitute(time, '\s', '', 'g'), '[-/]')
+      let [m, d] = split(time, '[-/]')
       if m > 12
         let [d, m] = [m, d]
       endif

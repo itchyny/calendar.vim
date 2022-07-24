@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2022/06/25 12:41:08.
+" Last Change: 2022/07/24 12:48:42.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -134,7 +134,7 @@ function! s:self.action(action) dict abort
         let [title, startdate, enddate, recurrence] = s:parse_title(title, 1)
         let opt = {}
         if startdate !=# ''
-          call extend(opt, { 'start': startdate =~# 'T\d' ? { 'dateTime': startdate } : { 'date': startdate  } })
+          call extend(opt, { 'start': startdate =~# 'T\d' ? { 'dateTime': startdate } : { 'date': startdate } })
         endif
         if enddate !=# ''
           call extend(opt, { 'end': enddate =~# 'T\d' ? { 'dateTime': enddate } : { 'date': enddate } })
@@ -279,42 +279,31 @@ function! s:parse_title(title, ...) abort
   let date = join([year, month, day], '-')
   let ndate = join([nyear, nmonth, nday], '-')
   let [startdate, enddate] = ['', '']
-  if title =~# '\v^\s*\d+:\d+(:\d+)?\s*-\s*\d+:\d+(:\d+)?'
-    let time = matchstr(title, '\v^\s*\d+:\d+(:\d+)?\s*-\s*\d+:\d+(:\d+)?')
-    let starttime = matchstr(time, '\v^\s*\d+:\d+(:\d+)?')
-    let endtime = matchstr(time[len(starttime):], '\v\d+:\d+(:\d+)?')
-    if starttime =~# '\v^\s*2[4-9]:'
-      let hour = substitute(matchstr(starttime, '\v^\s*2[4-9]'), '\v\s*', '', '')
-      let starttime = (hour - 24) . starttime[len(hour):]
+  if title =~# '\v^\s*(\d+:\d+%(:\d+)?)\s*-\s*(\d+:\d+%(:\d+)?)'
+    let [_, starttime, endtime, title; __] = matchlist(title, '\v^\s*(\d+:\d+%(:\d+)?)\s*-\s*(\d+:\d+%(:\d+)?)\s*(.*)')
+    if starttime =~# '\v^2[4-9]:'
+      let [_, hour, starttime; __] = matchlist(starttime, '\v^(2[4-9])(:.*)')
+      let starttime = (hour - 24) . starttime
       let startday = ndate
     else
       let startday = date
     endif
-    if endtime =~# '^2[4-9]:'
-      let hour = matchstr(endtime, '^2[4-9]')
-      let endtime = (hour - 24) . endtime[len(hour):]
+    if endtime =~# '\v^2[4-9]:'
+      let [_, hour, endtime; __] = matchlist(endtime, '\v^(2[4-9])(:.*)')
+      let endtime = (hour - 24) . endtime
       let endday = ndate
     else
       let endday = date
     endif
-    let title = substitute(title[len(time):], '^\s*', '', '')
     let [startdate, enddate] = [s:format_time(startday . 'T' . starttime), s:format_time(endday . 'T' . endtime)]
-  elseif title =~# '\v^\s*\d+[-/]\d+([-/]\d+)?\s+\d+:\d+(:\d+)?\s*-\s*(\d+[-/]\d+([-/]\d+)?\s+)?\d+:\d+(:\d+)?'
-    let time = matchstr(title, '\v^\s*\d+[-/]\d+([-/]\d+)?\s+\d+:\d+(:\d+)?\s*-\s*(\d+[-/]\d+([-/]\d+)?\s+)?\d+:\d+(:\d+)?')
-    let starttime = matchstr(time, '\v^\s*\d+[-/]\d+([-/]\d+)?\s+\d+:\d+(:\d+)?\s*')
-    let endtime = matchstr(time[len(starttime):], '\v(\d+[-/]\d+([-/]\d+)?\s+)?\d+:\d+(:\d+)?')
-    let starttime = substitute(starttime, '\v^\s*|\s*$', '', 'g')
-    let endtime = substitute(endtime, '\v^\s*|\s*$', '', 'g')
+  elseif title =~# '\v^\s*(\d+[-/]\d+%([-/]\d+)?\s+\d+:\d+%(:\d+)?)\s*-\s*(%(\d+[-/]\d+%([-/]\d+)?\s+)?\d+:\d+%(:\d+)?)'
+    let [_, starttime, endtime, title; __] = matchlist(title, '\v^\s*(\d+[-/]\d+%([-/]\d+)?\s+\d+:\d+%(:\d+)?)\s*-\s*(%(\d+[-/]\d+%([-/]\d+)?\s+)?\d+:\d+%(:\d+)?)\s*(.*)')
     if endtime !~# '\v^\d+[-/]\d+([-/]\d+)?'
       let endtime = matchstr(starttime, '\v^\d+[-/]\d+([-/]\d+)?\s+') . endtime
     endif
-    let title = substitute(title[len(time):], '^\s*', '', '')
     let [startdate, enddate] = [s:format_time(starttime), s:format_time(endtime)]
-  elseif title =~# '\v^\s*\d+[-/]\d+([-/]\d+)?%(\s*-\s*\d+[-/]\d+([-/]\d+)?|\s+)'
-    let time = matchstr(title, '\v^\s*\d+[-/]\d+([-/]\d+)?%(\s*-\s*\d+[-/]\d+([-/]\d+)?|\s+)')
-    let starttime = matchstr(time, '\v^\s*\d+[-/]\d+([-/]\d+)?\ze%(\s*-\s*\d+[-/]\d+([-/]\d+)?|\s+)')
-    let endtime = matchstr(time[len(starttime):], '\v\d+[-/]\d+([-/]\d+)?')
-    let title = substitute(title[len(time):], '^\s*', '', '')
+  elseif title =~# '\v^\s*(\d+[-/]\d+%([-/]\d+)?)%(\s*-\s*(\d+[-/]\d+%([-/]\d+)?)|\s+)'
+    let [_, starttime, endtime, title; __] = matchlist(title, '\v^\s*(\d+[-/]\d+%([-/]\d+)?)%(\s*-\s*(\d+[-/]\d+%([-/]\d+)?)|\s+)\s*(.*)')
     let [startdate, enddate] = [s:format_time(starttime), s:format_time_end(endtime !=# '' ? endtime : starttime)]
     if startdate =~# '\v^\d+-\d+-\d+$' && enddate =~# '\v^\d+-\d+-\d+$'
       let [sy, sm, sd] = map(split(startdate, '-'), 'v:val + 0')
@@ -331,19 +320,9 @@ function! s:parse_title(title, ...) abort
     let [startdate, enddate] = [date, ndate]
   endif
   let recurrence = {}
-  if title =~# '\v^\s*\d+(weeks|days)\s+'
-    let rec = matchstr(title, '\v^\s*\d+(weeks|days)\s+')
-    let title = substitute(title[len(rec):], '^\s*', '', '')
-    let recurrence = {}
-    let key = matchstr(rec, '\(week\|day\)')
-    let recurrence[key] = matchstr(rec, '\d\+') + 0
-    if title =~# '\v^\s*\d+:\d+(:\d+)?\s*-\s*\d+:\d+(:\d+)?' && startdate !~# 'T'
-      let time = matchstr(title, '\v^\s*\d+:\d+(:\d+)?\s*-\s*\d+:\d+(:\d+)?')
-      let starttime = matchstr(time, '\v^\s*\d+:\d+(:\d+)?')
-      let endtime = matchstr(time[len(starttime):], '\v\d+:\d+(:\d+)?')
-      let title = substitute(title[len(time):], '^\s*', '', '')
-      let [startdate, enddate] = [s:format_time(startdate . 'T' . starttime), s:format_time(startdate . 'T' . endtime)]
-    endif
+  if title =~# '\v^\s*(\d+)(week|day)s\s+'
+    let [_, num, key, title; __] = matchlist(title, '\v^\s*(\d+)(week|day)s\s+(.*)')
+    let recurrence[key] = str2nr(num)
   endif
   return [title, startdate, enddate, recurrence]
 endfunction
