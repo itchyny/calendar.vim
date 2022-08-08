@@ -96,9 +96,9 @@ function! calendar#color#new_syntax(id, fg, bg) abort
         call add(syntaxnames, name)
       endif
       if _cuibg >= 0
-        exec 'highlight Calendar' . name . ' ctermfg=' . cuifg . ' ctermbg=' . _cuibg . ' guifg=' . fg . ' guibg=' . _bg
+        exec 'highlight default Calendar' . name . ' ctermfg=' . cuifg . ' ctermbg=' . _cuibg . ' guifg=' . fg . ' guibg=' . _bg
       else
-        exec 'highlight Calendar' . name . ' ctermfg=' . cuifg . ' guifg=' . fg
+        exec 'highlight default Calendar' . name . ' ctermfg=' . cuifg . ' guifg=' . fg
       endif
       let select_bg = s:select_color()
       if type(select_bg) == type('') || select_bg >= 0
@@ -107,9 +107,9 @@ function! calendar#color#new_syntax(id, fg, bg) abort
           call add(syntaxnames, nameselect)
         endif
         if s:is_gui
-          exec 'highlight Calendar' . nameselect . ' guifg=' . fg . ' guibg=' . (flg ? select_bg : bg)
+          exec 'highlight default Calendar' . nameselect . ' guifg=' . fg . ' guibg=' . (flg ? select_bg : bg)
         else
-          exec 'highlight Calendar' . nameselect . ' ctermfg=' . cuifg . ' ctermbg=' . (flg ? select_bg : cuibg)
+          exec 'highlight default Calendar' . nameselect . ' ctermfg=' . cuifg . ' ctermbg=' . (flg ? select_bg : cuibg)
         endif
       endif
     endif
@@ -457,7 +457,7 @@ function! calendar#color#syntax(name, fg, bg, attr) abort
     let fg = len(a:fg) ? ' ctermfg=' . a:fg : ''
     let bg = len(a:bg) ? ' ctermbg=' . a:bg : ''
   endif
-  exec 'highlight Calendar' . a:name . term . fg . bg
+  exec 'highlight default Calendar' . a:name . term . fg . bg
 endfunction
 
 let s:_select_color = {}
