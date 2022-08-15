@@ -195,7 +195,12 @@ endfunction
 let s:f = {}
 
 function! s:frame() abort
-  return &enc ==# 'utf-8' && &fenc ==# 'utf-8' ? 'unicode' : 'default'
+  return s:has_unicode() ? 'unicode' : 'default'
+endfunction
+
+function! s:has_unicode() abort
+  " Vim help says: When 'fileencoding' is empty, the same value as 'encoding' will be used.
+  return &enc ==# 'utf-8' && (empty(&fenc) || &fenc ==# 'utf-8')
 endfunction
 
 function! s:frame_default() abort
@@ -205,7 +210,7 @@ function! s:frame_default() abort
 endfunction
 
 function! s:frame_unicode() abort
-  if &enc ==# 'utf-8' && &fenc ==# 'utf-8'
+  if s:has_unicode()
     return { 'type': 'unicode', 'vertical': "\u2502", 'horizontal': "\u2500", 'junction': "\u253C",
            \ 'left': "\u251C", 'right': "\u2524", 'top': "\u252C", 'bottom': "\u2534",
            \ 'topleft': "\u250C", 'topright': "\u2510", 'bottomleft': "\u2514", 'bottomright': "\u2518" }
@@ -215,7 +220,7 @@ function! s:frame_unicode() abort
 endfunction
 
 function! s:frame_unicode_bold() abort
-  if &enc ==# 'utf-8' && &fenc ==# 'utf-8'
+  if s:has_unicode()
     return { 'type': 'unicode_bold', 'vertical': "\u2503", 'horizontal': "\u2501", 'junction': "\u254B",
            \ 'left': "\u2523", 'right': "\u252B", 'top': "\u2533", 'bottom': "\u253B",
            \ 'topleft': "\u250F", 'topright': "\u2513", 'bottomleft': "\u2517", 'bottomright': "\u251B" }
@@ -225,7 +230,7 @@ function! s:frame_unicode_bold() abort
 endfunction
 
 function! s:frame_unicode_round() abort
-  if &enc ==# 'utf-8' && &fenc ==# 'utf-8'
+  if s:has_unicode()
     return extend(s:frame_unicode_bold(), {
           \ 'type': 'unicode_round', 'topleft': "\u256D", 'topright': "\u256E",
           \ 'bottomleft': "\u2570", 'bottomright': "\u256F" })
@@ -235,7 +240,7 @@ function! s:frame_unicode_round() abort
 endfunction
 
 function! s:frame_unicode_double() abort
-  if &enc ==# 'utf-8' && &fenc ==# 'utf-8'
+  if s:has_unicode()
     return { 'type': 'unicode_double', 'vertical': "\u2551", 'horizontal': "\u2550", 'junction': "\u256C",
            \ 'left': "\u2560", 'right': "\u2563", 'top': "\u2566", 'bottom': "\u2569",
            \ 'topleft': "\u2554", 'topright': "\u2557", 'bottomleft': "\u255A", 'bottomright': "\u255D" }

@@ -311,9 +311,9 @@ The following options change the appearance of the calendar.
 		-frame={default/unicode/space/unicode_bold/unicode_round/unicode_double}
 		let g:calendar_frame = "{default/unicode/...}"
 		The format of frames. The unicode-prefix values are available
-		when |'enc'| is 'utf-8' and |'fenc'| is 'utf-8'.
+		when |'enc'| is 'utf-8' and |'fenc'| is 'utf-8' or empty.
 		The default value is:
-			"unicode": If |'enc'| is 'utf-8' and |'fenc'| is 'utf-8'
+			"unicode": If |'enc'| is 'utf-8' and |'fenc'| is 'utf-8' or empty
 			"default": In other cases
 
 						*calendar-options-task_width*
