@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:26:52.
+" Last Change: 2022/12/04 13:10:16.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -157,7 +157,7 @@ function! s:instance.oneday(day, events) dict abort
     let right = a:events.moon . right
   endif
   if width > len(right) + 3 && len(right)
-    let le = calendar#string#strdisplaywidth(right) + 1
+    let le = strdisplaywidth(right) + 1
     let right = ' ' . right
   else
     let le = 0

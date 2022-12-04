@@ -32,7 +32,7 @@ endfunction
 function! calendar#google#task#getTaskList_response(id, response) abort
   let [_tasklist, err; rest] = s:getdata(a:id)
   if a:response.status =~# '^2'
-    let cnt = calendar#webapi#decode(a:response.content)
+    let cnt = json_decode(a:response.content)
     let content = type(cnt) == type({}) ? cnt : {}
     if has_key(content, 'items') && type(content.items) == type([])
       call s:cache.save('taskList', content)
@@ -157,7 +157,7 @@ function! calendar#google#task#response(id, response) abort
   let [_download, err, j, i, id, force; rest] = s:getdata(a:id)
   let opt = { 'tasklist': id }
   if a:response.status =~# '^2'
-    let cnt = calendar#webapi#decode(a:response.content)
+    let cnt = json_decode(a:response.content)
     let content = type(cnt) == type({}) ? cnt : {}
     if has_key(content, 'items')
       call s:task_cache.new(id).save(i, content)
@@ -236,7 +236,7 @@ function! calendar#google#task#insert(id, previous, parent, title, ...) abort
   call calendar#google#client#post_async(s:newid(['insert', 0, a:id, title, note, due, opt]),
         \ 'calendar#google#task#insert_response',
         \ calendar#google#task#get_url('lists/' . a:id . '/tasks'),
-        \ opt, extend({ 'title': title, 'notes': note }, due ==# '' ? {} : { 'due': due ==# '-1Z' ? function('calendar#webapi#null') : due }))
+        \ opt, extend({ 'title': title, 'notes': note }, due ==# '' ? {} : { 'due': due ==# '-1Z' ? v:null : due }))
 endfunction
 
 function! calendar#google#task#insert_response(id, response) abort
@@ -249,7 +249,7 @@ function! calendar#google#task#insert_response(id, response) abort
       call calendar#google#client#post_async(s:newid(['insert', 1, id, title, note, due, opt]),
             \ 'calendar#google#task#insert_response',
             \ calendar#google#task#get_url('lists/' . id . '/tasks'),
-            \ opt, extend({ 'title': title, 'notes': note }, due ==# '' ? {} : { 'due': due ==# '-1Z' ? function('calendar#webapi#null') : due }))
+            \ opt, extend({ 'title': title, 'notes': note }, due ==# '' ? {} : { 'due': due ==# '-1Z' ? v:null : due }))
     endif
   endif
 endfunction
@@ -318,7 +318,7 @@ function! calendar#google#task#update(id, taskid, title, ...) abort
         \ 'calendar#google#task#update_response',
         \ calendar#google#task#get_url('lists/' . a:id . '/tasks/' . a:taskid),
         \ { 'tasklist': a:id, 'task': a:taskid },
-        \ extend({ 'id': a:taskid, 'title': title, 'notes': note }, due ==# '' ? {} : { 'due': due ==# '-1Z' ? function('calendar#webapi#null') : due }))
+        \ extend({ 'id': a:taskid, 'title': title, 'notes': note }, due ==# '' ? {} : { 'due': due ==# '-1Z' ? v:null : due }))
 endfunction
 
 function! calendar#google#task#update_response(id, response) abort
@@ -332,7 +332,7 @@ function! calendar#google#task#update_response(id, response) abort
             \ 'calendar#google#task#update_response',
             \ calendar#google#task#get_url('lists/' . id . '/tasks/' . taskid),
             \ { 'tasklist': id, 'task': taskid },
-            \ extend({ 'id': taskid, 'title': title, 'notes': note }, due ==# '' ? {} : { 'due': due ==# '-1Z' ? function('calendar#webapi#null') : due }))
+            \ extend({ 'id': taskid, 'title': title, 'notes': note }, due ==# '' ? {} : { 'due': due ==# '-1Z' ? v:null : due }))
     endif
   endif
 endfunction

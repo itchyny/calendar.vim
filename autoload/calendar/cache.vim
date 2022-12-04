@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/cache.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/11/20 00:09:42.
+" Last Change: 2022/12/04 13:08:22.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -19,7 +19,7 @@ endfunction
 
 function! calendar#cache#clear() abort
   for path in s:clearpath
-    call calendar#util#rmdir(path, 'rf')
+    call delete(path, 'rf')
   endfor
 endfunction
 
@@ -72,11 +72,7 @@ function! s:self.check_dir(...) dict abort
   endif
   if !isdirectory(dir)
     try
-      if exists('*mkdir')
-        call mkdir(dir, 'p')
-      else
-        call calendar#util#system('mkdir -p ' .  shellescape(dir))
-      endif
+      call mkdir(dir, 'p')
       call s:setfperm(dir)
     catch
     endtry
@@ -97,7 +93,7 @@ function! s:self.save(key, val) dict abort
     return 1
   endif
   try
-    call writefile(calendar#cache#string(a:val), path)
+    call writefile([json_encode(a:val)], path)
     call s:setfperm_file(path)
   catch
     call calendar#echo#error(calendar#message#get('cache_write_fail') . ': ' . path)
@@ -115,10 +111,7 @@ function! s:self.get(key) dict abort
     let result = readfile(path)
     try
       if len(result)
-        if exists('*js_decode') && has('patch-8.0.0216')
-          return js_decode(len(result) > 1 ? join(result, '') : result[0])
-        endif
-        sandbox return eval(join(result, ''))
+        return js_decode(len(result) > 1 ? join(result, '') : result[0])
       else
         return 1
       endif
@@ -152,85 +145,21 @@ function! s:self.delete(key) dict abort
 endfunction
 
 function! s:self.clear() dict abort
-  call calendar#util#rmdir(self.dir(), 'rf')
+  call delete(self.dir(), 'rf')
 endfunction
 
-if exists('*json_encode')
-  function! calendar#cache#string(v) abort
-    return [json_encode(a:v)]
-  endfunction
-else
-  " string() with making newlines and indents properly.
-  function! calendar#cache#string(v, ...) abort
-    let r = []
-    let f = 1
-    let s = a:0 ? a:1 : ''
-    if type(a:v) == type([])
-      call add(r, '[ ')
-      let s .= '  '
-      for i in range(len(a:v))
-        call add(r, s . string(a:v[i]) . ',')
-      endfor
-      if r[-1][len(r[-1]) - 1] ==# ','
-        let r[-1] = r[-1][:-2]
-      endif
-      call add(r, ' ]')
-    elseif type(a:v) == type({})
-      call add(r, '{ ')
-      let s .= '  '
-      for k in keys(a:v)
-        if type(a:v[k]) == type({}) || type(a:v[k]) == type([]) && len(a:v[k]) > 2
-          let result = calendar#cache#string(a:v[k], s . repeat(' ', len(string(k)) + 2))
-          let result[-1] .= ','
-          call add(r, s . string(k) . ': ' . result[0])
-          call remove(result, 0)
-          call extend(r, result)
-        else
-          call add(r, s . string(k) . ': ' . string(a:v[k]) . ',')
-        endif
-      endfor
-      if r[-1][len(r[-1]) - 1] ==# ','
-        let r[-1] = r[-1][:-2]
-      endif
-      call add(r, ' }')
-    else
-      call add(r, s . string(a:v))
-      let f = 0
-    endif
-    if f
-      if len(r[1]) > len(s) + 1
-        let r[1] = r[1][len(s):]
-      endif
-      let r[0] .= r[1]
-      call remove(r, 1)
-      if len(r) > 1
-        let r[-2] .= r[-1]
-        call remove(r, -1)
-      endif
-    endif
-    return r
-  endfunction
-endif
-
-if exists('*getfperm') && exists('*setfperm')
-  function! s:setfperm_dir(dir) abort
-    let expected = 'rwx------'
-    if getfperm(a:dir) !=# expected
-      call setfperm(a:dir, expected)
-    endif
-  endfunction
-  function! s:setfperm_file(path) abort
-    let expected = 'rw-------'
-    if getfperm(a:path) !=# expected
-      call setfperm(a:path, expected)
-    endif
-  endfunction
-else
-  function! s:setfperm_dir(dir) abort
-  endfunction
-  function! s:setfperm_file(path) abort
-  endfunction
-endif
+function! s:setfperm_dir(dir) abort
+  let expected = 'rwx------'
+  if getfperm(a:dir) !=# expected
+    call setfperm(a:dir, expected)
+  endif
+endfunction
+function! s:setfperm_file(path) abort
+  let expected = 'rw-------'
+  if getfperm(a:path) !=# expected
+    call setfperm(a:path, expected)
+  endif
+endfunction
 
 let &cpo = s:save_cpo
 unlet s:save_cpo

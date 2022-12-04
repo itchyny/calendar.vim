@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/string.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/11/06 12:00:00.
+" Last Change: 2022/12/04 13:10:31.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -52,10 +52,6 @@ function! calendar#string#truncate_reverse(str, width) abort
     let ret = repeat(' ', a:width - width) . ret
   endif
   return s:cache.save(key, ret)
-endfunction
-
-function! calendar#string#strdisplaywidth(str) abort
-  return strdisplaywidth(a:str)
 endfunction
 
 function! calendar#string#strwidthpart(str, width) abort

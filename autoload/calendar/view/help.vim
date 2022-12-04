@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/help.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2015/03/29 06:33:09.
+" Last Change: 2022/12/04 13:10:37.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -21,7 +21,7 @@ let s:self._contents_cache = {}
 function! s:self.split_message(message) dict abort
   let messages = split(a:message, "\n")
   let frame = calendar#setting#frame()
-  let width = calendar#string#strdisplaywidth(frame.vertical)
+  let width = strdisplaywidth(frame.vertical)
   let w = self.sizex() - 4 - width * 2
   let msg = []
   for message in messages

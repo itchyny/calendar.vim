@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_months.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2017/05/07 23:07:32.
+" Last Change: 2022/12/04 13:10:22.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -165,7 +165,7 @@ function! s:instance.set_contents() dict abort
     endif
     let [mi, mj] = [0, 0]
     let monthname = month_name[m.get_month() - 1]
-    let monthnamelen = calendar#string#strdisplaywidth(monthname)
+    let monthnamelen = strdisplaywidth(monthname)
     let holidays = b:calendar.event.get_holidays(m.get_year(), m.get_month())
     call add(self.month_names_offset[j], len(s[mh * mj + h * j]))
     if monthnamelen >= w * 6 + 2

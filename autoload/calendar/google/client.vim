@@ -60,7 +60,7 @@ function! calendar#google#client#initialize_access_token() abort
           \ 'code': code,
           \ 'redirect_uri': client.redirect_uri,
           \ 'grant_type': 'authorization_code'})
-    let content = calendar#webapi#decode(response.content)
+    let content = json_decode(response.content)
     if calendar#google#client#access_token_response(response, content)
       return
     endif
@@ -81,7 +81,7 @@ function! calendar#google#client#refresh_token() abort
           \ 'client_secret': client.client_secret,
           \ 'refresh_token': cache.refresh_token,
           \ 'grant_type': 'refresh_token'})
-    let content = calendar#webapi#decode(response.content)
+    let content = json_decode(response.content)
     if calendar#google#client#access_token_response(response, content)
       return 1
     endif
@@ -133,7 +133,7 @@ function! s:request(method, url, param, body) abort
   let param = extend(a:param, { 'oauth_token': access_token })
   let response = calendar#webapi#{a:method}(a:url, param, a:body)
   if response.status == 200
-    return calendar#webapi#decode(response.content)
+    return json_decode(response.content)
   elseif response.status == 401
     unlet! access_token
     let access_token = calendar#google#client#refresh_token()
@@ -143,7 +143,7 @@ function! s:request(method, url, param, body) abort
     let param = extend(a:param, { 'oauth_token': access_token })
     let response = calendar#webapi#{a:method}(a:url, param, a:body)
     if response.status == 200
-      return calendar#webapi#decode(response.content)
+      return json_decode(response.content)
     endif
   endif
   return 1

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2019/08/07 21:22:19.
+" Last Change: 2022/12/04 13:10:33.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -301,15 +301,15 @@ function! s:self.action(action) dict abort
       let daypercent = 100 * dayof / yeardays
       let message = printf('%s %s/%s --%d%%-- %s %s %s', select, dayof, yeardays, daypercent, todaystr, today, diff)
       let winw = calendar#util#winwidth() - 14
-      if calendar#string#strdisplaywidth(message) > winw
+      if strdisplaywidth(message) > winw
         let message = printf('%s %s/%s --%d%%-- %s %s', select, dayof, yeardays, daypercent, today, diff)
-        if calendar#string#strdisplaywidth(message) > winw
+        if strdisplaywidth(message) > winw
           let message = printf('%s %s/%s %s %s', select, dayof, yeardays, today, diff)
-          if calendar#string#strdisplaywidth(message) > winw
+          if strdisplaywidth(message) > winw
             let message = printf('%s %s/%s', select, dayof, yeardays)
-            if calendar#string#strdisplaywidth(message) > winw
+            if strdisplaywidth(message) > winw
               let message = printf('%s', select)
-              if calendar#string#strdisplaywidth(message) > winw
+              if strdisplaywidth(message) > winw
                 let message = printf('%s', selectmd)
               endif
             endif

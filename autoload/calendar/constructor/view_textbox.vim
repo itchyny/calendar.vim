@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_textbox.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2021/09/18 13:37:00.
+" Last Change: 2022/12/04 13:10:25.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -36,7 +36,7 @@ let s:instance._nocontents = 1
 
 function! s:instance.width() dict abort
   let frame = calendar#setting#frame()
-  let width = calendar#string#strdisplaywidth(frame.vertical)
+  let width = strdisplaywidth(frame.vertical)
   return self.maxwidth() / width * width + 2
 endfunction
 
@@ -46,7 +46,7 @@ function! s:instance.contents() dict abort
   endif
   let s = []
   let frame = calendar#setting#frame()
-  let width = calendar#string#strdisplaywidth(frame.vertical)
+  let width = strdisplaywidth(frame.vertical)
   let flen = len(frame.vertical)
   let top = frame.topleft . repeat(frame.horizontal, (self.sizex() - 2) / width - 2) . frame.topright
   let bottom = frame.bottomleft . repeat(frame.horizontal, (self.sizex() - 2) / width - 2) . frame.bottomright
@@ -106,7 +106,7 @@ function! s:instance.get_contents() dict abort
   let self.syntax = []
   let cnt = []
   let frame = calendar#setting#frame()
-  let width = calendar#string#strdisplaywidth(frame.vertical)
+  let width = strdisplaywidth(frame.vertical)
   let cnts = self.get_raw_contents()
   let w = self.sizex() - width * 2
   if len(cnts)
@@ -128,7 +128,7 @@ function! s:instance.get_contents() dict abort
       if len(cnt) == self.select
         let self._current_contents = { 'title': t.title }
       endif
-      call add(cnt, repeat(' ', max([(self.sizex() - 4 - width * 2 - calendar#string#strdisplaywidth(t.title)) / 2, 0])) . t.title)
+      call add(cnt, repeat(' ', max([(self.sizex() - 4 - width * 2 - strdisplaywidth(t.title)) / 2, 0])) . t.title)
       if !self._select_title
         call add(self.noindex, len(cnt))
       endif

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/countcache.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/11/19 07:40:05.
+" Last Change: 2022/12/04 13:12:17.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -42,7 +42,7 @@ function! calendar#countcache#save() abort
     return
   endif
   let s:count = 0
-  if exists('s:reltime') && has('reltime')
+  if exists('s:reltime')
     let time = split(split(reltimestr(reltime(s:reltime)))[0], '\.')
     if time[0] < 60
       return
@@ -54,9 +54,7 @@ function! calendar#countcache#save() abort
       let s:saveflag[c.name] = 0
     endif
   endfor
-  if has('reltime')
-    let s:reltime = reltime()
-  endif
+  let s:reltime = reltime()
 endfunction
 
 augroup CalendarCountCache

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_days.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2017/05/07 23:06:06.
+" Last Change: 2022/12/04 13:10:18.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -26,7 +26,7 @@ endfunction
 
 function! s:instance.on_resize() dict abort
   let self.frame = copy(calendar#setting#frame())
-  let width = calendar#string#strdisplaywidth(self.frame.vertical)
+  let width = strdisplaywidth(self.frame.vertical)
   let self.view = {}
   let self.view.width = (self.sizex() - width) / self.daynum / width * width
   let h = max([(self.sizey() - 3) / 6, 1])
@@ -39,7 +39,7 @@ function! s:instance.on_resize() dict abort
     let width = 1
     let self.view.width = (self.sizex() - width) / self.daynum
   endif
-  let self.frame.width = calendar#string#strdisplaywidth(self.frame.vertical)
+  let self.frame.width = strdisplaywidth(self.frame.vertical)
   let self.frame.strlen = len(self.frame.vertical)
   let self.element = {}
   let self.element.splitter = repeat(self.frame.horizontal, (self.view.width - width) / width)
@@ -56,7 +56,7 @@ endfunction
 
 function! s:instance.width() dict abort
   let frame = calendar#setting#frame()
-  let width = calendar#string#strdisplaywidth(frame.vertical)
+  let width = strdisplaywidth(frame.vertical)
   let w = max([(self.maxwidth() - calendar#setting#get('clock_12hour') * 7) / 8, 3])
   let hh = self.height()
   let h = max([(hh - 3) / 6, 1])
@@ -149,7 +149,7 @@ function! s:instance.set_day_name() dict abort
     return
   endif
   let day_name = copy(calendar#message#get('day_name_long'))
-  let maxlen = max(map(copy(day_name), 'calendar#string#strdisplaywidth(v:val)'))
+  let maxlen = max(map(copy(day_name), 'strdisplaywidth(v:val)'))
   if maxlen >= self.view.inner_width
     let day_name = copy(calendar#message#get('day_name'))
   endif
@@ -163,12 +163,12 @@ function! s:instance.set_day_name() dict abort
       let s[2] .= (i > idx ? self.frame.junction : self.frame.left) . self.element.splitter
     endif
     let name = day_name[i % 7]
-    let wid = calendar#string#strdisplaywidth(name)
+    let wid = strdisplaywidth(name)
     if wid >= self.view.inner_width
       let name = calendar#string#truncate(name, max([2, self.view.inner_width]))
-      let wid = calendar#string#strdisplaywidth(name)
+      let wid = strdisplaywidth(name)
     endif
-    let len = calendar#string#strdisplaywidth(self.element.splitter)
+    let len = strdisplaywidth(self.element.splitter)
     let whiteleft = repeat(' ', (len - wid) / 2)
     let whiteright = repeat(' ', len - len(whiteleft) - wid)
     let weekstr = whiteleft . name . whiteright
@@ -452,7 +452,7 @@ function! s:instance.set_contents() dict abort
                   endif
                 else
                   let eventsummary = get(tevts[ii], 'summary', '')
-                  let smallspace = repeat(' ', f.width - 1 - (calendar#string#strdisplaywidth(eventsummary) + f.width - 1) % f.width)
+                  let smallspace = repeat(' ', f.width - 1 - (strdisplaywidth(eventsummary) + f.width - 1) % f.width)
                   let newtext = calendar#string#truncate(eventsummary . smallspace . repeat(f.horizontal, l), l - f.width) . (flg ? f.horizontal : f.topright)
                   call add(texts, newtext)
                   let xx += l / f.width * f.strlen + f.strlen

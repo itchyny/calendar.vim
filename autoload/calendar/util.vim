@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/util.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2019/07/30 22:37:39.
+" Last Change: 2022/12/04 12:57:09.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -81,37 +81,6 @@ function! calendar#util#id() abort
   let s:id = (s:id + 1) % 10000
   return printf('%04d%02d%02d%02d%02d%02d%04d', y, m, d, h, i, s, s:id)
 endfunction
-
-" Execute shell command.
-function! calendar#util#system(cmd) abort
-  silent! return system(a:cmd)
-endfunction
-
-" Remove directory.
-if has('unix')
-  function! calendar#util#rmdir(path, ...) abort
-    let flags = a:0 ? a:1 : ''
-    let cmd = flags =~# 'r' ? 'rm -r' : 'rmdir'
-    let cmd .= flags =~# 'f' && cmd ==# 'rm -r' ? ' -f' : ''
-    let ret = system(cmd . ' ' . shellescape(a:path))
-  endfunction
-elseif has('win32')
-  function! calendar#util#rmdir(path, ...) abort
-    let flags = a:0 ? a:1 : ''
-    if &shell =~? 'sh$'
-      let cmd = flags =~# 'r' ? 'rm -r' : 'rmdir'
-      let cmd .= flags =~# 'f' && cmd ==# 'rm -r' ? ' -f' : ''
-      let ret = system(cmd . ' ' . shellescape(a:path))
-    else
-      let cmd = 'rmdir /Q'
-      let cmd .= flags =~# 'r' ? ' /S' : ''
-      let ret = system(cmd . ' "' . a:path . '"')
-    endif
-  endfunction
-else
-  function! calendar#util#rmdir(path, ...) abort
-  endfunction
-endif
 
 let &cpo = s:save_cpo
 unlet s:save_cpo

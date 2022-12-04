@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/time.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2017/05/08 07:45:01.
+" Last Change: 2022/12/04 13:10:59.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -16,15 +16,9 @@ function! calendar#time#new(h, m, s) abort
   return extend(copy(s:self), { 'h': a:h, 'm': a:m, 's': a:s })
 endfunction
 
-if exists('*strftime')
-  function! calendar#time#now() abort
-    return calendar#time#new(strftime('%H') * 1, strftime('%M') * 1, strftime('%S') * 1)
-  endfunction
-else
-  function! calendar#time#now() abort
-    return calendar#time#new(system('date "+%H"') * 1, system('date "+%M"') * 1, system('date "+%S"') * 1)
-  endfunction
-endif
+function! calendar#time#now() abort
+  return calendar#time#new(strftime('%H') * 1, strftime('%M') * 1, strftime('%S') * 1)
+endfunction
 
 function! calendar#time#hour12(h) abort
   return a:h == 0 ? 12 : a:h < 13 ? a:h : a:h - 12
