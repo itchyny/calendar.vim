@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/setting.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/10/17 01:28:47.
+" Last Change: 2022/12/04 19:02:20.
 " =============================================================================
 
 scriptencoding utf-8
@@ -260,7 +260,7 @@ function! s:google_client() abort
     return s:_google_client
   endif
   let s:_google_client = {
-        \ 'redirect_uri': 'urn:ietf:wg:oauth:2.0:oob',
+        \ 'redirect_uri': 'http://localhost:8080/',
         \ 'scope': 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/tasks',
         \ 'api_key': '',
         \ 'client_id': '',

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/client.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/11/30 20:02:44.
+" Last Change: 2022/12/04 19:07:10.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -44,15 +44,18 @@ function! calendar#google#client#access_token() abort
   return content.access_token
 endfunction
 
+let s:server_py_path = expand('<sfile>:p:h') . '/server.py'
 function! calendar#google#client#initialize_access_token() abort
+  if !executable('python3')
+    call calendar#echo#error('Python 3 is required.')
+    return
+  endif
   let client = s:client()
   let url = s:get_url()
+  echo printf(calendar#message#get('access_url_input_code'), url)
   call calendar#webapi#open_url(url)
-  try
-    let code = input(printf(calendar#message#get('access_url_input_code'), url) . "\n" . calendar#message#get('input_code'))
-  catch
-    return
-  endtry
+  call system('python3 ' . shellescape(s:server_py_path))
+  let code = input(calendar#message#get('input_code'))
   if code !=# ''
     let response = calendar#webapi#post_nojson(s:token_url, {}, {
           \ 'client_id': client.client_id,
