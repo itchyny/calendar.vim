@@ -1,6 +1,7 @@
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs
 from textwrap import dedent
+import html
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -17,7 +18,7 @@ class Handler(BaseHTTPRequestHandler):
                     <style>pre::before {{ content: 'CODE: '; }}</style>
                 </head>
                 <body>
-                    <pre>{queries['code'][0]}</pre>
+                    <pre>{html.escape(queries['code'][0])}</pre>
                 </body>
                 </html>
             ''').encode('utf-8'))
