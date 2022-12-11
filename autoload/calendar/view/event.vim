@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2022/07/24 12:48:42.
+" Last Change: 2022/12/11 16:38:56.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -131,7 +131,7 @@ function! s:self.action(action) dict abort
       let msg = calendar#message#get('input_event') . (change ? get(event, 'summary', get(event, 'title', '')) . ' -> ' : '')
       let title = input(msg, change ? '' : get(event, 'summary', get(event, 'title', '')) . (head ? "\<Home>" : ''))
       if title !=# ''
-        let [title, startdate, enddate, recurrence] = s:parse_title(title, 1)
+        let [title, startdate, enddate, recurrence] = calendar#view#event#parse_title(title, 0)
         let opt = {}
         if startdate !=# ''
           call extend(opt, { 'start': startdate =~# 'T\d' ? { 'dateTime': startdate } : { 'date': startdate } })
@@ -165,7 +165,7 @@ function! s:self.insert_new_event(action, ...) dict abort
     if next
       let self.select += 1
     endif
-    let [title, startdate, enddate, recurrence] = s:parse_title(title)
+    let [title, startdate, enddate, recurrence] = calendar#view#event#parse_title(title, 1)
     let calendars = b:calendar.event.calendarCandidates()
     if len(calendars) == 0
       if calendar#setting#get('google_calendar')
@@ -272,52 +272,39 @@ function! s:self.move_event() dict abort
   call b:calendar.event.move(calendarId, event.id, destination, year, month)
 endfunction
 
-function! s:parse_title(title, ...) abort
+function! calendar#view#event#parse_title(title, new_event) abort
   let title = a:title
   let [year, month, day] = b:calendar.day().get_ymd()
-  let [nyear, nmonth, nday] = b:calendar.day().new(year, month, day).add(1).get_ymd()
-  let date = join([year, month, day], '-')
-  let ndate = join([nyear, nmonth, nday], '-')
   let [startdate, enddate] = ['', '']
-  if title =~# '\v^\s*(\d+:\d+%(:\d+)?)\s*-\s*(\d+:\d+%(:\d+)?)'
-    let [_, starttime, endtime, title; __] = matchlist(title, '\v^\s*(\d+:\d+%(:\d+)?)\s*-\s*(\d+:\d+%(:\d+)?)\s*(.*)')
-    if starttime =~# '\v^2[4-9]:'
-      let [_, hour, starttime; __] = matchlist(starttime, '\v^(2[4-9])(:.*)')
-      let starttime = (hour - 24) . starttime
-      let startday = ndate
-    else
-      let startday = date
-    endif
-    if endtime =~# '\v^2[4-9]:'
-      let [_, hour, endtime; __] = matchlist(endtime, '\v^(2[4-9])(:.*)')
-      let endtime = (hour - 24) . endtime
-      let endday = ndate
-    else
-      let endday = date
-    endif
-    let [startdate, enddate] = [s:format_time(startday . 'T' . starttime), s:format_time(endday . 'T' . endtime)]
-  elseif title =~# '\v^\s*(\d+[-/]\d+%([-/]\d+)?\s+\d+:\d+%(:\d+)?)\s*-\s*(%(\d+[-/]\d+%([-/]\d+)?\s+)?\d+:\d+%(:\d+)?)'
-    let [_, starttime, endtime, title; __] = matchlist(title, '\v^\s*(\d+[-/]\d+%([-/]\d+)?\s+\d+:\d+%(:\d+)?)\s*-\s*(%(\d+[-/]\d+%([-/]\d+)?\s+)?\d+:\d+%(:\d+)?)\s*(.*)')
+  if title =~# '\v^\s*(\d+:\d+%(:\d+)?)\s*-\s*(\d+:\d+%(:\d+)?)\s+'
+    let [_, starttime, endtime, title; __] = matchlist(title, '\v^\s*(\d+:\d+%(:\d+)?)\s*-\s*(\d+:\d+%(:\d+)?)\s+(.*)')
+    let date = calendar#day#join_date([year, month, day])
+    let [startdate, enddate] = [s:format_datetime(date . 'T' . starttime), s:format_datetime(date . 'T' . endtime)]
+  elseif title =~# '\v^\s*(\d+[-/]\d+%([-/]\d+)?\s+\d+:\d+%(:\d+)?)\s*-\s*(%(\d+[-/]\d+%([-/]\d+)?\s+)?\d+:\d+%(:\d+)?)\s+'
+    let [_, starttime, endtime, title; __] = matchlist(title, '\v^\s*(\d+[-/]\d+%([-/]\d+)?\s+\d+:\d+%(:\d+)?)\s*-\s*(%(\d+[-/]\d+%([-/]\d+)?\s+)?\d+:\d+%(:\d+)?)\s+(.*)')
     if endtime !~# '\v^\d+[-/]\d+([-/]\d+)?'
       let endtime = matchstr(starttime, '\v^\d+[-/]\d+([-/]\d+)?\s+') . endtime
     endif
-    let [startdate, enddate] = [s:format_time(starttime), s:format_time(endtime)]
-  elseif title =~# '\v^\s*(\d+[-/]\d+%([-/]\d+)?)%(\s*-\s*(\d+[-/]\d+%([-/]\d+)?)|\s+)'
-    let [_, starttime, endtime, title; __] = matchlist(title, '\v^\s*(\d+[-/]\d+%([-/]\d+)?)%(\s*-\s*(\d+[-/]\d+%([-/]\d+)?)|\s+)\s*(.*)')
-    let [startdate, enddate] = [s:format_time(starttime), s:format_time_end(endtime !=# '' ? endtime : starttime)]
+    let [startdate, enddate] = [s:format_datetime(starttime), s:format_datetime(endtime)]
+  elseif title =~# '\v^\s*(\d+[-/]\d+%([-/]\d+)?)%(\s*-\s*(\d+[-/]\d+%([-/]\d+)?))?\s+'
+    let [_, starttime, endtime, title; __] = title =~# '\v^\s*(\d{1,2}[-/]\d{1,2})[-/](\d{1,2})\s+'
+          \ ? matchlist(title, '\v^\s*(\d{1,2}[-/]\d{1,2})[-/](\d{1,2})\s+(.*)')
+          \ : matchlist(title, '\v^\s*(\d+[-/]\d+%([-/]\d+)?)%(\s*-\s*(\d+[-/]\d+%([-/]\d+)?))?\s+(.*)')
+    let [startdate, enddate] = [s:format_datetime(starttime), s:format_datetime_end(endtime, starttime)]
     if startdate =~# '\v^\d+-\d+-\d+$' && enddate =~# '\v^\d+-\d+-\d+$'
       let [sy, sm, sd] = map(split(startdate, '-'), 'v:val + 0')
       let [ey, em, ed] = map(split(enddate, '-'), 'v:val + 0')
       if sy == ey && sm > em
         if [year, month] == [ey, em]
-          let startdate = join([sy - 1, sm, sd], '-')
+          let startdate = printf('%d-%02d-%02d', sy - 1, sm, sd)
         else
-          let enddate = join([ey + 1, em, ed], '-')
+          let enddate = printf('%d-%02d-%02d', ey + 1, em, ed)
         endif
       endif
     endif
-  elseif !a:0 || !a:1
-    let [startdate, enddate] = [date, ndate]
+  elseif a:new_event
+    let [nyear, nmonth, nday] = calendar#day#new(year, month, day).add(1).get_ymd()
+    let [startdate, enddate] = [printf('%d-%02d-%02d', year, month, day), printf('%d-%02d-%02d', nyear, nmonth, nday)]
   endif
   let recurrence = {}
   if title =~# '\v^\s*(\d+)(week|day)s\s+'
@@ -327,68 +314,36 @@ function! s:parse_title(title, ...) abort
   return [title, startdate, enddate, recurrence]
 endfunction
 
-function! s:format_time(time) abort
-  let time = substitute(a:time, '\v^\s+|\s+$', '', 'g')
+function! s:format_datetime(datetime) abort
   let endian = calendar#setting#get('date_endian')
-  if time =~# '\v^\d+-\d+-\d+T\s*$'
-    return substitute(time, 'T\s*$', '', '')
-  elseif time =~# '\v^\d+[-/]\d+[-/]\d+\s*$'
-    let [y, m, d] = split(time, '[-/]')
-    if d > 1000
-      let [y, m, d] = endian ==# 'little' ? [d, m, y] : [d, y, m]
-      if m > 12
-        let [d, m] = [m, d]
-      endif
+  if a:datetime =~# '\v^%((\d+)[-/])?(\d+)[-/](\d+)%(%(T|\s+)%((\d+)%(:(\d+)%(:(\d+))?)?)?)?$'
+    let [_, y, m, d, hour, min, sec; __] = matchlist(a:datetime, '\v^%((\d+)[-/])?(\d+)[-/](\d+)%(%(T|\s+)%((\d+)%(:(\d+)%(:(\d+))?)?)?)?$')
+    if y ==# ''
+      let y = b:calendar.day().get_year()
+      let [m, d] = endian ==# 'little' ? [d, m] : [m, d]
+    else
+      let [y, m, d] = endian ==# 'little' ? [d, m, y] : endian ==# 'middle' ? [d, y, m] : [y, m, d]
     endif
-    return join([y, m, d], '-')
-  elseif time =~# '\v^\d+[-/]\d+\s*$'
-    let [m, d] = split(time, '[-/]')
-    if m > 12
-      let [d, m] = [m, d]
+    if hour >= 24
+      let [y, m, d] = calendar#day#new(y, m, d).add(1).get_ymd()
+      let hour = string(hour - 24)
     endif
-    let y = b:calendar.day().get_year()
-    return join([y, m, d], '-')
-  elseif time =~# '\v^\d+[-/]\d+\s+\d+:'
-    let [date, t] = split(time, '\v\s+')
-    let [m, d] = split(date, '[-/]')
-    if m > 12
-      let [d, m] = [m, d]
-    endif
-    let y = b:calendar.day().get_year()
-    return join([y, m, d], '-') . 'T' . s:format_time(t)
-  elseif time =~# '\v^\d+[-/]\d+[-/]\d+\s+\d+:'
-    let [date, t] = split(time, '\v\s+')
-    let [y, m, d] = split(date, '[-/]')
-    if d > 1000
-      let [y, m, d] = endian ==# 'little' ? [d, m, y] : [d, y, m]
-      if m > 12
-        let [d, m] = [m, d]
-      endif
-    endif
-    return join([y, m, d], '-') . 'T' . s:format_time(t)
-  elseif time =~# '\v^\d+-\d+-\d+T\d+$'
-    return time . ':00:00'
-  elseif time =~# '\v^\d+-\d+-\d+T\d+:\d+$'
-    return time . ':00'
-  elseif time =~# '\v^\d+-\d+-\d+T\d+:\d+:\d+$'
-    return time
-  elseif time =~# '\v^\d+:\d+$'
-    return time . ':00'
+    return printf('%d-%02d-%02d', y, m, d) . (hour ==# '' ? '' : printf('T%02d:%02d:%02d', hour, min, sec))
+  else
+    return a:datetime
   endif
-  return time
 endfunction
 
-function! s:format_time_end(time) abort
-  let time = s:format_time(a:time)
-  if time =~# '\v^\d+-\d+-\d+$'
-    let ymdstr = matchstr(time, '\v^\d+-\d+-\d+$')
-    let ymd = map(split(ymdstr, '-'), 'v:val + 0')
-    if len(ymd) == 3
-      let newdate = calendar#day#new(ymd[0], ymd[1], ymd[2]).add(1)
-      return join(newdate.get_ymd(), '-')
-    endif
+function! s:format_datetime_end(datetime, starttime) abort
+  let datetime = a:datetime ==# '' ? s:format_datetime(a:starttime)
+        \ : a:datetime =~# '\v^\d+$' ? matchstr(s:format_datetime(a:starttime), '\v^\d+-\d+-') . printf('%02d', a:datetime)
+        \ : s:format_datetime(a:datetime)
+  if datetime =~# '\v^\d+-\d+-\d+$'
+    let [y, m, d] = map(split(datetime, '-'), 'v:val + 0')
+    let [y, m, d] = calendar#day#new(y, m, d).add(1).get_ymd()
+    let datetime = printf('%d-%02d-%02d', y, m, d)
   endif
-  return time
+  return datetime
 endfunction
 
 let s:constructor = calendar#constructor#view_textbox#new(s:self)
