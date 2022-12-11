@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/task.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2022/07/24 11:39:17.
+" Last Change: 2022/12/11 11:34:29.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -59,12 +59,8 @@ function! s:self.action(action) dict abort
       let msg = calendar#message#get('input_task') . (change ? get(task, 'title', '') . ' -> ' : '')
       let title = input(msg, change ? '' : get(task, 'title', '') . (head ? "\<Home>" : ''))
       if title !=# ''
-        if get(task, 'title') =~# '\v^\d+[-/]\d+' && title !~# '\v^\s*\d+[-/]\d+'
-          let duedate = '-1'
-        else
-          let [title, duedate] = s:parse_title(title)
-        endif
-        call b:calendar.task.update(self.current_group_id(), taskid, title, duedate ==# '' ? {} : { 'due': duedate })
+        let [title, due] = calendar#view#task#parse_title(title)
+        call b:calendar.task.update(self.current_group_id(), taskid, title, due ==# '' ? {} : { 'due': due })
       endif
     else
       return self.action('start_insert_next_line')
@@ -76,11 +72,11 @@ function! s:self.action(action) dict abort
       if next
         let self.select += 1
       endif
-      let [title, duedate] = s:parse_title(title)
+      let [title, due] = calendar#view#task#parse_title(title)
       call b:calendar.task.insert(self.current_group_id(),
             \ next ? taskid : !has_key(task, 'parent') || has_key(prevtask, 'parent') ? prevtaskid : '',
             \ get(next ? task : !has_key(task, 'parent') || has_key(prevtask, 'parent') ? prevtask : task, 'parent', ''),
-            \ title, duedate ==# '' ? {} : { 'due': duedate })
+            \ title, due ==# '' ? {} : { 'due': due })
     endif
   elseif a:action ==# 'clear'
     if calendar#setting#get('skip_task_clear_completed_confirm') || input(calendar#message#get('clear_completed_task')) =~# '\c^y\%[es]$'
@@ -91,31 +87,22 @@ function! s:self.action(action) dict abort
   endif
 endfunction
 
-function! s:parse_title(title) abort
+function! calendar#view#task#parse_title(title) abort
   let title = a:title
-  let duedate = ''
-  let endian = calendar#setting#get('date_endian')
-  if title =~# '\v^\s*(\d+[-/]\d+%([-/]\d+)?)\s+'
-    let [_, time, title; __] = matchlist(title, '\v^\s*(\d+[-/]\d+%([-/]\d+)?)\s+(.*)')
-    if time =~# '\v\d+[-/]\d+[-/]\d+'
-      let [y, m, d] = split(time, '[-/]')
-      if d > 1000
-        let [y, m, d] = endian ==# 'little' ? [d, m, y] : [d, y, m]
-        if m > 12
-          let [d, m] = [m, d]
-        endif
-      endif
-      let duedate = join([y, m, d], '-')
-    elseif time =~# '\v\d+[-/]\d+'
-      let [m, d] = split(time, '[-/]')
-      if m > 12
-        let [d, m] = [m, d]
-      endif
-      let [year, month, day] = b:calendar.day().get_ymd()
-      let duedate = join([m < month - 1 ? year + 1 : year, m, d], '-')
+  let due = ''
+  if title =~# '\v^\s*%((\d+)[-/])?(\d+)[-/](\d+)\s+'
+    let endian = calendar#setting#get('date_endian')
+    let [_, y, m, d, title; __] = matchlist(title, '\v^\s*%((\d+)[-/])?(\d+)[-/](\d+)\s+(.*)')
+    if y ==# ''
+      let [year, month, _] = b:calendar.day().get_ymd()
+      let [y, m, d] = endian ==# 'little' ? [year, d, m] : [year, m, d]
+      let y = m < month ? y + 1 : y
+    else
+      let [y, m, d] = endian ==# 'little' ? [d, m, y] : endian ==# 'middle' ? [d, y, m] : [y, m, d]
     endif
+    let due = printf('%d-%02d-%02d', y, m, d)
   endif
-  return [duedate ==# '' ? a:title : title, duedate . (duedate !=# '' ? 'T00:00:00.000Z' : '')]
+  return [title, due !=# '' ? due . 'T00:00:00Z' : '']
 endfunction
 
 let s:constructor = calendar#constructor#view_textbox#new(s:self)
