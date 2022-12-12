@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/day.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2022/12/04 13:27:03.
+" Last Change: 2022/12/12 20:17:43.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -61,6 +61,21 @@ function! calendar#day#join_date(ymd) abort
     endif
   endif
   return join(ymd, '')
+endfunction
+
+function! calendar#day#join_date_range(x, y) abort
+  let [x, y] = a:x.sub(a:y) < 0 ? [a:x, a:y] : [a:y, a:x]
+  if x.get_ymd() == y.get_ymd()
+    return calendar#day#join_date([x.get_month(), x.get_day()])
+  elseif x.get_year() == y.get_year()
+    return printf('%s - %s',
+          \ calendar#day#join_date([x.get_month(), x.get_day()]),
+          \ calendar#day#join_date([y.get_month(), y.get_day()]))
+  else
+    return printf('%s - %s',
+          \ calendar#day#join_date([x.get_year(), x.get_month(), x.get_day()]),
+          \ calendar#day#join_date([y.get_year(), y.get_month(), y.get_day()]))
+  endif
 endfunction
 
 let &cpo = s:save_cpo

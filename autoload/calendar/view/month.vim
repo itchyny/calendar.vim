@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/month.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2022/12/12 08:52:17.
+" Last Change: 2022/12/12 22:30:29.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -412,56 +412,22 @@ function! s:self.timerange() dict abort
   if !b:calendar.visual_mode()
     return ''
   endif
-  let y = b:calendar.day()
-  let x = b:calendar.visual_start_day()
-  let recurrence = ''
+  let x = b:calendar.day()
   let xn = calendar#week#week_index(x)
+  let y = b:calendar.visual_start_day()
   let yn = calendar#week#week_index(y)
+  let recurrence = ''
+  if x.sub(y) > 0
+    let [x, xn, y, yn] = [y, yn, x, xn]
+  endif
   if b:calendar.is_line_visual()
-    if x.sub(y) >= 0
-      let y = y.add(-yn)
-      let x = x.add(-xn+6)
-    else
-      let x = x.add(-xn)
-      let y = y.add(-yn+6)
-    endif
+    let [x, y] = [x.add(-xn), y.add(-yn+6)]
   elseif b:calendar.is_block_visual()
-    let yh = y.add(-yn)
-    let xh = x.add(-xn)
-    if x.sub(y) >= 0
-      let recweek = xh.sub(yh) / 7 + 1
-      let x = y.add(-yn+xn)
-    else
-      let recweek = yh.sub(xh) / 7 + 1
-      let y = x.add(-xn+yn)
-    endif
+    let recweek = y.add(-yn).sub(x.add(-xn)) / 7 + 1
     let recurrence = recweek > 1 ? recweek . 'weeks ' : ''
+    let y = x.add(-xn+yn)
   endif
-  if x.sub(y) >= 0
-    if x.get_year() == y.get_year()
-      return printf('%s - %s %s',
-            \ calendar#day#join_date([y.get_month(), y.get_day()]),
-            \ calendar#day#join_date([x.get_month(), x.get_day()]),
-            \ recurrence)
-    else
-      return printf('%s - %s %s',
-            \ calendar#day#join_date([y.get_year(), y.get_month(), y.get_day()]),
-            \ calendar#day#join_date([x.get_year(), x.get_month(), x.get_day()]),
-            \ recurrence)
-    endif
-  else
-    if x.get_year() == y.get_year()
-      return printf('%s - %s %s',
-            \ calendar#day#join_date([x.get_month(), x.get_day()]),
-            \ calendar#day#join_date([y.get_month(), y.get_day()]),
-            \ recurrence)
-    else
-      return printf('%s - %s %s',
-            \ calendar#day#join_date([x.get_year(), x.get_month(), x.get_day()]),
-            \ calendar#day#join_date([y.get_year(), y.get_month(), y.get_day()]),
-            \ recurrence)
-    endif
-  endif
+  return calendar#day#join_date_range(x, y) . ' ' . recurrence
 endfunction
 
 function! s:self.action(action) dict abort

@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_days.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2022/12/12 08:52:39.
+" Last Change: 2022/12/12 22:27:20.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -631,70 +631,31 @@ function! s:instance.timerange() dict abort
   let y = b:calendar.visual_start_day()
   let yh = b:calendar.visual_start_time().hour()
   let recurrence = ''
-  if b:calendar.is_line_visual()
-    if x.sub(y) >= 0
-      if x.get_year() == y.get_year()
-        return printf('%s - %s %s',
-              \ calendar#day#join_date([y.get_month(), y.get_day()]),
-              \ calendar#day#join_date([x.get_month(), x.get_day()]),
-              \ recurrence)
-      else
-        return printf('%s - %s %s',
-              \ calendar#day#join_date([y.get_year(), y.get_month(), y.get_day()]),
-              \ calendar#day#join_date([x.get_year(), x.get_month(), x.get_day()]),
-              \ recurrence)
-      endif
-    else
-      if x.get_year() == y.get_year()
-        return printf('%s - %s %s',
-              \ calendar#day#join_date([x.get_month(), x.get_day()]),
-              \ calendar#day#join_date([y.get_month(), y.get_day()]),
-              \ recurrence)
-      else
-        return printf('%s - %s %s',
-              \ calendar#day#join_date([x.get_year(), x.get_month(), x.get_day()]),
-              \ calendar#day#join_date([y.get_year(), y.get_month(), y.get_day()]),
-              \ recurrence)
-      endif
-    endif
-  elseif b:calendar.is_block_visual()
-    if x.sub(y) >= 0
-      let rec = x.sub(y) + 1
-      let [yh, xh] = [min([xh, yh]), max([xh, yh])]
-      let x = y
-    else
-      let rec = y.sub(x) + 1
-      let [xh, yh] = [min([xh, yh]), max([xh, yh])]
-      let y = x
-    endif
-    let recurrence = rec > 1 ? rec . 'days ' : ''
+  if x.sub(y) > 0 || x.eq(y) && xh > yh
+    let [x, xh, y, yh] = [y, yh, x, xh]
   endif
-  if x.sub(y) == 0 && !len(recurrence)
-    return printf('%d:00 - %d:00 ', min([xh, yh]), max([xh, yh]) + 1)
-  elseif x.sub(y) >= 0
-    if x.get_year() == y.get_year()
-      return printf('%s %d:00 - %s %d:00 %s',
-            \ calendar#day#join_date([y.get_month(), y.get_day()]), yh,
-            \ calendar#day#join_date([x.get_month(), x.get_day()]), xh + 1,
-            \ recurrence)
-    else
-      return printf('%s %d:00 - %s %d:00 %s',
-            \ calendar#day#join_date([y.get_year(), y.get_month(), y.get_day()]), yh,
-            \ calendar#day#join_date([x.get_year(), x.get_month(), x.get_day()]), xh + 1,
-            \ recurrence)
+  if b:calendar.is_line_visual()
+    return calendar#day#join_date_range(x, y) . ' '
+  elseif b:calendar.is_block_visual()
+    let recday = y.sub(x) + 1
+    let recurrence = recday > 1 ? recday . 'days ' : ''
+    let y = x
+    if xh > yh
+      let [xh, yh] = [yh, xh]
     endif
+  endif
+  if x.eq(y) && recurrence ==# ''
+    return printf('%d:00 - %d:00 ', xh, yh + 1)
+  elseif x.get_year() == y.get_year()
+    return printf('%s %d:00 - %s %d:00 %s',
+          \ calendar#day#join_date([x.get_month(), x.get_day()]), xh,
+          \ calendar#day#join_date([y.get_month(), y.get_day()]), yh + 1,
+          \ recurrence)
   else
-    if x.get_year() == y.get_year()
-      return printf('%s %d:00 - %s %d:00 %s',
-            \ calendar#day#join_date([x.get_month(), x.get_day()]), xh,
-            \ calendar#day#join_date([y.get_month(), y.get_day()]), yh + 1,
-            \ recurrence)
-    else
-      return printf('%s %d:00 - %s %d:00 %s',
-            \ calendar#day#join_date([x.get_year(), x.get_month(), x.get_day()]), xh,
-            \ calendar#day#join_date([y.get_year(), y.get_month(), y.get_day()]), yh + 1,
-            \ recurrence)
-    endif
+    return printf('%s %d:00 - %s %d:00 %s',
+          \ calendar#day#join_date([x.get_year(), x.get_month(), x.get_day()]), xh,
+          \ calendar#day#join_date([y.get_year(), y.get_month(), y.get_day()]), yh + 1,
+          \ recurrence)
   endif
 endfunction
 
