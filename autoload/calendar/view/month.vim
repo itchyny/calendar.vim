@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/month.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2022/12/04 13:10:38.
+" Last Change: 2022/12/12 08:52:17.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -439,15 +439,27 @@ function! s:self.timerange() dict abort
   endif
   if x.sub(y) >= 0
     if x.get_year() == y.get_year()
-      return printf('%d/%d - %d/%d ', y.get_month(), y.get_day(), x.get_month(), x.get_day()) . recurrence
+      return printf('%s - %s %s',
+            \ calendar#day#join_date([y.get_month(), y.get_day()]),
+            \ calendar#day#join_date([x.get_month(), x.get_day()]),
+            \ recurrence)
     else
-      return printf('%d/%d/%d - %d/%d/%d ', y.get_year(), y.get_month(), y.get_day(), x.get_year(), x.get_month(), x.get_day()) . recurrence
+      return printf('%s - %s %s',
+            \ calendar#day#join_date([y.get_year(), y.get_month(), y.get_day()]),
+            \ calendar#day#join_date([x.get_year(), x.get_month(), x.get_day()]),
+            \ recurrence)
     endif
   else
     if x.get_year() == y.get_year()
-      return printf('%d/%d - %d/%d ', x.get_month(), x.get_day(), y.get_month(), y.get_day()) . recurrence
+      return printf('%s - %s %s',
+            \ calendar#day#join_date([x.get_month(), x.get_day()]),
+            \ calendar#day#join_date([y.get_month(), y.get_day()]),
+            \ recurrence)
     else
-      return printf('%d/%d/%d - %d/%d/%d ', x.get_year(), x.get_month(), x.get_day(), y.get_year(), y.get_month(), y.get_day()) . recurrence
+      return printf('%s - %s %s',
+            \ calendar#day#join_date([x.get_year(), x.get_month(), x.get_day()]),
+            \ calendar#day#join_date([y.get_year(), y.get_month(), y.get_day()]),
+            \ recurrence)
     endif
   endif
 endfunction
