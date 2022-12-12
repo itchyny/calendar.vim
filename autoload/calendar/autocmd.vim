@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/autocmd.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/09/20 22:09:40.
+" Last Change: 2022/12/13 00:16:51.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -35,7 +35,6 @@ function! calendar#autocmd#new() abort
 
     " On entering the buffer, update the calendar.
     autocmd BufEnter,WinEnter,ColorScheme <buffer>
-          \ silent! call calendar#revive() |
           \ silent! call b:calendar.update()
 
     " On entering the buffer, fire CursorHold to update the clock.
