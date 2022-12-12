@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/autocmd.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2022/12/13 00:16:51.
+" Last Change: 2022/12/13 00:23:46.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -36,10 +36,6 @@ function! calendar#autocmd#new() abort
     " On entering the buffer, update the calendar.
     autocmd BufEnter,WinEnter,ColorScheme <buffer>
           \ silent! call b:calendar.update()
-
-    " On entering the buffer, fire CursorHold to update the clock.
-    autocmd BufEnter,WinEnter <buffer>
-          \ silent! doautocmd CursorHold
 
     " On resizing the Vim window, check the window size and update if it is changed.
     autocmd VimResized,CursorHold <buffer>
