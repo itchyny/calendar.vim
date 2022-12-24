@@ -4,7 +4,7 @@ Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2020/12/31 01:59:11.
+Last Change: 2022/12/24 13:48:39.
 
 CONTENTS					*calendar-contents*
 
@@ -789,43 +789,51 @@ g'{a-z}  g`{a-z}	Jump to the mark {a-z}.
 ------------------------------------------------------------------------------
 INPUT FORMAT					*calendar-input-format*
 This application has some special format for user's input of events and tasks.
+The date endian depends on |calendar-options-date_endian|. Both "-" and "/"
+are always supported as date separator.
 
 Calendar:
 	Day event:
 		EVENT: [event-title]
 
-	Few hours event:
+	Hours event:
 		EVENT: HH:MM - HH:MM [event-title]
 		EVENT: HH:MM:ss - HH:MM:ss [event-title]
+		EVENT: HH:MM a.m. - HH:MM p.m. [event-title]
+		EVENT: HH:MM:ss am - HH:MM:ss pm [event-title]
 
 		Example:
 		EVENT: 12:00 - 14:00 [event-title]
-		EVENT: 12:00:30 - 14:00:20 [event-title]
+		EVENT: 12:00:30 - 14:00:30 [event-title]
+		EVENT: 2:00 a.m. - 3:00 p.m. [event-title]
+		EVENT: 12:30:30 pm - 4:30:30 pm [event-title]
 
-	Few days event:
-		EVENT: mm/dd [event-title] (all day event)
-		EVENT: mm/dd - mm/dd [event-title]
+	Days event:
+		EVENT: mm/dd [event-title] (all day event, the order depends on the endian)
+		EVENT: mm/dd - mm/dd [event-title] (duration event, the order depends on the endian)
 		EVENT: yyyy/mm/dd - yyyy/mm/dd [event-title] (big endian)
 		EVENT: mm/dd/yyyy - mm/dd/yyyy [event-title] (middle endian)
 		EVENT: dd/mm/yyyy - dd/mm/yyyy [event-title] (little endian)
 		EVENT: yyyy-mm-dd - yyyy-mm-dd [event-title] (big endian, "-" separator)
 
 		Example:
-		EVENT: 10/23 [event-title] (all day event)
-		EVENT: 10/23 - 10/25 [event-title]
+		EVENT: 10/23 [event-title] (all day event, the order depends on the endian)
+		EVENT: 10/23 - 10/25 [event-title] (duration event, the order depends on the endian)
 		EVENT: 2014/10/23 - 2014/10/25 [event-title] (big endian)
 		EVENT: 10/23/2014 - 10/25/2014 [event-title] (middle endian)
 		EVENT: 23/10/2014 - 25/10/2014 [event-title] (little endian)
 		EVENT: 2014-10-23 - 2014-10-25 [event-title] (big endian, "-" separator)
 
 	Days and hours event:
-		EVENT: mm/dd HH:MM - mm/dd HH:MM [event-title]
+		EVENT: mm/dd HH:MM - mm/dd HH:MM [event-title] (the order of mm and dd depends on the endian)
+		EVENT: mm/dd HH:MM:ss a.m. - mm/dd HH:MM:ss p.m. [event-title]
 		EVENT: yyyy/mm/dd HH:MM - yyyy/mm/dd HH:MM [event-title]
 		EVENT: dd/mm/yyyy HH:MM - dd/mm/yyyy HH:MM [event-title] (little endian)
 		EVENT: dd-mm-yyyy HH:MM - dd-mm-yyyy HH:MM [event-title] (little endian, "-" separator)
 
 		Example:
-		EVENT: 10/23 19:00 - 10/25 21:00 [event-title]
+		EVENT: 10/23 19:00 - 10/25 21:00 [event-title] (the order of mm and dd depends on the endian)
+		EVENT: 10/23 12:00pm - 10/25 3:00pm [event-title]
 		EVENT: 2014/10/23 19:00 - 2014/10/25 21:00 [event-title]
 		EVENT: 23-10-2014 10:00 - 25-10-2014 21:00 [event-title] (little endian, "-" separator)
 

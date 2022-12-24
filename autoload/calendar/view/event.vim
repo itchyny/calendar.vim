@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2022/12/11 16:38:56.
+" Last Change: 2022/12/24 13:34:01.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -276,12 +276,12 @@ function! calendar#view#event#parse_title(title, new_event) abort
   let title = a:title
   let [year, month, day] = b:calendar.day().get_ymd()
   let [startdate, enddate] = ['', '']
-  if title =~# '\v^\s*(\d+:\d+%(:\d+)?)\s*-\s*(\d+:\d+%(:\d+)?)\s+'
-    let [_, starttime, endtime, title; __] = matchlist(title, '\v^\s*(\d+:\d+%(:\d+)?)\s*-\s*(\d+:\d+%(:\d+)?)\s+(.*)')
+  if title =~# '\v\c^\s*(\d+:\d+%(:\d+)?%(\s*[ap]%(m|\.m\.))?)\s*-\s*(\d+:\d+%(:\d+)?%(\s*[ap]%(m|\.m\.))?)\s+'
+    let [_, starttime, endtime, title; __] = matchlist(title, '\v\c^\s*(\d+:\d+%(:\d+)?%(\s*[ap]%(m|\.m\.))?)\s*-\s*(\d+:\d+%(:\d+)?%(\s*[ap]%(m|\.m\.))?)\s+(.*)')
     let date = calendar#day#join_date([year, month, day])
     let [startdate, enddate] = [s:format_datetime(date . 'T' . starttime), s:format_datetime(date . 'T' . endtime)]
-  elseif title =~# '\v^\s*(\d+[-/]\d+%([-/]\d+)?\s+\d+:\d+%(:\d+)?)\s*-\s*(%(\d+[-/]\d+%([-/]\d+)?\s+)?\d+:\d+%(:\d+)?)\s+'
-    let [_, starttime, endtime, title; __] = matchlist(title, '\v^\s*(\d+[-/]\d+%([-/]\d+)?\s+\d+:\d+%(:\d+)?)\s*-\s*(%(\d+[-/]\d+%([-/]\d+)?\s+)?\d+:\d+%(:\d+)?)\s+(.*)')
+  elseif title =~# '\v\c^\s*(\d+[-/]\d+%([-/]\d+)?\s+\d+:\d+%(:\d+)?%(\s*[ap]%(m|\.m\.))?)\s*-\s*(%(\d+[-/]\d+%([-/]\d+)?\s+)?\d+:\d+%(:\d+)?%(\s*[ap]%(m|\.m\.))?)\s+'
+    let [_, starttime, endtime, title; __] = matchlist(title, '\v\c^\s*(\d+[-/]\d+%([-/]\d+)?\s+\d+:\d+%(:\d+)?%(\s*[ap]%(m|\.m\.))?)\s*-\s*(%(\d+[-/]\d+%([-/]\d+)?\s+)?\d+:\d+%(:\d+)?%(\s*[ap]%(m|\.m\.))?)\s+(.*)')
     if endtime !~# '\v^\d+[-/]\d+([-/]\d+)?'
       let endtime = matchstr(starttime, '\v^\d+[-/]\d+([-/]\d+)?\s+') . endtime
     endif
@@ -316,8 +316,8 @@ endfunction
 
 function! s:format_datetime(datetime) abort
   let endian = calendar#setting#get('date_endian')
-  if a:datetime =~# '\v^%((\d+)[-/])?(\d+)[-/](\d+)%(%(T|\s+)%((\d+)%(:(\d+)%(:(\d+))?)?)?)?$'
-    let [_, y, m, d, hour, min, sec; __] = matchlist(a:datetime, '\v^%((\d+)[-/])?(\d+)[-/](\d+)%(%(T|\s+)%((\d+)%(:(\d+)%(:(\d+))?)?)?)?$')
+  if a:datetime =~# '\v\c^%((\d+)[-/])?(\d+)[-/](\d+)%(%(T|\s+)%((\d+)%(:(\d+)%(:(\d+))?)?(\s*[ap]%(m|\.m\.))?)?)?$'
+    let [_, y, m, d, hour, min, sec, ampm; __] = matchlist(a:datetime, '\v\c^%((\d+)[-/])?(\d+)[-/](\d+)%(%(T|\s+)%((\d+)%(:(\d+)%(:(\d+))?)?(\s*[ap]%(m|\.m\.))?)?)?$')
     if y ==# ''
       let y = b:calendar.day().get_year()
       let [m, d] = endian ==# 'little' ? [d, m] : [m, d]
@@ -327,6 +327,8 @@ function! s:format_datetime(datetime) abort
     if hour >= 24
       let [y, m, d] = calendar#day#new(y, m, d).add(1).get_ymd()
       let hour = string(hour - 24)
+    elseif ampm !=# ''
+      let hour = ampm =~? 'a' && hour ==# '12' ? '0' : ampm =~? 'p' && hour !=# '12' ? string(hour + 12) : hour
     endif
     return printf('%d-%02d-%02d', y, m, d) . (hour ==# '' ? '' : printf('T%02d:%02d:%02d', hour, min, sec))
   else
