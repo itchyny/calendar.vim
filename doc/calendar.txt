@@ -1,10 +1,9 @@
 *calendar.txt*	A calendar application for Vim
 
-Version: 0.0
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2022/12/24 13:48:39.
+Last Change: 2023/01/05 08:33:27.
 
 CONTENTS					*calendar-contents*
 
@@ -1087,15 +1086,6 @@ Problem 12:					*calendar-problem-12*
 
 		Report/Request the issue/feature at
 		https://github.com/itchyny/calendar.vim/issues
-
-==============================================================================
-CHANGELOG					*calendar-changelog*
-
-0.0	2014-01-05, ...
-	- Initial commit and implementation.
-
-	2013-06-22, ...
-	- Research and implementation.
 
 ==============================================================================
 vim:tw=78:sw=4:ts=8:ft=help:norl:noet:

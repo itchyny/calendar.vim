@@ -2,18 +2,11 @@
 " Filename: autoload/calendar/util.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2022/12/04 12:57:09.
+" Last Change: 2023/01/05 08:33:15.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
-
-" Utility functions.
-
-" Version of this application.
-function! calendar#util#version() abort
-  return '0.0'
-endfunction
 
 " Name of this application.
 function! calendar#util#name() abort

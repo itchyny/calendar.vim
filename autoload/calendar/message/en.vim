@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/message/en.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/05/09 08:07:17.
+" Last Change: 2023/01/05 08:33:18.
 " =============================================================================
 
 scriptencoding utf-8
@@ -81,7 +81,6 @@ let s:message.help = {
         \ "    :help calendar\n",
         \ ], ''),
       \ 'credit': join(["  Name: " . calendar#util#name(),
-        \ "  Version: " . calendar#util#version(),
         \ "  Author: " . calendar#util#author(),
         \ "  License: " . calendar#util#license(),
         \ "  Repository: " . calendar#util#repository(),

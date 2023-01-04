@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/message/ja.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2016/05/09 08:06:55.
+" Last Change: 2023/01/05 08:33:20.
 " =============================================================================
 
 scriptencoding utf-8
@@ -82,7 +82,6 @@ let s:message.help = {
         \ "    :help calendar\n",
         \ ], ''),
       \ 'credit': join(["  アプリケーション名: " . calendar#util#name(),
-        \ "  バージョン: " . calendar#util#version(),
         \ "  作者: " . calendar#util#author(),
         \ "  ライセンス: " . calendar#util#license(),
         \ "  リポジトリ: " . calendar#util#repository(),
