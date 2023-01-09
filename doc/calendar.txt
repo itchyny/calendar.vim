@@ -3,7 +3,7 @@
 Author: itchyny (https://github.com/itchyny)
 License: MIT License
 Repository: https://github.com/itchyny/calendar.vim
-Last Change: 2023/01/05 08:33:27.
+Last Change: 2023/01/10 08:42:23.
 
 CONTENTS					*calendar-contents*
 
@@ -424,14 +424,6 @@ Other miscellaneous options.
 		Specify the calendar candidates on inserting and moving a
 		calendar event. Note that the values are matched against the
 		summary of the calendars.
-
-						*calendar-options-updatetime*
-						*g:calendar_updatetime*
-		-updatetime=[num]
-		let g:calendar_updatetime = [num]
-		Specify the updatetime (in msec) in the calendar buffer. This
-		value is used for asynchronous web queries and the clock view.
-		The default value is 200.
 
 						*calendar-options-skip_event_delete_confirm*
 						*g:calendar_skip_event_delete_confirm*

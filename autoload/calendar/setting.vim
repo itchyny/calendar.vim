@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/setting.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2022/12/04 19:02:20.
+" Last Change: 2023/01/10 08:42:17.
 " =============================================================================
 
 scriptencoding utf-8
@@ -99,10 +99,6 @@ endfunction
 
 function! s:google_task() abort
   return 0
-endfunction
-
-function! s:updatetime() abort
-  return 200
 endfunction
 
 function! s:view() abort

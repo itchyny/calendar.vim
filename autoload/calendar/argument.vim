@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/argument.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/10/17 01:28:50.
+" Last Change: 2023/01/10 08:42:14.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -26,7 +26,6 @@ let s:all_value_options = {
       \ '-date_separator': [ '/', '-', '.', '" "' ],
       \ '-event_start_time_minwidth': [],
       \ '-cache_directory': [],
-      \ '-updatetime': [],
       \ '-view': [ 'year', 'month', 'week', 'days', 'day', 'clock', 'event', 'agenda' ],
       \ '-frame': [ 'default', 'unicode', 'space', 'unicode_bold', 'unicode_round', 'unicode_double' ],
       \ '-position': [ 'here', 'below', 'tab', 'left', 'right', 'topleft', 'topright' ],
