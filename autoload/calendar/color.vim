@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/color.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2023/01/10 21:46:45.
+" Last Change: 2023/01/10 23:12:32.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -78,31 +78,26 @@ function! calendar#color#new_syntax(id, fg, bg) abort
   endif
   let is_dark = calendar#color#is_dark()
   if is_dark
-    let [fg, bg] = [a:fg ==# '#000000' ? a:bg : a:fg ==# '#ffffff' ? a:bg : a:fg, '']
+    let [fg, bg] = [a:fg =~# '\v#(000000|ffffff)' ? a:bg : a:fg, '']
   else
-    let [fg, bg] = [a:fg ==# '#ffffff' ? calendar#color#normal_fg_color() : a:fg, calendar#color#whiten(a:bg)]
+    let [fg, bg] = ['', calendar#color#whiten(a:fg =~# '\v#(000000|ffffff)' ? a:bg : a:fg)]
   endif
   let [cuifg, cuibg] = [calendar#color#convert(fg), calendar#color#convert(bg)]
-  if cuifg < 0
-    return name
-  endif
   if index(syntaxnames, name) < 0
     call add(syntaxnames, name)
   endif
-  if cuibg >= 0
-    exec 'highlight default Calendar' . name . ' ctermfg=' . cuifg . ' ctermbg=' . cuibg . ' guifg=' . fg . ' guibg=' . bg
-  else
-    exec 'highlight default Calendar' . name . ' ctermfg=' . cuifg . ' guifg=' . fg
-  endif
+  exec 'highlight default Calendar' . name
+        \ . (fg ==# '' ? '' : ' ctermfg=' . cuifg . ' guifg=' . fg)
+        \ . (bg ==# '' ? '' : ' ctermbg=' . cuibg . ' guibg=' . bg)
   let select_bg = is_dark ? s:select_color() : s:is_gui ? a:bg : calendar#color#convert(a:bg)
   let nameselect = name . 'Select'
   if index(syntaxnames, nameselect) < 0
     call add(syntaxnames, nameselect)
   endif
   if s:is_gui
-    exec 'highlight default Calendar' . nameselect . ' guifg=' . fg . ' guibg=' . select_bg
+    exec 'highlight default Calendar' . nameselect . (fg ==# '' ? '' : ' guifg=' . fg) . ' guibg=' . select_bg
   else
-    exec 'highlight default Calendar' . nameselect . ' ctermfg=' . cuifg . ' ctermbg=' . select_bg
+    exec 'highlight default Calendar' . nameselect . (cuifg < 0 ? '' : ' ctermfg=' . cuifg) . ' ctermbg=' . select_bg
   endif
   return name
 endfunction
