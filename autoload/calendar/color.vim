@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/color.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2019/07/30 22:37:29.
+" Last Change: 2023/01/10 21:46:45.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -70,52 +70,41 @@ function! calendar#color#new_syntax(id, fg, bg) abort
     let syntaxnames = []
   endif
   let name = s:shorten(substitute(a:id, '[^a-zA-Z0-9]', '', 'g'))
-  if len(name) && len(a:fg) && len(a:bg)
-    if index(syntaxnames, name) >= 0
-      return name
-    endif
-    let flg = 0
-    let is_dark = calendar#color#is_dark()
-    if is_dark && s:is_dark_color(a:fg) || !is_dark && s:is_light_color(a:fg)
-      let flg = 1
-      let [fg, bg] = [a:bg, '']
-    else
-      let [fg, bg] = [a:fg, a:bg]
-    endif
-    let cuifg = calendar#color#convert(fg)
-    let cuibg = calendar#color#convert(bg)
-    if flg
-      let _bg = bg
-      let _cuibg = cuibg
-    else
-      let _bg = calendar#color#whiten(bg)
-      let _cuibg = calendar#color#convert(_bg)
-    endif
-    if cuifg >= 0
-      if index(syntaxnames, name) < 0
-        call add(syntaxnames, name)
-      endif
-      if _cuibg >= 0
-        exec 'highlight default Calendar' . name . ' ctermfg=' . cuifg . ' ctermbg=' . _cuibg . ' guifg=' . fg . ' guibg=' . _bg
-      else
-        exec 'highlight default Calendar' . name . ' ctermfg=' . cuifg . ' guifg=' . fg
-      endif
-      let select_bg = s:select_color()
-      if type(select_bg) == type('') || select_bg >= 0
-        let nameselect = name . 'Select'
-        if index(syntaxnames, nameselect) < 0
-          call add(syntaxnames, nameselect)
-        endif
-        if s:is_gui
-          exec 'highlight default Calendar' . nameselect . ' guifg=' . fg . ' guibg=' . (flg ? select_bg : bg)
-        else
-          exec 'highlight default Calendar' . nameselect . ' ctermfg=' . cuifg . ' ctermbg=' . (flg ? select_bg : cuibg)
-        endif
-      endif
-    endif
+  if !len(name) || !len(a:fg) || !len(a:bg)
+    return ''
+  endif
+  if index(syntaxnames, name) >= 0
     return name
   endif
-  return ''
+  let is_dark = calendar#color#is_dark()
+  if is_dark
+    let [fg, bg] = [a:fg ==# '#000000' ? a:bg : a:fg ==# '#ffffff' ? a:bg : a:fg, '']
+  else
+    let [fg, bg] = [a:fg ==# '#ffffff' ? calendar#color#normal_fg_color() : a:fg, calendar#color#whiten(a:bg)]
+  endif
+  let [cuifg, cuibg] = [calendar#color#convert(fg), calendar#color#convert(bg)]
+  if cuifg < 0
+    return name
+  endif
+  if index(syntaxnames, name) < 0
+    call add(syntaxnames, name)
+  endif
+  if cuibg >= 0
+    exec 'highlight default Calendar' . name . ' ctermfg=' . cuifg . ' ctermbg=' . cuibg . ' guifg=' . fg . ' guibg=' . bg
+  else
+    exec 'highlight default Calendar' . name . ' ctermfg=' . cuifg . ' guifg=' . fg
+  endif
+  let select_bg = is_dark ? s:select_color() : s:is_gui ? a:bg : calendar#color#convert(a:bg)
+  let nameselect = name . 'Select'
+  if index(syntaxnames, nameselect) < 0
+    call add(syntaxnames, nameselect)
+  endif
+  if s:is_gui
+    exec 'highlight default Calendar' . nameselect . ' guifg=' . fg . ' guibg=' . select_bg
+  else
+    exec 'highlight default Calendar' . nameselect . ' ctermfg=' . cuifg . ' ctermbg=' . select_bg
+  endif
+  return name
 endfunction
 
 function! calendar#color#refresh_syntax() abort
