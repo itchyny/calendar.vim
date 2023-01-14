@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/11/19 07:40:32.
+" Last Change: 2023/01/14 19:16:57.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -252,7 +252,7 @@ function! calendar#google#calendar#getEvents(year, month, ...) abort
     endif
   endfor
   for date in keys(events)
-    call sort(events[date].events, function('calendar#google#calendar#sorter'))
+    call sort(events[date].events, function('s:events_sorter'))
   endfor
   return events
 endfunction
@@ -262,11 +262,10 @@ function! s:extract_time_sec(summary) abort
   return ((xs[1] * 60) + xs[2]) * 60 + xs[3]
 endfunction
 
-function! calendar#google#calendar#sorter(x, y) abort
-  return a:x.calendarId ==# a:y.calendarId
-        \ ? (a:x.sec == a:y.sec
+function! s:events_sorter(x, y) abort
+  return a:x.sec == a:y.sec
         \   ? (get(a:x, 'summary', '') > get(a:y, 'summary', '') ? 1 : -1)
-        \ : a:x.sec > a:y.sec ? 1 : -1) : 0
+        \ : a:x.sec > a:y.sec ? 1 : -1
 endfunction
 
 function! s:moon_event(events) abort
