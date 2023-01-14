@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/constructor/view_days.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2022/12/12 22:27:20.
+" Last Change: 2023/01/14 18:35:10.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -191,102 +191,63 @@ function! s:instance.set_day_name() dict abort
   let self.day_name_cache[key] = [s, syntax]
 endfunction
 
-function! s:get_timeevts(events, blockmin) abort
+function! s:get_time_events(events, blockmin) abort
   let time_events = {}
-  let r = range(len(a:events))
-  for i in r
-    if get(a:events[i], 'isTimeEvent') && has_key(a:events[i], 'hms') && has_key(a:events[i], 'endhms')
-      if a:events[i].ymd == a:events[i].endymd ||
-            \  (a:events[i].endhms == [0, 0, 0] &&
-            \   calendar#day#new(a:events[i].endymd[0], a:events[i].endymd[1], a:events[i].endymd[2]).sub(
-            \     calendar#day#new(a:events[i].ymd[0], a:events[i].ymd[1], a:events[i].ymd[2])
-            \   ) == 1
-            \  )
-        let hour = a:events[i].hms[0]
-        let min = a:events[i].hms[1] / a:blockmin * a:blockmin
-        let endhour = a:events[i].ymd == a:events[i].endymd ? a:events[i].endhms[0] : 24
-        let endmin = a:events[i].endhms[1]
-        let flg = 0
-        let prev = []
-        while (hour < endhour || hour == endhour && min < endmin) && hour <= 24
-          let timestr = hour . ':' . min
-          if !has_key(time_events, timestr)
-            let time_events[timestr] = []
-          endif
-          call add(time_events[timestr], [i, flg, get(a:events[i], 'syntax', '')])
-          let prev = time_events[timestr][-1]
-          let flg = 1
-          let min += a:blockmin
-          if min >= 60
-            let min = 0
-            let hour += 1
-          endif
-        endwhile
-        if len(prev) > 1 && prev[1]
-          let prev[1] = 2
+  let timestrs_by_timestr = {}
+  let i = 0
+  for event in a:events
+    if get(event, 'isTimeEvent') && (event.ymd == event.endymd ||
+          \  (event.endhms == [0, 0, 0] &&
+          \    calendar#day#new(event.endymd[0], event.endymd[1], event.endymd[2]).sub(
+          \      calendar#day#new(event.ymd[0], event.ymd[1], event.ymd[2])) == 1))
+      let hour = event.hms[0]
+      let min = event.hms[1] / a:blockmin * a:blockmin
+      let endhour = event.ymd == event.endymd ? event.endhms[0] : 24
+      let endmin = event.endhms[1]
+      let event_timestrs = []
+      let adjacent_timestrs = {}
+      while hour < endhour || hour == endhour && min < endmin
+        let timestr = hour . ':' . min
+        if !has_key(time_events, timestr)
+          let time_events[timestr] = []
         endif
-        if len(prev) && prev[1] == 0
-          let prev[1] = 4
+        call add(event_timestrs, timestr)
+        let timestrs_by_timestr[timestr] = extend(adjacent_timestrs, get(timestrs_by_timestr, timestr, {(timestr): 0}))
+        let min += a:blockmin
+        if min >= 60
+          let min = 0
+          let hour += 1
         endif
-      endif
-    endif
-  endfor
-  let maxnum = 0
-  let prevdict = {}
-  let hour = 0
-  let min = 0
-  let prevret = {}
-  let ret = {}
-  while hour <= 24
-    let timestr = hour . ':' . min
-    if has_key(time_events, timestr)
-      let maxnum = max([maxnum, len(time_events[timestr])])
-      let new = {}
-      let minind = 0
-      let rr = range(len(time_events[timestr]))
-      for i in rr
-        let tvs = time_events[timestr][i]
-        if has_key(prevdict, tvs[0])
-          let new[prevdict[tvs[0]]] = deepcopy(tvs)
+      endwhile
+      let index = max(map(keys(adjacent_timestrs), 'len(time_events[v:val])'))
+      let event_count = index + 1
+      for j in range(index)
+        if len(filter(copy(event_timestrs), 'get(get(time_events[v:val], ' . j . ', []), 0, -1) >= 0')) == 0
+          let index = j
+          let event_count -= 1
+          break
         endif
       endfor
-      for i in rr
-        let tvs = time_events[timestr][i]
-        if !has_key(prevdict, tvs[0])
-          while has_key(new, minind)
-            let minind += 1
-          endwhile
-          let new[minind] = deepcopy(tvs)
-          let prevdict[tvs[0]] = minind
-        endif
-      endfor
-      let minind = 0
-      let prevret[timestr] = []
-      for i in range(maxnum)
-        if has_key(new, i)
-          call add(prevret[timestr], new[i])
+      for timestr in event_timestrs
+        let style = len(event_timestrs) == 1 ? 'single' : timestr ==# event_timestrs[0] ? 'top' : timestr ==# event_timestrs[-1] ? 'bottom' : 'middle'
+        if index < len(time_events[timestr])
+          let time_events[timestr][index] = [i, style, get(event, 'syntax', ''), 0]
         else
-          call add(prevret[timestr], [-1, 3, ''])
+          while len(time_events[timestr]) < index
+            call add(time_events[timestr], [-1, 'empty', '', 0])
+          endwhile
+          call add(time_events[timestr], [i, style, get(event, 'syntax', ''), 0])
         endif
       endfor
-    else
-      let prevdict = {}
-      for [key, events] in items(prevret)
-        for event in events
-          call add(event, maxnum)
+      for timestr in keys(adjacent_timestrs)
+        for event in time_events[timestr]
+          let event[3] = event_count
         endfor
-        let ret[key] = events
       endfor
-      let prevret = {}
-      let maxnum = 0
     endif
-    let min += a:blockmin
-    if min >= 60
-      let min = 0
-      let hour += 1
-    endif
-  endwhile
-  return ret
+    let i += 1
+  endfor
+  return time_events
 endfunction
 
 function! s:instance.set_contents() dict abort
@@ -411,7 +372,7 @@ function! s:instance.set_contents() dict abort
       endif
     endfor
     call sort(filter(longevt, 'calendar#view#month#longevt_filter(v:val, d)'), 'calendar#view#month#sorter')
-    let time_events = s:get_timeevts(evts.events, v.blockmin)
+    let time_events = s:get_time_events(evts.events, v.blockmin)
     for k in range(height)
       if k < height - bottompad
         if (k + 1) % v.hourheight
@@ -419,9 +380,9 @@ function! s:instance.set_contents() dict abort
           let min = (k % v.hourheight) * v.blockmin
           let timestr = hour . ':' . min
           if has_key(time_events, timestr) && len(time_events[timestr])
-            let maxnum = get(time_events[timestr][0], 3, 1)
-            let tevts = map(deepcopy(time_events[timestr]), 'v:val[0] >= 0 ? evts.events[v:val[0]] : {}')
-            let onelen = max([(v.inner_width + 2) / maxnum - f.width, f.width * 3])
+            let event_count = time_events[timestr][0][3]
+            let tevts = map(copy(time_events[timestr]), 'v:val[0] >= 0 ? evts.events[v:val[0]] : {}')
+            let onelen = max([(v.inner_width + 2) / event_count - f.width, f.width * 3])
             let hourcontents = ''
             let texts = []
             let syns = []
@@ -431,14 +392,20 @@ function! s:instance.set_contents() dict abort
             let framelen = v.inner_width / f.width * f.strlen
             let xx = len(s[ya]) - framelen
             for ii in range(len(tevts))
-              let l = maxnum > 1 ? (max([0, min([onelen, v.inner_width - totallen])]) - 1) / f.width * f.width : v.inner_width
+              let l = event_count > 1 ? (max([0, min([onelen, v.inner_width - totallen])]) - 1) / f.width * f.width : v.inner_width
               if l >= f.width * 2
-                let flg = time_events[timestr][ii][1]
-                let border = flg == 3 ? [repeat(' ', f.width), repeat(' ', f.width)] : flg == 1 ? repeat([f.vertical], 2) : [f.bottomleft, f.bottomright]
-                let rep = flg == 3 || flg == 1 ? repeat(' ', f.width) : f.horizontal
-                if flg && flg < 4
-                  call add(texts, border[0] . repeat(rep, l / f.width - 2) . border[1])
-                  if flg < 3
+                let style = time_events[timestr][ii][1]
+                if style ==# 'top' || style ==# 'single'
+                  let eventsummary = get(tevts[ii], 'summary', '')
+                  let smallspace = repeat(' ', f.width - 1 - (strdisplaywidth(eventsummary) + f.width - 1) % f.width)
+                  call add(texts, calendar#string#truncate(eventsummary . smallspace . repeat(f.horizontal, l), l - f.width) . (style ==# 'top' ? f.topright : f.horizontal))
+                  let xx += l / f.width * f.strlen + f.strlen
+                else
+                  let border = style ==# 'empty' ? repeat(repeat(' ', f.width), 2) : style ==# 'middle' ? repeat([f.vertical], 2) : [f.bottomleft, f.bottomright]
+                  call add(texts, border[0] . repeat(style =~# 'empty\|middle' ? repeat(' ', f.width) : f.horizontal, l / f.width - 2) . border[1])
+                  if style ==# 'empty'
+                    let xx += l / f.width * f.strlen + f.strlen
+                  else
                     if (k % v.hourheight) == 0 && k
                       let cutlen = len(s[ya][(xx):])
                       let leftpart = s[ya][:len(s[ya]) - cutlen - 1]
@@ -447,15 +414,7 @@ function! s:instance.set_contents() dict abort
                       call add(syntax, calendar#text#new(l - f.width * 2 + f.strlen * 2, xx, ya, get(tevts[ii], 'syntax', '')))
                       let xx += l - 2 * f.width + 2 * f.strlen + f.strlen
                     endif
-                  else
-                    let xx += l / f.width * f.strlen + f.strlen
                   endif
-                else
-                  let eventsummary = get(tevts[ii], 'summary', '')
-                  let smallspace = repeat(' ', f.width - 1 - (strdisplaywidth(eventsummary) + f.width - 1) % f.width)
-                  let newtext = calendar#string#truncate(eventsummary . smallspace . repeat(f.horizontal, l), l - f.width) . (flg ? f.horizontal : f.topright)
-                  call add(texts, newtext)
-                  let xx += l / f.width * f.strlen + f.strlen
                 endif
                 call add(syns, get(tevts[ii], 'syntax', ''))
                 let totallen += onelen
@@ -482,7 +441,7 @@ function! s:instance.set_contents() dict abort
         endif
       endif
     endfor
-    call add(self.timeevent_syntax, deepcopy(time_events))
+    call add(self.timeevent_syntax, copy(time_events))
     if h > 1
       let frame = i ? (j + 1 == 7 ? f.bottom : f.junction) : j + 1 == 7 ? f.bottomleft : f.left
       let s[y + h - 1] .= frame . e.splitter
