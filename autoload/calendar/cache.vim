@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/cache.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2022/12/04 13:08:22.
+" Last Change: 2023/02/03 08:41:15.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -108,13 +108,9 @@ function! s:self.get(key) dict abort
   let path = self.path(a:key)
   if filereadable(path)
     call s:setfperm_file(path)
-    let result = readfile(path)
-    try
-      if len(result)
-        return js_decode(len(result) > 1 ? join(result, '') : result[0])
-      else
-        return 1
-      endif
+    let result = join(readfile(path), '')
+    try " use js_decode to read contents saved before using JSON
+      return has('*js_decode') ? js_decode(result) : json_decode(result)
     catch
       return 1
     endtry
