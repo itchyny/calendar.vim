@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/color.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2023/01/10 23:12:32.
+" Last Change: 2023/02/08 17:31:25.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -78,9 +78,9 @@ function! calendar#color#new_syntax(id, fg, bg) abort
   endif
   let is_dark = calendar#color#is_dark()
   if is_dark
-    let [fg, bg] = [a:fg =~# '\v#(000000|ffffff)' ? a:bg : a:fg, '']
+    let [fg, bg] = [a:fg =~# '\v#%(00|1d|ff){3}' ? a:bg : a:fg, '']
   else
-    let [fg, bg] = ['', calendar#color#whiten(a:fg =~# '\v#(000000|ffffff)' ? a:bg : a:fg)]
+    let [fg, bg] = ['', calendar#color#whiten(a:fg =~# '\v#%(00|1d|ff){3}' ? a:bg : a:fg)]
   endif
   let [cuifg, cuibg] = [calendar#color#convert(fg), calendar#color#convert(bg)]
   if index(syntaxnames, name) < 0
