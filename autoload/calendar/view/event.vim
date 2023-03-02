@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/view/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2022/12/24 13:34:01.
+" Last Change: 2023/03/02 22:43:26.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -24,7 +24,7 @@ function! s:self.get_raw_contents() dict abort
   let [year, month, day] = b:calendar.day().get_ymd()
   let key = join([year, month, day], '-')
   let agenda = get(self.source, 'agenda', 0)
-  let events = agenda ? s:get_agenda_events() : deepcopy(get(get(b:calendar.event.get_events_one_month(year, month), key, {}), 'events', []))
+  let events = agenda ? s:get_agenda_events() : get(get(b:calendar.event.get_events(year, month), key, {}), 'events', [])
   let cnt = []
   let ev = {}
   for e in events
@@ -77,7 +77,7 @@ function! s:get_agenda_events() abort
   let end_ymdnum = ((eyear * 100 + emonth) * 100) + eday
   let current_sec = calendar#time#now().seconds()
   let events = []
-  let event_source = b:calendar.event.get_events_one_month(year, month)
+  let event_source = b:calendar.event.get_events(year, month)
   for key in keys(event_source)
     let event = get(get(event_source[key], 'events', []), 0, {})
     let ymdnum = get(event, 'ymdnum', 0)

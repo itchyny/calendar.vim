@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/google/calendar.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2023/01/14 19:16:57.
+" Last Change: 2023/03/02 22:11:15.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -188,7 +188,7 @@ function! calendar#google#calendar#getEvents(year, month, ...) abort
           let ymd = calendar#time#datetime(get(itm.start, 'date', get(itm.start, 'dateTime', '')))
           let endymd = calendar#time#datetime(get(itm.end, 'date', get(itm.end, 'dateTime', '')))
           let isTimeEvent = (!has_key(itm.start, 'date')) && has_key(itm.start, 'dateTime') && (!has_key(itm.end, 'date')) && has_key(itm.end, 'dateTime')
-          if len(ymd) != 6 || len(endymd) != 6 || [a:year, a:month] != [ymd[0], ymd[1]]
+          if len(ymd) != 6 || len(endymd) != 6
             continue
           endif
           let date = join(ymd[:2], '-')

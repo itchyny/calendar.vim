@@ -2,7 +2,7 @@
 " Filename: autoload/calendar/event.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2020/10/17 01:37:16.
+" Last Change: 2023/03/02 22:40:36.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -67,11 +67,18 @@ function! s:self.get_events(year, month) dict abort
   if has_key(self.__events, key) && (!calendar#setting#get('google_calendar') || get(g:, 'calendar_google_event_download', 1) <= 0) && !self._updated
     return self.__events[key]
   endif
-  let events = self.get_events_one_month(a:year, a:month, 1)
-  let [year, month] = calendar#day#new(a:year, a:month, 1).month().add(1).get_ym()
-  call extend(events, self.get_events_one_month(year, month, 0))
-  let [year, month] = calendar#day#new(a:year, a:month, 1).month().add(-1).get_ym()
-  call extend(events, self.get_events_one_month(year, month, 0))
+  let events = {}
+  let month = calendar#day#new(a:year, a:month, 1).month()
+  for m in [month.add(-1), month, month.add(1)]
+    for [ymd, evts] in items(self.get_events_one_month(m.get_year(), m.get_month(), 1))
+      if has_key(events, ymd)
+        let events[ymd].events = extend(copy(events[ymd].events),
+              \ filter(copy(evts.events), 'index(map(copy(events[ymd].events), "v:val.id"), v:val.id) < 0'))
+      else
+        let events[ymd] = evts
+      endif
+    endfor
+  endfor
   let self.__events[key] = events
   return self.__events[key]
 endfunction
