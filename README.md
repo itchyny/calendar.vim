@@ -123,7 +123,7 @@ DO NOT use this software with important events and tasks.
 This software downloads your events or tasks to the cache directory.
 Please be careful with the cache directory; DO NOT share the directory with any cloud storage softwares.
 This software also uploads your events and tasks to Google APIs.
-While it uses https, but DO NOT use this software for confidential matters.
+While it uses https, DO NOT use this software for confidential matters.
 This software NEVER uploads your events and tasks to any other server except Google's.
 However, if `wget` or `curl` command are replaced with malicious softwares, your events or tasks can be uploaded to other sites.
 Please use the official softwares for the commands.
